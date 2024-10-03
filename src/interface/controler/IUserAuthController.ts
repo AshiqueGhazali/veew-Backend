@@ -7,6 +7,6 @@ export interface emailBody {
   
   export default interface IUserAuthController {
     sendOtp(req:Request,res:Response):Promise<void>;
-    // login(req: { email: string; password: string }): Promise<any>;
+    verifyOtp(req:Request,res:Response):Promise<void>
   }
   

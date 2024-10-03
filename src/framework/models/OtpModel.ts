@@ -3,7 +3,7 @@ import {IOtp,IOtpCreationAttributes} from '../../entity/otpEntity'
 import { DataTypes, ModelDefined } from "sequelize";
 
 
-export const OtpModel:ModelDefined<IOtp,IOtpCreationAttributes> = sequelize.define(
+const OtpModel:ModelDefined<IOtp,IOtpCreationAttributes> = sequelize.define(
     'UserOtp',
     {
         id:{
@@ -12,15 +12,23 @@ export const OtpModel:ModelDefined<IOtp,IOtpCreationAttributes> = sequelize.defi
             primaryKey: true,
         },
         otp:{
-            type:DataTypes.NUMBER,
+            type:DataTypes.INTEGER,
             allowNull:false
         },
         email:{
             type:DataTypes.STRING,
             allowNull:false
-        }
+        },
+        expiresAt: {
+            type: DataTypes.DATE,
+            allowNull: false,
+        },
 
     },{
+        tableName:'otpTable',
         timestamps:true,
+        paranoid: true
     }
 ) 
+
+export default OtpModel

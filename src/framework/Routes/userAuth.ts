@@ -5,15 +5,23 @@ import UserAuthRepository from "../../adapters/Repositories/UserAuthRepository";
 
 const router: Router = express.Router()
 
+import OtpModel  from "../models/OtpModel";
 
-const userAuthRepository = new UserAuthRepository()
-const userAuthUseCase = new UserAuthUseCase(userAuthRepository)
+import OtpService from "../utils/otpService";
+
+
+const otpService = new OtpService()
+
+
+const userAuthRepository = new UserAuthRepository(OtpModel)
+const userAuthUseCase = new UserAuthUseCase(userAuthRepository,otpService)
 const userAuthController = new UserAuthController(userAuthUseCase);
 
 
 
 
-router.post('/send-otp', (req, res) => userAuthController.sendOtp(req, res));
+router.post('/send-otp', userAuthController.sendOtp.bind(userAuthController));
+router.post('/verify-otp', userAuthController.verifyOtp.bind(userAuthController))
 
 
 export default router;

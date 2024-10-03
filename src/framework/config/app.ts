@@ -1,7 +1,7 @@
 import express from "express"
 import dotenv from "dotenv"
 import cors from "cors"
-import session from "express-session"
+import session, { SessionOptions } from "express-session"
 import morgan from "morgan";
 
 
@@ -29,9 +29,10 @@ app.use(
       secret: process.env.SESSION_SECRET || 'piyuuu',
       resave: false,
       saveUninitialized: true,
-      cookie: { secure: process.env.NODE_ENV === 'production' },
+      cookie: {maxAge: 60000 },
     })
 ); 
+
 
 
 // morgan for using console all request
