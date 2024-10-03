@@ -13,7 +13,9 @@
   "devDependencies": {
     "@types/cors": "^2.8.17",
     "@types/express-session": "^1.18.0",
+    "@types/morgan": "^1.9.9",
     "@types/node": "^22.7.3",
+    "@types/pg": "^8.11.10",
     "@types/sequelize": "^4.28.20",
     "@types/uuid": "^10.0.0",
     "sequelize-cli": "^6.6.2",
@@ -26,11 +28,15 @@
     "dotenv": "^16.4.5",
     "express": "^4.21.0",
     "express-session": "^1.18.0",
+    "mailgen": "^2.0.28",
+    "morgan": "^1.10.0",
+    "nodemailer": "^6.9.15",
     "nodemon": "^3.1.7",
     "pg": "^8.13.0",
     "pg-hstore": "^2.3.4",
     "sequelize": "^6.37.3",
     "sequelize-typescript": "^2.1.6",
+    "sqlite3": "^5.1.7",
     "uuid": "^10.0.0"
   }
 }

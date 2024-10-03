@@ -10,4 +10,3 @@ export interface IUser {
   }
   
   export interface IUserCreationAttributes extends Omit<IUser, 'id'> {}
-  
