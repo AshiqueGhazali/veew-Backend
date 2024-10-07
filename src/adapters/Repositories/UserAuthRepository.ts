@@ -3,7 +3,8 @@ import {User} from '../../framework/models/UserModel'
 import { IOtp, IOtpCreationAttributes } from "../../entity/otpEntity";
 import { ModelDefined } from "sequelize";
 import { Model } from "sequelize";
-
+import { registerBody } from "../../interface/useCase/IUserAuthUseCase";
+import { IUserCreationAttributes, IUser } from "../../entity/userEntity";
 
 class UserAuthRepository implements IUserAuthRepository {
     private OtpModel:ModelDefined<IOtp,IOtpCreationAttributes>;
@@ -22,8 +23,17 @@ class UserAuthRepository implements IUserAuthRepository {
             expiresAt:new Date()
         })
 
-        console.log('new otp saved to dab , otp is :',newOtp);
         
+    }
+
+    async findUser(email: string): Promise<Model<IUser, IUserCreationAttributes> | null> {
+        const userData = await User.findOne({
+            where:{
+                email:email
+            }
+        })
+
+        return userData
     }
 
     async verifyOtp(email: string): Promise<Model<IOtp, IOtpCreationAttributes>| null> {
@@ -37,6 +47,16 @@ class UserAuthRepository implements IUserAuthRepository {
         
 
         return otpdata
+    }
+
+    async createUser(data: registerBody): Promise<void> {
+        const {firstName,lastName,email,password} = data
+        const newUser = await User.create({
+            firstName:firstName,
+            lastName:lastName,
+            email:email,
+            password:password  
+        })        
     }
 
    

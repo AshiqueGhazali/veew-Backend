@@ -11,6 +11,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
     "@types/cors": "^2.8.17",
     "@types/express-session": "^1.18.0",
     "@types/morgan": "^1.9.9",
@@ -25,6 +26,7 @@
   },
   "dependencies": {
     "@types/express": "^5.0.0",
+    "bcrypt": "^5.1.1",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.21.0",

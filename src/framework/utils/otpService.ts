@@ -9,10 +9,7 @@ export default class OtpService implements IOtpService {
         return Math.floor(1000 + Math.random() * 9000);
       }
 
-    async sendOtp(email: string, otp: number): Promise<void> {        
-
-        console.log(`User OTP is ${otp}`);
-        
+    async sendOtp(email: string, otp: number): Promise<void> {                
         // want
         const transporter = nodemailer.createTransport({
             service: 'gmail',
@@ -52,7 +49,6 @@ export default class OtpService implements IOtpService {
             html: mail
         }
 
-        console.log("otp is :",otp,"emaili is:",email);
         
         
         await transporter.sendMail(message);

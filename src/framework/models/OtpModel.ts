@@ -27,7 +27,6 @@ const OtpModel:ModelDefined<IOtp,IOtpCreationAttributes> = sequelize.define(
     },{
         tableName:'otpTable',
         timestamps:true,
-        paranoid: true
     }
 ) 
 

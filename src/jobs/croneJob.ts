@@ -1,7 +1,6 @@
-// src/jobs/cronJob.ts
 import cron from 'node-cron';
 import OtpModel  from '../framework/models/OtpModel'; 
-import { Op } from 'sequelize'; // Import Op here
+import { Op } from 'sequelize'; 
 
 cron.schedule('* * * * *', async () => {
     const now = new Date();
