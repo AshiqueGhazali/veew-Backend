@@ -77,18 +77,45 @@ class UserAuthController implements IUserAuthController {
         try {
             const status = await this.userAuthUseCase.authenticateUser(loginBody)
 
-            if(!status?.status){
+            if(!status?.status){                
                 res.status(400).json({message:status?.message,})
                 return;
             }
 
-            res.status(200).json({success:true,message:status?.message,userData:status?.userData})
+            const { token } = status;
+
+            res.cookie("token", token, {
+              httpOnly: true,
+              maxAge: 3600000,
+            });
+
+            res.status(200).json(status)
             
         } catch (error) {
             res.status(500).json({ message: 'Internal server error' });
             
         }
 
+    }
+
+    async logout(req: Request, res: Response): Promise<void> {
+        try {
+            res.cookie("token", "", { httpOnly: true, expires: new Date() });
+            res.status(200).json({ status: true,message:"logout completed" });
+          } catch (error) {
+            res.json(error);
+          }
+    }
+
+    async getToken(req: Request, res: Response): Promise<void> {
+        try {
+            const token = req.cookies.token;
+            const response = await this.userAuthUseCase.verifyToken(token);
+            res.status(200).json(response);
+          } catch (error) {
+            res.status(401).json(error);
+            console.log(error);
+          }
     }
  
 }

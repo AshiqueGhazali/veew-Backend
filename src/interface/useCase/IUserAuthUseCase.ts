@@ -16,10 +16,20 @@ export interface registerBody {
    password:string
 }
 
+export interface VerifyTokenResponse{
+   status:boolean,
+   decoded?:object
+}
+
 
 export interface loginBody {
    email:string;
    password:string
+}
+
+export interface VerifyTokenResponse{
+   status:boolean,
+   decoded?:object
 }
 
 export default interface IUserAuthUseCase{
@@ -28,4 +38,5 @@ export default interface IUserAuthUseCase{
    UserRegister(data:registerBody):Promise<void>
    isEmailExist(email:string):Promise<resObj|null>
    authenticateUser(data:loginBody):Promise<resObj|null>
+   verifyToken(token:string):Promise<VerifyTokenResponse>
 }

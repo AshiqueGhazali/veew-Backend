@@ -12,8 +12,10 @@
   "license": "ISC",
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
+    "@types/cookie-parser": "^1.4.7",
     "@types/cors": "^2.8.17",
     "@types/express-session": "^1.18.0",
+    "@types/jsonwebtoken": "^9.0.7",
     "@types/morgan": "^1.9.9",
     "@types/node": "^22.7.3",
     "@types/node-cron": "^3.0.11",
@@ -27,10 +29,12 @@
   "dependencies": {
     "@types/express": "^5.0.0",
     "bcrypt": "^5.1.1",
+    "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.21.0",
     "express-session": "^1.18.0",
+    "jsonwebtoken": "^9.0.2",
     "mailgen": "^2.0.28",
     "morgan": "^1.10.0",
     "node-cron": "^3.0.3",

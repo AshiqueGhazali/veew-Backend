@@ -1,8 +1,9 @@
 import express from "express"
 import dotenv from "dotenv"
 import cors from "cors"
-import session, { SessionOptions } from "express-session"
+import session from "express-session"
 import morgan from "morgan";
+import cookieParser from 'cookie-parser';
 
 
 dotenv.config()
@@ -10,6 +11,9 @@ dotenv.config()
 import userAuth from '../Routes/userAuth'
 
 const app = express()
+
+//cookie-parser middleware
+app.use(cookieParser());
 
 app.use(cors({
     origin:"http://localhost:5173",

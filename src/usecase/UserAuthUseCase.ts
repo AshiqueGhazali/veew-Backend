@@ -1,18 +1,23 @@
 import IUserAuthRepository from '../interface/repository/IUserAuthRepository';
 import { emailBody } from '../interface/controler/IUserAuthController';
 import { IOtpService } from '../interface/utils/IOtpService';
-import IUserAuthUseCase, { loginBody, registerBody, resObj } from '../interface/useCase/IUserAuthUseCase';
+import IUserAuthUseCase, { loginBody, registerBody, resObj,VerifyTokenResponse } from '../interface/useCase/IUserAuthUseCase';
 import IhasingService from '../interface/utils/IHashingService';
+import IJwtService from "../interface/utils/IJwtService";
+
 
 class UserAuthUseCase implements IUserAuthUseCase {
   private userAuthRepository: IUserAuthRepository
   private otpService:IOtpService
   private hashingService:IhasingService
+  private jwtServices: IJwtService;
 
-  constructor(userAuthRepository: IUserAuthRepository,otpService:IOtpService,hashingService:IhasingService) {
+
+  constructor(userAuthRepository: IUserAuthRepository,otpService:IOtpService,hashingService:IhasingService,jwtServices:IJwtService) {
     this.userAuthRepository = userAuthRepository
     this.otpService= otpService
     this.hashingService=hashingService
+    this.jwtServices=jwtServices
   }
 
   async sendOtp(email: emailBody['email']): Promise<void> {    
@@ -76,10 +81,22 @@ class UserAuthUseCase implements IUserAuthUseCase {
       const camparePassword = await this.hashingService.compare(data.password,userData?.dataValues.password)
 
       if(camparePassword){
+
+        let payload = {
+          id: userData.dataValues.id,
+          userName: userData.dataValues.firstName,
+          role: "user",
+        };
+
+        let token = await this.jwtServices.createToken(payload);
+
+
+
         return {
           status:true,
           message:'successfully authenticated',
-          userData:userData
+          userData:userData,
+          token
         }
       }
     }
@@ -87,6 +104,25 @@ class UserAuthUseCase implements IUserAuthUseCase {
     return {
       status:false,
       message:"Incorrect User Name and Password"
+    }
+  }
+
+  async verifyToken(token: string): Promise<VerifyTokenResponse> {
+    try {
+      let response = this.jwtServices.verify(token);
+
+      if (response?.role == "user") {
+        return {
+          status: true,
+          decoded: response,
+        };
+      }
+
+      return {
+        status: false,
+      };
+    } catch (error) {
+      throw Error();
     }
   }
 
