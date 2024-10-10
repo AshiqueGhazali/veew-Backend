@@ -8,7 +8,9 @@ import cookieParser from 'cookie-parser';
 
 dotenv.config()
 
-import userAuth from '../Routes/userAuth'
+import userAuthRouter from '../Routes/userAuth'
+import userRouter from "../Routes/userRoutes";
+import adminRoutes from "../Routes/adminRoutes";
 
 const app = express()
 
@@ -43,7 +45,11 @@ app.use(
 app.use(morgan('dev')) 
 
 // user Routes
-app.use("/",userAuth)
+app.use("/",userAuthRouter)
+app.use("/",userRouter)
 
+
+// admin Routes
+app.use('/admin',adminRoutes)
 
 export default app

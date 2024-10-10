@@ -1,5 +1,5 @@
 import IUserAuthRepository from "../../interface/repository/IUserAuthRepository";
-import {User} from '../../framework/models/UserModel'
+import User from '../../framework/models/UserModel'
 import { IOtp, IOtpCreationAttributes } from "../../entity/otpEntity";
 import { ModelDefined } from "sequelize";
 import { Model } from "sequelize";

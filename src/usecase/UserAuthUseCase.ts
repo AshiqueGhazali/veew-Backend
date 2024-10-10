@@ -109,9 +109,9 @@ class UserAuthUseCase implements IUserAuthUseCase {
 
   async verifyToken(token: string): Promise<VerifyTokenResponse> {
     try {
-      let response = this.jwtServices.verify(token);
+      let response = await this.jwtServices.verify(token);
 
-      if (response?.role == "user") {
+      if (response?.role === "user") {
         return {
           status: true,
           decoded: response,

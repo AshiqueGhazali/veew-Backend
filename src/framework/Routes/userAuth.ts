@@ -1,4 +1,4 @@
-import express, {Request, Response, Router} from "express"
+import express, {Router} from "express"
 import UserAuthController from "../../adapters/Controllers/UserAuthController";
 import UserAuthUseCase from "../../usecase/UserAuthUseCase";
 import UserAuthRepository from "../../adapters/Repositories/UserAuthRepository";
