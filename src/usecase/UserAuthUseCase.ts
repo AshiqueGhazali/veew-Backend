@@ -30,8 +30,24 @@ class UserAuthUseCase implements IUserAuthUseCase {
   }
 
   async verifyOtp(email: string, otp: number): Promise<resObj | null> {
+    const otpData = await this.userAuthRepository.verifyOtp(email)    
 
-    
+    if(otpData && otpData.dataValues.otp=== otp){
+        return  {
+          status:true,
+          message:"otp verified successfully"
+        }
+  
+    }else{
+      return  {
+        status:false,
+        message:"Otp verification Failed"
+      }
+    } 
+  }
+
+  async verifyForgotPasswordOtp(email: string, otp: number): Promise<resObj | null> {
+      
     const otpData = await this.userAuthRepository.verifyOtp(email)    
 
     if(otpData && otpData.dataValues.otp=== otp){
@@ -76,8 +92,16 @@ class UserAuthUseCase implements IUserAuthUseCase {
   async authenticateUser(data: loginBody): Promise<resObj | null> {
 
     const userData = await this.userAuthRepository.findUser(data.email)   
+
+    if(userData?.dataValues.isBlock){
+      return {
+        status:false,
+        message:'User is Blocked by Admin!',
+        userData:userData,
+      }
+    }
     
-    if(userData ){
+    if(userData){
       const camparePassword = await this.hashingService.compare(data.password,userData?.dataValues.password)
 
       if(camparePassword){
@@ -112,6 +136,12 @@ class UserAuthUseCase implements IUserAuthUseCase {
       let response = await this.jwtServices.verify(token);
 
       if (response?.role === "user") {
+        const isBlock = await this.userAuthRepository.isBlock(response.id)
+        if(isBlock){
+          return {
+            status: false,
+          };
+        }
         return {
           status: true,
           decoded: response,
@@ -121,9 +151,25 @@ class UserAuthUseCase implements IUserAuthUseCase {
       return {
         status: false,
       };
+      
     } catch (error) {
       throw Error();
     }
+  }
+
+  async userResetPassword(email:string, password: string): Promise<resObj | null> {
+      try {
+
+        const bcryptPassword = await this.hashingService.hashing(password)
+        await this.userAuthRepository.updatePassword(bcryptPassword,email)
+
+        return {
+          status:true,
+          message:'password updated'
+        }
+      } catch (error) {
+        throw error
+      }
   }
 
 

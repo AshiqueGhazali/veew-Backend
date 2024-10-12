@@ -59,6 +59,31 @@ class UserAuthRepository implements IUserAuthRepository {
         })        
     }
 
+    async isBlock(userId: string): Promise<boolean> {
+        try {
+            const user = await User.findOne({where:{id:userId}})
+
+            if(user?.dataValues.isBlock){
+                return true
+            }
+            return false
+        } catch (error) {
+            throw error
+        }
+    }
+
+    async updatePassword(password: string, email:string): Promise<void> {
+        try {
+            await User.update({password:password},{where:{
+                email:email
+            }})
+
+            return
+        } catch (error) {
+            throw error
+        }
+    }
+
    
 }
 

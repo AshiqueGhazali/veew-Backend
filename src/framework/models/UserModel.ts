@@ -38,6 +38,10 @@ const User : ModelDefined<IUser,IUserCreationAttributes> = sequelize.define(
       type: DataTypes.STRING,
       allowNull: true,
     },
+    isBlock: {
+      type: DataTypes.BOOLEAN,
+      defaultValue:false
+    },
   },{
     tableName: 'user',  
     timestamps: true,   

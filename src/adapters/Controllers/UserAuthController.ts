@@ -36,13 +36,51 @@ class UserAuthController implements IUserAuthController {
         }
     }
 
+    async sendForgotPasswordOtp(req: Request, res: Response): Promise<void> {
+        const { email } = req.body;
+
+        try {
+            const isUser = await this.userAuthUseCase.isEmailExist(email)
+
+            if(isUser?.status){
+                res.status(401).json({message:"user not exist in this email"})
+                return
+            }
+
+            await this.userAuthUseCase.sendOtp(email);
+            app.locals.email=email
+            res.status(200).json({ message: 'OTP sent successfully' }); 
+                       
+        } catch (error) {
+            res.status(500).json({ message: 'Internal server error' });
+        }
+    }
+
     async verifyOtp(req: Request, res: Response): Promise<void> {
         const otp = req.body.userOtp        
-        
 
         try{
            
             const status = await this.userAuthUseCase.verifyOtp(app.locals.email,otp)
+                     
+            if(status?.status){
+                res.status(200).json({success:true,messega:status?.message})
+            }else{ 
+                res.status(401).json({message:"otp verification failed"})               
+                
+            }
+        }catch(err){
+            res.status(500).json({ message: 'Internal server error' });
+            
+        }
+    }
+
+    async verifyForgotPasswordOtp(req: Request, res: Response): Promise<void> {
+        const { userOtp, email } = req.body       
+
+        try{
+           
+            const status = await this.userAuthUseCase.verifyForgotPasswordOtp(email, userOtp)
                      
             if(status?.status){
                 res.status(200).json({success:true,messega:status?.message})
@@ -78,7 +116,7 @@ class UserAuthController implements IUserAuthController {
             const status = await this.userAuthUseCase.authenticateUser(loginBody)
 
             if(!status?.status){                
-                res.status(400).json({message:status?.message,})
+                res.status(400).json({message:status?.message})
                 return;
             }
 
@@ -116,6 +154,25 @@ class UserAuthController implements IUserAuthController {
             res.status(401).json(error);
             console.log(error);
           }
+    }
+
+    async resetPassword(req: Request, res: Response): Promise<void> {
+        const {password, email} = req.body
+
+        try {
+            const response = await this.userAuthUseCase.userResetPassword(email,password)
+
+            if(response?.status){
+                res.status(200).json(response.message)
+                return
+            }
+
+            res.status(401).json(response?.message)
+            return
+        } catch (error) {
+            res.status(401).json(error);
+            console.log(error);
+        }
     }
  
 }

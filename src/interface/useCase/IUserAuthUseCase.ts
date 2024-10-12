@@ -35,8 +35,10 @@ export interface VerifyTokenResponse{
 export default interface IUserAuthUseCase{
    sendOtp(email:string):Promise<void>
    verifyOtp(email:string,otp:number):Promise<resObj|null>
+   verifyForgotPasswordOtp(email:string,otp:number):Promise<resObj|null>
    UserRegister(data:registerBody):Promise<void>
    isEmailExist(email:string):Promise<resObj|null>
    authenticateUser(data:loginBody):Promise<resObj|null>
    verifyToken(token:string):Promise<VerifyTokenResponse>
+   userResetPassword(email:string,password:string):Promise<resObj|null>
 }

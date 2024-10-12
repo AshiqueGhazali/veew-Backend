@@ -22,6 +22,7 @@ class AdminController implements IAdminController{
 
             res.cookie("adminToken", status.token, { maxAge: 3600000 });     
             res.status(200).json({success:true,message:"login successfull"})
+            return
             
         } catch (error) {
             throw error
@@ -37,6 +38,7 @@ class AdminController implements IAdminController{
                 return
             }
             res.status(401).json({status:false})
+            return
             
         } catch (error) {
             throw error
@@ -47,6 +49,38 @@ class AdminController implements IAdminController{
         try {
             res.cookie("adminToken","",{httpOnly:true,expires:new Date()})
             res.status(200).json({ status: true,message:"logout completed" });
+            
+            return
+        } catch (error) {
+            throw error
+        }
+    }
+
+    async getAllUsers(req: Request, res: Response): Promise<void> {
+        try {            
+            const usersData = await this.adminUsecase.getUsersData()       
+                 
+            res.status(200).json(usersData)
+
+            return
+        } catch (error) {
+            throw error
+        }
+    }
+
+    async blockUser(req: Request, res: Response): Promise<void> {
+        try {
+            const userId:string = req.body.userId
+
+            if(userId){
+                await this.adminUsecase.blockUserAndUnblock(userId)
+                res.status(200).json({success:true,message:"okkk"})
+                return
+            }
+
+            res.status(401).json({message:"could't find user"})
+            return
+            
         } catch (error) {
             throw error
         }
