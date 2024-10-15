@@ -25,6 +25,36 @@ class UserController implements IUserController{
             throw error
         }
     }
+
+    async editUserProfile(req: IAuthRequest, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const {id,firstName, lastName,phone,gender,age,image}=req.body
+            console.log(req.body);
+            await this.userUseCase.editUserProfile({id,firstName, lastName,phone,gender,age,image})
+
+            res.status(200).json({success:true,message:"profile updated"})
+
+            return;
+            
+        } catch (error) {
+            throw error
+        }
+    }
+
+    async uploadProfileImg(req: IAuthRequest, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const imageUrl = req.file?.path; 
+            if(req.userId && imageUrl){
+                await this.userUseCase.editImage(req.userId,imageUrl)
+                res.status(200).json({ imageUrl }); 
+                return;
+            }else{
+                res.status(401).json({message:"user id is not getting"})
+            }
+        } catch (error) {
+            
+        }
+    }
 }
 
 export default UserController

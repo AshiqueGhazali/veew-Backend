@@ -1,5 +1,5 @@
 import { Model, ModelDefined } from "sequelize";
-import IUserRepository from "../../interface/repository/IUserRepository";
+import IUserRepository, { editData } from "../../interface/repository/IUserRepository";
 import { IUser, IUserCreationAttributes } from "../../entity/userEntity";
 
 
@@ -10,15 +10,47 @@ class UserRepository implements IUserRepository {
         this.UserModel = UserModel
     }
 
-    async fetchPrfileData(userId: string): Promise<Model<IUser, IUserCreationAttributes> | null> {
+    async fetchProfileData(userId: string): Promise<Model<IUser, IUserCreationAttributes> | null> {
         try {
-            const userData = await this.UserModel.findOne({where:{
-                id:userId
-            }})     
+
+            if(userId){
+                const userData = await this.UserModel.findOne({where:{
+                    id:userId
+                }})     
+                
+                return userData
+            }else{
+                console.log("no user fountttdddd");
+                
+                return null
+            }
             
-            return userData
 
         } catch (error) {
+            throw error
+        }
+    }
+
+    async editProfile(userId: string, data: editData): Promise<void> {
+        try {
+            const profileUpdate = await this.UserModel.update(data,{where:{
+                id:userId
+            }})
+            return
+        } catch (error) {
+            console.log("us eggegeggegge");
+            
+            throw error
+        }
+    }
+
+    async editImage(userId: string, image: string): Promise<void> {
+        try {
+            await this.UserModel.update({image:image},{where:{
+                id:userId
+            }})            
+            return
+        } catch (error) {            
             throw error
         }
     }

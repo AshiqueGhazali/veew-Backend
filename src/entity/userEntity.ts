@@ -7,7 +7,8 @@ export interface IUser {
     password: string;
     age?: number;
     gender?: string;
-    isBlock?:boolean
+    image?:string
+    isBlock?:boolean;
   }
   
   export interface IUserCreationAttributes extends Omit<IUser, 'id'> {}

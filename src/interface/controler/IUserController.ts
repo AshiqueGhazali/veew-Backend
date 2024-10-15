@@ -6,4 +6,6 @@ export interface IAuthRequest extends Request {
 
 export default interface IUserController {
     getUserData(req:IAuthRequest,res:Response,next:NextFunction):Promise<void>;
+    editUserProfile(req:IAuthRequest,res:Response,next:NextFunction):Promise<void>;
+    uploadProfileImg(req:IAuthRequest,res:Response,next:NextFunction):Promise<void>
 }
