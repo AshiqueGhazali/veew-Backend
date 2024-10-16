@@ -7,7 +7,7 @@ const Pricing : ModelDefined<IPricing, IPricingCreationAttributes> = sequelize.d
     'Pricing',
     {
         id:{
-            type:DataTypes.UUIDV4,
+            type:DataTypes.UUID,
             defaultValue:DataTypes.UUIDV4,
             primaryKey:true
         },
@@ -23,15 +23,19 @@ const Pricing : ModelDefined<IPricing, IPricingCreationAttributes> = sequelize.d
             type:DataTypes.INTEGER,
             allowNull:false
         },
-        expiredAfter:{
+        numberOfEvents:{
+            type:DataTypes.INTEGER,
+            allowNull:false
+        },
+        expireAfter:{
             type:DataTypes.INTEGER,
             allowNull:true
         },
-        NumberOfEvents:{
+        maxParticipents:{
             type:DataTypes.INTEGER,
-            allowNull:true
+            allowNull:false
         },
-        description:{
+        idealFor:{
             type:DataTypes.STRING,
             allowNull:false
         }

@@ -86,6 +86,19 @@ class AdminController implements IAdminController{
         }
     }
 
+    async addPricingPlan(req: Request, res: Response): Promise<void> {
+        try {
+            const data = req.body            
+            const response = await this.adminUsecase.verifyPlan(data)
+            if(!response?.status){
+                res.status(404).json(response)
+            }
+            res.status(200).json(response)
+        } catch (error) {
+            throw error
+        }
+    }
+
 }
 
 export default AdminController

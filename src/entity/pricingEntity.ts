@@ -3,9 +3,10 @@ export interface IPricing {
     title:string;
     category:'PRICING' | 'SUBSCRIPTION';
     price:number;
-    expiredAfter:number;
-    NumberOfEvents:number;
-    description:string;
+    numberOfEvents:number;
+    expireAfter?:number;
+    maxParticipents:number;
+    idealFor:string;
   }
   
   export interface IPricingCreationAttributes extends Omit<IPricing, 'id'> {}
