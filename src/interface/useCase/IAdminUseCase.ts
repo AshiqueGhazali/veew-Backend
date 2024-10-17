@@ -1,5 +1,6 @@
 import { Model } from "sequelize";
 import { IUser, IUserCreationAttributes } from "../../entity/userEntity";
+import { IPricing, IPricingCreationAttributes } from "../../entity/pricingEntity";
 
 export interface loginParams {
     userName:string;
@@ -32,4 +33,6 @@ export default interface IAdminUseCase {
     getUsersData():Promise<Model<IUser,IUserCreationAttributes>[] |null>
     blockUserAndUnblock(userId:string):Promise<void>;
     verifyPlan(data:addPlanParams):Promise<adminresObj|null>
+    getPricingPlans():Promise<Model<IPricing,IPricingCreationAttributes>[] | null>
+    editPricingPlan(planId:string,data:addPlanParams):Promise<adminresObj>
 }

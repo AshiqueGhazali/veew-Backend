@@ -1,12 +1,10 @@
-import { DataTypes, Model, ModelDefined} from 'sequelize';
-import sequelize from '../config/sequelize';
+import { DataTypes, Model, ModelDefined } from "sequelize";
+import sequelize from "../config/sequelize";
 
+import { IUser, IUserCreationAttributes } from "../../entity/userEntity";
 
-import { IUser, IUserCreationAttributes } from '../../entity/userEntity';
-
-
-const User : ModelDefined<IUser,IUserCreationAttributes> = sequelize.define(
-  'User',
+const User: ModelDefined<IUser, IUserCreationAttributes> = sequelize.define(
+  "User",
   {
     id: {
       type: DataTypes.UUID,
@@ -44,11 +42,13 @@ const User : ModelDefined<IUser,IUserCreationAttributes> = sequelize.define(
     },
     isBlock: {
       type: DataTypes.BOOLEAN,
-      defaultValue:false
+      defaultValue: false,
     },
-  },{
-    tableName: 'user',  
-    timestamps: true,   
-  })
+  },
+  {
+    tableName: "user",
+    timestamps: true,
+  }
+);
 
-export default User
+export default User;

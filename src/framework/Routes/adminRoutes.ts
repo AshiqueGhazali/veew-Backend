@@ -25,5 +25,7 @@ adminRoutes.post('/logout',adminController.logout.bind(adminController))
 adminRoutes.get('/getUsersData',authorizationMiddleware, adminController.getAllUsers.bind(adminController))
 adminRoutes.post('/blockUser',authorizationMiddleware, adminController.blockUser.bind(adminController))
 adminRoutes.post('/addPlan',authorizationMiddleware, adminController.addPricingPlan.bind(adminController))
+adminRoutes.get('/getPlan',authorizationMiddleware, adminController.getPricingPlans.bind(adminController))
+adminRoutes.put('/updatePlan',adminController.editPricingPlan.bind(adminController))
 
 export default adminRoutes

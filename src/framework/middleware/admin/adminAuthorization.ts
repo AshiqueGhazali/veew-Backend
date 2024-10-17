@@ -14,7 +14,7 @@
 //     const verification = await jwtservice.verify(token); // ineed imple token veryifht
 //     next();
 
-//   } catch (error) {    
+//   } catch (error) {
 //     return res
 //     .status(401).json({ message:"Admin is not authenticated", error: error });
 //   }
@@ -33,13 +33,13 @@ const authorization = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const token = req.cookies.adminToken
-    
-        
-    next();
+    const token = req.cookies.adminToken;
 
-  } catch (error) {    
-    res.status(401).json({ message: "Admin is not authenticated", error: error });
+    next();
+  } catch (error) {
+    res
+      .status(401)
+      .json({ message: "Admin is not authenticated", error: error });
   }
 };
 

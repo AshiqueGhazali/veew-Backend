@@ -1,8 +1,8 @@
 export interface IOtp {
-    id:string;
-    email:string;
-    otp:number;
-    expiresAt:Date;
+  id: string;
+  email: string;
+  otp: number;
+  expiresAt: Date;
 }
 
-export interface IOtpCreationAttributes extends Omit<IOtp, 'id'>{}
+export interface IOtpCreationAttributes extends Omit<IOtp, "id"> {}
