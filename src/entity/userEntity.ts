@@ -3,11 +3,12 @@ export interface IUser {
   firstName: string;
   lastName: string;
   email: string;
-  password: string;
+  password?: string;
   age?: number;
   gender?: string;
   image?: string;
   isBlock?: boolean;
+  currentSubscriptionId?:string
 }
 
 export interface IUserCreationAttributes extends Omit<IUser, "id"> {}

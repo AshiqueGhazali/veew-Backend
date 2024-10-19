@@ -1,5 +1,5 @@
-import { Request, Response } from "express";
-import IAdminController from "../../interface/controler/IAdminController";
+import { Request, response, Response } from "express";
+import IAdminController, { IPlanDeleteRequest } from "../../interface/controler/IAdminController";
 import IAdminUseCase from "../../interface/useCase/IAdminUseCase";
 
 class AdminController implements IAdminController {
@@ -131,6 +131,24 @@ class AdminController implements IAdminController {
     } catch (error) {
       throw error;
     }
+  }
+
+  async deletePlan(req: IPlanDeleteRequest, res: Response): Promise<void> {
+      try {
+        const planId = req.query.planId
+
+        const response = await this.adminUsecase.softDeletePlan(planId)
+
+        if(!response?.status){
+          res.status(404).json(response)
+          return
+        }
+
+        res.status(200).json(response)
+        return;
+      } catch (error) {
+        throw error;
+      }
   }
 }
 

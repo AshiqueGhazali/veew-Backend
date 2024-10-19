@@ -26,7 +26,7 @@ const User: ModelDefined<IUser, IUserCreationAttributes> = sequelize.define(
     },
     password: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     age: {
       type: DataTypes.INTEGER,
@@ -44,6 +44,13 @@ const User: ModelDefined<IUser, IUserCreationAttributes> = sequelize.define(
       type: DataTypes.BOOLEAN,
       defaultValue: false,
     },
+    // currentSubscriptionId: {
+    //   type: DataTypes.UUID,
+    //   allowNull: true, 
+    //   defaultValue: null,
+    //   blank:true,
+    //   references: { model: "user_subscription", key: "id" },
+    // }
   },
   {
     tableName: "user",

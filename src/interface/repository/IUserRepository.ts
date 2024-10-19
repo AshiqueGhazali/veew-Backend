@@ -15,12 +15,9 @@ export interface editData {
 }
 
 export default interface IUserRepository {
-  fetchProfileData(
-    userId: string
-  ): Promise<Model<IUser, IUserCreationAttributes> | null>;
+  fetchProfileData(userId: string): Promise<Model<IUser, IUserCreationAttributes> | null>;
   editProfile(userId: string, data: editData): Promise<void>;
   editImage(userId: string, image: string): Promise<void>;
-  fetchAllPlans(): Promise<
-    Model<IPricing, IPricingCreationAttributes>[] | null
-  >;
+  fetchAllPlans(): Promise<Model<IPricing, IPricingCreationAttributes>[] | null>;
+  fetchPlanData(planId:string):Promise<Model<IPricing, IPricingCreationAttributes>| null>;
 }

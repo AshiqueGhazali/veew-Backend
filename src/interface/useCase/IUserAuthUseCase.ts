@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { IUser, IUserCreationAttributes } from "../../entity/userEntity";
 import { Model } from "sequelize";
+import { googleAuthBody } from "../controler/IUserAuthController";
 
 export interface resObj {
   status: boolean;
@@ -40,4 +41,6 @@ export default interface IUserAuthUseCase {
   authenticateUser(data: loginBody): Promise<resObj | null>;
   verifyToken(token: string): Promise<VerifyTokenResponse>;
   userResetPassword(email: string, password: string): Promise<resObj | null>;
+  googleAuthenticateUser(data:googleAuthBody):Promise<resObj|null>
+
 }

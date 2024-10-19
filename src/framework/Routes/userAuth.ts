@@ -33,6 +33,9 @@ router.get('/getToken',userAuthController.getToken.bind(userAuthController))
 router.post('/setForgotPasswordOtp',userAuthController.sendForgotPasswordOtp.bind(userAuthController))
 router.post('/verifyForgotPasswordOtp',userAuthController.sendForgotPasswordOtp.bind(userAuthController))
 router.post('/resetPassword',userAuthController.resetPassword.bind(userAuthController))
+// router.post('/getAllPlans',userAuthController.googleAuth.bind(userAuthController))
+router.post("/googleAuth",userAuthController.googleAuth.bind(userAuthController))
+
 
 
 export default router;

@@ -1,5 +1,5 @@
 import IUserAuthRepository from "../interface/repository/IUserAuthRepository";
-import { emailBody } from "../interface/controler/IUserAuthController";
+import { emailBody, googleAuthBody } from "../interface/controler/IUserAuthController";
 import { IOtpService } from "../interface/utils/IOtpService";
 import IUserAuthUseCase, {
   loginBody,
@@ -104,7 +104,7 @@ class UserAuthUseCase implements IUserAuthUseCase {
       };
     }
 
-    if (userData) {
+    if (userData && userData.dataValues.password) {
       const camparePassword = await this.hashingService.compare(
         data.password,
         userData?.dataValues.password
@@ -173,6 +173,36 @@ class UserAuthUseCase implements IUserAuthUseCase {
       };
     } catch (error) {
       throw error;
+    }
+  }
+
+  async googleAuthenticateUser(data: googleAuthBody): Promise<resObj | null> {
+    try {
+      let user = await this.userAuthRepository.findUser(data.email);
+      console.log(user, "hiiiii user");
+      if (!user) {
+        await this.userAuthRepository.saveGooogleAuth(data);
+      }
+
+      let Tuser = await this.userAuthRepository.findUser(data.email);
+
+      let payload = {
+        id: Tuser?.dataValues.id as string,
+        userName: Tuser?.dataValues.firstName as string,
+        role: "user",
+      };
+
+      // it generate token
+      let token = await this.jwtServices.createToken(payload);
+
+      return {
+        status: true,
+        message: "googleAuthenticated Successfully",
+        token,
+        userData:Tuser?Tuser : undefined
+      };
+    } catch (error) {
+      throw Error();
     }
   }
 }

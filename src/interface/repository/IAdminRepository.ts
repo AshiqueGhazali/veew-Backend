@@ -12,4 +12,5 @@ export default interface IAdminRepository {
   addPricingPlan(data: addPlanParams): Promise<void>;
   getAllPlans(): Promise<Model<IPricing, IPricingCreationAttributes>[] | null>;
   updatePlan(planId: string, data: addPlanParams): Promise<void>;
+  destroyPlan(planId:string):Promise<void>
 }

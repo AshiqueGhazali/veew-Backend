@@ -46,11 +46,7 @@ class AdminRepository implements IAdminRepository {
 
   async addPricingPlan(data: addPlanParams): Promise<void> {
     try {
-      // const {title,category,price,expireAfter,maxParticipents,idealFor}=data
-      console.log("ivde etthnna data is :", data);
-
       const nwePlan = await this.PricingModel.create(data);
-      console.log("new plan is :", nwePlan);
 
       return;
     } catch (error) {
@@ -79,12 +75,22 @@ class AdminRepository implements IAdminRepository {
           },
         }
       );
-
-      console.log("Updated is :", editedPlan);
       return;
     } catch (error) {
       throw error;
     }
+  }
+
+  async destroyPlan(planId: string): Promise<void> {
+      try {
+        await this.PricingModel.destroy({where:{
+          id:planId
+        }})
+
+        return
+      } catch (error) {
+        throw error;
+      }
   }
 }
 

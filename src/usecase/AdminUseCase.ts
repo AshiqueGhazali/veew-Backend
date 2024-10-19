@@ -176,6 +176,25 @@ class AdminUseCase implements IAdminUseCase {
       throw error;
     }
   }
+
+  async softDeletePlan(planId: string): Promise<adminresObj | null> {
+    try {
+      if (!planId) {
+        return {
+          status: false,
+          message: "couldint find plan",
+        };
+      }
+
+      await this.adminRepository.destroyPlan(planId);
+      return {
+        status: true,
+        message: "plan deleted successfully!",
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 export default AdminUseCase;

@@ -1,7 +1,5 @@
-import { NextFunction, Request, Response } from "express";
-import IUserController, {
-  IAuthRequest,
-} from "../../interface/controler/IUserController";
+import { NextFunction,  Response } from "express";
+import IUserController, {IAuthRequest} from "../../interface/controler/IUserController";
 import IuserUseCase from "../../interface/useCase/IUserUseCase";
 
 class UserController implements IUserController {
@@ -87,7 +85,55 @@ class UserController implements IUserController {
 
       res.status(200).json(response);
       return;
-    } catch (error) {}
+    } catch (error) {
+      res.status(500)
+      console.log(error);
+    }
+  }
+
+  async createPayment(req: IAuthRequest, res: Response, next: NextFunction): Promise<void> {
+      try {
+        const {planId} = req.body
+
+        console.log("plan id is ::",req.body);
+        
+
+        const response = await this.userUseCase.createPayment(planId)
+        if(response){
+          res.status(200).json(response)
+          return
+        }
+        res.status(401)
+        return
+      } catch (error) {
+        res.status(500)
+        console.log(error);
+        
+      }
+  }
+
+  async verifyPayment(req: IAuthRequest, res: Response, next: NextFunction): Promise<void> {
+      try {
+        const userId = req.userId || ''
+
+        console.log("user id is :",userId);
+        console.log("bodddyyy is :",req.body);
+        
+        
+        const {planId,orderCreationId,razorpayPaymentId,razorpayOrderId,razorpaySignature} = req.body
+        const newData = {userId,planId,orderCreationId,razorpayPaymentId,razorpayOrderId,razorpaySignature}
+        const response = await this.userUseCase.verifyPayment(newData)
+
+        if(response?.status){
+          res.status(200).json(response)
+          return
+        }
+        res.status(400).json(response)
+        return
+      } catch (error) {
+        res.status(500)
+        console.log(error);
+      }
   }
 }
 

@@ -171,6 +171,33 @@ class UserAuthController implements IUserAuthController {
       console.log(error);
     }
   }
+
+  async googleAuth(req: Request,res: Response): Promise<void> {
+    try {
+
+
+      const { email, firstName, lastName, image } = req.body;
+      let data = {email, firstName, lastName, image};
+
+      let response = await this.userAuthUseCase.googleAuthenticateUser(data);
+
+      console.log(email, image, "hiiii");
+
+      if (response?.status) {
+        const { token } = response;
+        res.cookie("token", token, {
+          httpOnly: true,
+          maxAge: 3600000,
+        });
+
+        res.status(200).json(response);
+        return
+      }
+    } catch (error) {
+      console.log(error);
+    }
+
+  }
 }
 
 export default UserAuthController;

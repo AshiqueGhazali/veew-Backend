@@ -5,6 +5,7 @@ import { ModelDefined } from "sequelize";
 import { Model } from "sequelize";
 import { registerBody } from "../../interface/useCase/IUserAuthUseCase";
 import { IUserCreationAttributes, IUser } from "../../entity/userEntity";
+import { googleAuthBody } from "../../interface/controler/IUserAuthController";
 
 class UserAuthRepository implements IUserAuthRepository {
   private OtpModel: ModelDefined<IOtp, IOtpCreationAttributes>;
@@ -23,16 +24,19 @@ class UserAuthRepository implements IUserAuthRepository {
     });
   }
 
-  async findUser(
-    email: string
-  ): Promise<Model<IUser, IUserCreationAttributes> | null> {
-    const userData = await User.findOne({
-      where: {
-        email: email,
-      },
-    });
-
-    return userData;
+  async findUser(email: string): Promise<Model<IUser, IUserCreationAttributes> | null> {
+    try {
+      const userData = await User.findOne({
+        where: {
+          email: email,
+        },
+      });
+  
+      return userData;
+    } catch (error) {
+      console.log("errr",error);
+      return null
+    }
   }
 
   async verifyOtp(
@@ -88,6 +92,20 @@ class UserAuthRepository implements IUserAuthRepository {
       throw error;
     }
   }
+
+  async saveGooogleAuth(data:googleAuthBody): Promise<Model<IUser|IUserCreationAttributes>> {
+    try {
+     
+     const user = await User.create({...data})
+
+    return user
+    
+
+    } catch (error) {
+       console.log(error)
+       throw Error()
+    }
+ }
 }
 
 export default UserAuthRepository;

@@ -10,6 +10,13 @@ export interface tokenData {
   role: string;
 }
 
+export interface googleAuthBody{
+  email:string,
+  firstName:string,
+  lastName:string
+  image:string
+}
+
 export default interface IUserAuthController {
   sendOtp(req: Request, res: Response): Promise<void>;
   sendForgotPasswordOtp(req: Request, res: Response): Promise<void>;
@@ -20,4 +27,5 @@ export default interface IUserAuthController {
   logout(req: Request, res: Response): Promise<void>;
   getToken(req: Request, res: Response): Promise<void>;
   resetPassword(req: Request, res: Response): Promise<void>;
+  googleAuth(req:Request,res:Response):Promise<void>
 }

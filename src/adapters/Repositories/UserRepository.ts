@@ -83,6 +83,22 @@ class UserRepository implements IUserRepository {
       throw error;
     }
   }
+
+  async fetchPlanData(planId: string): Promise<Model<IPricing, IPricingCreationAttributes> | null> {
+      try {
+        const planData = await this.PricingModel.findOne({where:{
+          id:planId
+        }})
+
+        if(!planData){
+          return null
+        }
+        return planData
+      } catch (error) {
+        console.log(error);
+        return null
+      }
+  }
 }
 
 export default UserRepository;

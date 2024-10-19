@@ -46,6 +46,7 @@ const Pricing: ModelDefined<IPricing, IPricingCreationAttributes> =
     {
       tableName: "pricing",
       timestamps: true,
+      paranoid: true
     }
   );
 
