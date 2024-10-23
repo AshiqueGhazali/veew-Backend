@@ -195,6 +195,19 @@ class AdminUseCase implements IAdminUseCase {
       throw error;
     }
   }
+
+  async getSubscribersData(): Promise<any> {
+      try {
+        const data = await this.adminRepository.getAllSubscribers()
+        return {
+          status:true,
+          data:data
+        }
+      } catch (error) {
+        console.log(error);
+        return
+      }
+  }
 }
 
 export default AdminUseCase;

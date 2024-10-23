@@ -1,6 +1,8 @@
 import { DataTypes, ModelDefined } from "sequelize";
 import sequelize from "../config/sequelize";
 import { IUserSubscription, IUserSubscriptionCreationAttributes } from "../../entity/userSubscriptionEntity";
+import User from "./UserModel";
+import Pricing from "./PricingModel";
 
 const UserSubscription: ModelDefined<IUserSubscription, IUserSubscriptionCreationAttributes> =
   sequelize.define(
@@ -51,5 +53,16 @@ const UserSubscription: ModelDefined<IUserSubscription, IUserSubscriptionCreatio
       paranoid: true,
     }
   );
+
+  // UserSubscription.belongsTo(User, {
+  //   foreignKey: "userId",
+  //   as: "user"
+  // });
+  
+  // UserSubscription.belongsTo(Pricing, {
+  //   foreignKey: "planId",
+  //   as: "pricing"
+  // });
+  
 
 export default UserSubscription;

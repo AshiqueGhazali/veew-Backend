@@ -36,4 +36,5 @@ export default interface IAdminUseCase {
     getPricingPlans():Promise<Model<IPricing,IPricingCreationAttributes>[] | null>
     editPricingPlan(planId:string,data:addPlanParams):Promise<adminresObj>
     softDeletePlan(planId:string):Promise<adminresObj | null>
+    getSubscribersData():Promise<any>
 }

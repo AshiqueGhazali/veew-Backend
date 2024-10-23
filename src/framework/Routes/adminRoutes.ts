@@ -4,6 +4,8 @@ import AdminUseCase from "../../usecase/AdminUseCase";
 import AdminController from "../../adapters/Controllers/AdminController";
 import JwtService from "../utils/jwtService";
 import authorizationMiddleware from "../middleware/admin/adminAuthorization";
+import UserSubscriptionModel from "../models/UserSubscriptionModel";
+
 
 import UserModel from "../models/UserModel"
 import Pricing from "../models/PricingModel";
@@ -13,7 +15,7 @@ const adminRoutes: Router = express.Router()
 const jwtService = new JwtService()
 
 
-const adminRepository = new AdminRepository(UserModel, Pricing)
+const adminRepository = new AdminRepository(UserModel, Pricing, UserSubscriptionModel)
 const adminUseCase = new AdminUseCase(adminRepository,jwtService)
 const adminController = new AdminController(adminUseCase)
 
@@ -28,5 +30,6 @@ adminRoutes.post('/addPlan',authorizationMiddleware, adminController.addPricingP
 adminRoutes.get('/getPlan',authorizationMiddleware, adminController.getPricingPlans.bind(adminController))
 adminRoutes.put('/updatePlan',adminController.editPricingPlan.bind(adminController))
 adminRoutes.delete('/deletePlan',authorizationMiddleware,adminController.deletePlan.bind(adminController))
+adminRoutes.get('/getAllSubscribers',authorizationMiddleware,adminController.getAllSubscribers.bind(adminController))
 
 export default adminRoutes

@@ -10,6 +10,9 @@ const sequelize = new Sequelize({
   database: process.env.DB_NAME,
 });
 
+console.log("Database password:", process.env.DB_PASSWORD);
+
+
 export const connectToDatabase = async () => {
   try {
     await sequelize.authenticate();

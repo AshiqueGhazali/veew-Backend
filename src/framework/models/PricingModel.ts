@@ -4,6 +4,7 @@ import {
   IPricing,
   IPricingCreationAttributes,
 } from "../../entity/pricingEntity";
+import UserSubscription from "./UserSubscriptionModel";
 
 const Pricing: ModelDefined<IPricing, IPricingCreationAttributes> =
   sequelize.define(
@@ -49,5 +50,10 @@ const Pricing: ModelDefined<IPricing, IPricingCreationAttributes> =
       paranoid: true
     }
   );
+
+  // Pricing.hasMany(UserSubscription, {
+  //   foreignKey: "planId",
+  //   as: "plans"
+  // });
 
 export default Pricing;

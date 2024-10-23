@@ -150,6 +150,23 @@ class AdminController implements IAdminController {
         throw error;
       }
   }
+
+  async getAllSubscribers(req: Request, res: Response): Promise<void> {
+      try {
+
+        const response = await this.adminUsecase.getSubscribersData()
+        if(response.status){
+          res.status(200).json(response.data)
+          return
+        }
+
+        res.status(400).json({message:"somthing went wrong!"})
+        
+      } catch (error) {
+        console.log(error);
+        return
+      }
+  }
 }
 
 export default AdminController;

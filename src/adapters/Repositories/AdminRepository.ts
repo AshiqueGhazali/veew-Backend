@@ -6,17 +6,21 @@ import {
   IPricingCreationAttributes,
 } from "../../entity/pricingEntity";
 import { addPlanParams } from "../../interface/useCase/IAdminUseCase";
+import { IUserSubscription, IUserSubscriptionCreationAttributes } from "../../entity/userSubscriptionEntity";
 
 class AdminRepository implements IAdminRepository {
   private UserModel: ModelDefined<IUser, IUserCreationAttributes>;
   private PricingModel: ModelDefined<IPricing, IPricingCreationAttributes>;
+  private UserSubscriptionModel: ModelDefined<IUserSubscription,IUserSubscriptionCreationAttributes>
 
   constructor(
     UserModel: ModelDefined<IUser, IUserCreationAttributes>,
-    PricingModel: ModelDefined<IPricing, IPricingCreationAttributes>
+    PricingModel: ModelDefined<IPricing, IPricingCreationAttributes>,
+    UserSubscriptionModel: ModelDefined<IUserSubscription,IUserSubscriptionCreationAttributes>
   ) {
     this.UserModel = UserModel;
     this.PricingModel = PricingModel;
+    this.UserSubscriptionModel = UserSubscriptionModel
   }
 
   async getAllUsers(): Promise<Model<IUser, IUserCreationAttributes>[] | null> {
@@ -90,6 +94,31 @@ class AdminRepository implements IAdminRepository {
         return
       } catch (error) {
         throw error;
+      }
+  }
+
+  async getAllSubscribers(): Promise<any> {
+      try {        
+        const subscriber = await this.UserSubscriptionModel.findAll({
+          include: [
+            {
+              model: this.UserModel,
+              as: 'user',
+              attributes: ['firstName' , 'lastName' , 'email']
+            },
+            {
+              model: this.PricingModel,
+              as: 'pricing',
+              attributes: ['title' , 'category']
+            }
+          ],
+          attributes: ['id', 'startDate', 'expireDate', 'numberOfEventsUsed', 'maxNumberOfEvents']
+        })
+        
+        return subscriber
+      } catch (error) {
+        console.log(error);
+        return
       }
   }
 }

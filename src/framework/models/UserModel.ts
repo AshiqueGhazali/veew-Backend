@@ -2,6 +2,7 @@ import { DataTypes, Model, ModelDefined } from "sequelize";
 import sequelize from "../config/sequelize";
 
 import { IUser, IUserCreationAttributes } from "../../entity/userEntity";
+import UserSubscription from "./UserSubscriptionModel";
 
 const User: ModelDefined<IUser, IUserCreationAttributes> = sequelize.define(
   "User",
@@ -44,18 +45,16 @@ const User: ModelDefined<IUser, IUserCreationAttributes> = sequelize.define(
       type: DataTypes.BOOLEAN,
       defaultValue: false,
     },
-    // currentSubscriptionId: {
-    //   type: DataTypes.UUID,
-    //   allowNull: true, 
-    //   defaultValue: null,
-    //   blank:true,
-    //   references: { model: "user_subscription", key: "id" },
-    // }
   },
   {
     tableName: "user",
     timestamps: true,
   }
 );
+
+// User.hasMany(UserSubscription, {
+//   foreignKey: "userId", 
+//   as: "subscriptions"
+// });
 
 export default User;

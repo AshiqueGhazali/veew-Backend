@@ -7,6 +7,8 @@ import cookieParser from "cookie-parser";
 
 dotenv.config();
 
+import '../models/accociations';
+
 import userAuthRouter from "../Routes/userAuth";
 import userRouter from "../Routes/userRoutes";
 import adminRoutes from "../Routes/adminRoutes";
