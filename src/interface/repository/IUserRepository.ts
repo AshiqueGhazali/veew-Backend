@@ -4,6 +4,7 @@ import {
   IPricing,
   IPricingCreationAttributes,
 } from "../../entity/pricingEntity";
+import { IUserSubscription, IUserSubscriptionCreationAttributes } from "../../entity/userSubscriptionEntity";
 
 export interface editData {
   firstName: string;
@@ -20,4 +21,7 @@ export default interface IUserRepository {
   editImage(userId: string, image: string): Promise<void>;
   fetchAllPlans(): Promise<Model<IPricing, IPricingCreationAttributes>[] | null>;
   fetchPlanData(planId:string):Promise<Model<IPricing, IPricingCreationAttributes>| null>;
+  isUserPlanInSamePayment(paymentIntentId:string):Promise<Model<IUserSubscription,IUserSubscriptionCreationAttributes> | null>
+  isUserPlanExist(userId:string,planId:string): Promise<Model<IUserSubscription, IUserSubscriptionCreationAttributes> | null>
+  addUserSubscription(userId:string,paymentIntentId:string,planData:any):Promise<void>
 }

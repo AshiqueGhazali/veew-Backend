@@ -4,23 +4,24 @@ import IUserRepository, {
   editData,
 } from "../interface/repository/IUserRepository";
 import IuserUseCase, {
-  createPlanResponse,
   editProfileBody,
-  verifyPlanParams,
 } from "../interface/useCase/IUserUseCase";
 import IJwtService from "../interface/utils/IJwtService";
 import { IPricing, IPricingCreationAttributes } from "../entity/pricingEntity";
 import Razorpay from "razorpay";
 import Cripto from "crypto";
 import { resObj } from "../interface/useCase/IUserAuthUseCase";
+import { IStripe } from "../interface/utils/IStripService";
 
 class UserUseCase implements IuserUseCase {
   private userRepository: IUserRepository;
   private jwtService: IJwtService;
+  private stripePayment : IStripe
 
-  constructor(userRepository: IUserRepository, jwtService: IJwtService) {
+  constructor(userRepository: IUserRepository, jwtService: IJwtService, stripePayment : IStripe) {
     this.userRepository = userRepository;
     this.jwtService = jwtService;
+    this.stripePayment = stripePayment
   }
 
   async getUserProfile(
@@ -69,87 +70,74 @@ class UserUseCase implements IuserUseCase {
     }
   }
 
-  async createPayment(planId: string): Promise<createPlanResponse | null> {
-      try {
-        function generateOrderId(): string {
-          const timestamp = Date.now(); 
-          const randomNum = Math.floor(Math.random() * 1000000); 
-          return `ORD-${timestamp}-${randomNum}`;
+  async createPayment(userId:string,planId: string): Promise<any> {
+    try {
+      
+      const planData = await this.userRepository.fetchPlanData(planId)
+      if(!planData){
+        return null
+      }
+      const isUserHavePlan = await this.userRepository.isUserPlanExist(userId,planId)
+      if(isUserHavePlan){
+        return {
+          status:false,
+          message:"User Already have same plan!"
         }
+      }
+      const response = await this.stripePayment.makePayment(planData?.dataValues.price,planId,null)
+      console.log("the going resss :",response);
 
+      return {
+        status:true,
+        sessionId:response
+      }
+
+    } catch (error) {
+      console.log(error);
+      return null
+      
+    }
+  }
+
+  async conformPlanSubscription(userId: string, planId: string, sessionId: string): Promise<resObj | null> {
+      try {
         const planData = await this.userRepository.fetchPlanData(planId)
 
-        if(planData){
-          const amount = planData.dataValues.price
-          const orderId = generateOrderId()
-
-        const insternce = new Razorpay({
-          key_id: process.env.RAZORPAY_ID_KEY || '',
-          key_secret: process.env.RAZORPAY_SECRET_KEY,
-        });
-  
-        const options = {
-          amount: amount * 100,
-          currency: "INR",
-          receipt: orderId,
-        };
-        const order = await insternce.orders.create(options);
-  
-        if (!order) {
-          return null
-        }
-  
-        return{
-            key: process.env.RAZORPAY_ID_KEY || '',
-            amount: options.amount,
-            orderId: orderId,
-            currency: options.currency,
-          }
-        }
-
-        return null
-  
-      } catch (error) {
-        console.log(error);
-        return null
-        
-      }
-  }
-
-  async verifyPayment(data: verifyPlanParams): Promise<resObj | null> {
-      try {
-        const { razorpayOrderId, razorpayPaymentId, razorpaySignature , orderCreationId} = data;
-        console.log('Order is is :',razorpayOrderId);
-        console.log('payment iss :',razorpayPaymentId);
-        console.log('signnnn iss :', razorpaySignature);
-        console.log("orderCreationId :::",orderCreationId);
-        
-        
-        
-        
-
-        const crypto = require('crypto');
-        const hmac = crypto.createHmac('sha256', process.env.RAZORPAY_KEY_SECRET!);
-
-        hmac.update(razorpayOrderId + '|' + razorpayPaymentId);
-        const generatedSignature = hmac.digest('hex');
-
-        if (generatedSignature === razorpaySignature) {
-            return {
-              status:true,
-              message:"all successs"
-            };
-        } else {
+        if(!planData){
           return {
             status:false,
-            message:"not verified"
-          };
+            message:"subscription plan not found"
+          }
+        }
+        const paymentint = await this.stripePayment.getPaymentIntentFromSession(sessionId)        
+        if(!paymentint){
+          return {
+            status:false,
+            message:"Payment intent not found"
+          }
+        }
+        const isPlan = await this.userRepository.isUserPlanInSamePayment(paymentint?.id)
+        const isPlanExist = await this.userRepository.isUserPlanExist(userId,planId)        
+
+        if(isPlan || isPlanExist){
+          return {
+            status:false,
+            message:"The plan is already subscribed with the same payment"
+          } 
+        }
+
+        await this.userRepository.addUserSubscription(userId,paymentint.id,planData)
+        return {
+          status:true,
+          message:"plan subscribed successfully"
         }
       } catch (error) {
         console.log(error);
-        return null
+         return null
       }
   }
+
+
 }
 
 export default UserUseCase;

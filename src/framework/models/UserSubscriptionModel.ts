@@ -16,10 +16,14 @@ const UserSubscription: ModelDefined<IUserSubscription, IUserSubscriptionCreatio
         allowNull: false,
         references: { model: "user", key: "id" }, 
       },
-      pricingPlanId: {
+      planId: {
         type: DataTypes.UUID,
         allowNull: false,
         references: { model: "pricing", key: "id" }, 
+      },
+      paymentIntentId: {
+        type:  DataTypes.STRING,
+        allowNull: false,
       },
       startDate: {
         type: DataTypes.DATE,

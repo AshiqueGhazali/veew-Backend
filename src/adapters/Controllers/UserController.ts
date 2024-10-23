@@ -93,17 +93,18 @@ class UserController implements IUserController {
 
   async createPayment(req: IAuthRequest, res: Response, next: NextFunction): Promise<void> {
       try {
+        const userId = req.userId || ''
         const {planId} = req.body
 
         console.log("plan id is ::",req.body);
         
 
-        const response = await this.userUseCase.createPayment(planId)
-        if(response){
-          res.status(200).json(response)
+        const response = await this.userUseCase.createPayment(userId,planId)
+        if(response?.status){
+          res.status(200).json({ sessionId: response.sessionId })
           return
         }
-        res.status(401)
+        res.status(400).json({message:response?.message})
         return
       } catch (error) {
         res.status(500)
@@ -112,29 +113,30 @@ class UserController implements IUserController {
       }
   }
 
-  async verifyPayment(req: IAuthRequest, res: Response, next: NextFunction): Promise<void> {
+  async conformSubscription(req: IAuthRequest, res: Response, next: NextFunction): Promise<void> {
       try {
-        const userId = req.userId || ''
 
-        console.log("user id is :",userId);
-        console.log("bodddyyy is :",req.body);
+        const userId = req.userId || ''
+        const {planId,sessionId} = req.body
+
+        const response = await this.userUseCase.conformPlanSubscription(userId,planId,sessionId)
+
+        console.log("ressppoooo is :",response);
         
-        
-        const {planId,orderCreationId,razorpayPaymentId,razorpayOrderId,razorpaySignature} = req.body
-        const newData = {userId,planId,orderCreationId,razorpayPaymentId,razorpayOrderId,razorpaySignature}
-        const response = await this.userUseCase.verifyPayment(newData)
 
         if(response?.status){
           res.status(200).json(response)
           return
         }
+
         res.status(400).json(response)
-        return
+        return   
       } catch (error) {
         res.status(500)
         console.log(error);
       }
   }
+
 }
 
 export default UserController;

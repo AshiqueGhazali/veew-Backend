@@ -1,7 +1,8 @@
 export interface IUserSubscription {
     id:string,
     userId:string,
-    pricingPlanId:string,
+    planId:string,
+    paymentIntentId:string,
     startDate:Date,
     expireDate?:Date,
     numberOfEventsUsed:number,
