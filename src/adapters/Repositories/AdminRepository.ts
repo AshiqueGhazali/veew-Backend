@@ -62,7 +62,7 @@ class AdminRepository implements IAdminRepository {
     Model<IPricing, IPricingCreationAttributes>[] | null
   > {
     try {
-      const plans = await this.PricingModel.findAll({paranoid: false});
+      const plans = await this.PricingModel.findAll();
       return plans;
     } catch (error) {
       throw error;

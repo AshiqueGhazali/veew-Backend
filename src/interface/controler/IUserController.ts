@@ -10,5 +10,6 @@ export default interface IUserController {
   uploadProfileImg(req: IAuthRequest,res: Response,next: NextFunction): Promise<void>;
   getAllPlans(req: IAuthRequest,res: Response,next: NextFunction): Promise<void>;
   createPayment(req: IAuthRequest,res: Response,next: NextFunction): Promise<void>;
-  conformSubscription(req:IAuthRequest, res:Response, next: NextFunction):Promise<void>
+  conformSubscription(req:IAuthRequest, res:Response, next: NextFunction):Promise<void>;
+  getUserSubscriptionPlan(req:IAuthRequest, res:Response, next: NextFunction):Promise<void>;
 }

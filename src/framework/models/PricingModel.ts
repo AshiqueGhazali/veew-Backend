@@ -51,9 +51,5 @@ const Pricing: ModelDefined<IPricing, IPricingCreationAttributes> =
     }
   );
 
-  // Pricing.hasMany(UserSubscription, {
-  //   foreignKey: "planId",
-  //   as: "plans"
-  // });
 
 export default Pricing;

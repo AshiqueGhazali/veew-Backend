@@ -12,6 +12,7 @@ import Razorpay from "razorpay";
 import Cripto from "crypto";
 import { resObj } from "../interface/useCase/IUserAuthUseCase";
 import { IStripe } from "../interface/utils/IStripService";
+import { IUserSubscription, IUserSubscriptionCreationAttributes } from "../entity/userSubscriptionEntity";
 
 class UserUseCase implements IuserUseCase {
   private userRepository: IUserRepository;
@@ -131,6 +132,29 @@ class UserUseCase implements IuserUseCase {
           status:true,
           message:"plan subscribed successfully"
         }
+      } catch (error) {
+        console.log(error);
+         return null
+      }
+  }
+
+  async getUserSubscriptionPlan(userId: string): Promise<Model<IUserSubscription, IUserSubscriptionCreationAttributes> | null> {
+      try {
+        const userPlan = await this.userRepository.getUserSubscriptionPlan(userId);
+      
+        if (!userPlan) {
+          return null; 
+        }
+
+        const currentDate = new Date();
+        const expireDate = userPlan.getDataValue("expireDate");
+
+        if (expireDate && expireDate < currentDate) {
+          console.log("Subscription has expired");
+          return null; 
+        }
+
+        return userPlan;
       } catch (error) {
         console.log(error);
          return null

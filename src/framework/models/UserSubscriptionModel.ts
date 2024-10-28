@@ -54,15 +54,5 @@ const UserSubscription: ModelDefined<IUserSubscription, IUserSubscriptionCreatio
     }
   );
 
-  // UserSubscription.belongsTo(User, {
-  //   foreignKey: "userId",
-  //   as: "user"
-  // });
-  
-  // UserSubscription.belongsTo(Pricing, {
-  //   foreignKey: "planId",
-  //   as: "pricing"
-  // });
-  
 
 export default UserSubscription;

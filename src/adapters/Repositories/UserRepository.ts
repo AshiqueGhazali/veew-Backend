@@ -171,6 +171,28 @@ class UserRepository implements IUserRepository {
         return
       }
   }
+
+  async getUserSubscriptionPlan(userId: string): Promise<Model<IUserSubscription, IUserSubscriptionCreationAttributes> | null> {
+      try {
+        const userPlan = await this.UserSubscriptionModel.findOne({
+          where:{userId},
+          include:[
+            {
+              model:this.PricingModel,
+              as:"pricing",
+              required:true
+            }
+          ]
+        })
+
+        console.log("user plan is :::",userPlan);
+        
+        return userPlan
+      } catch (error) {
+        console.log(error);
+        return null
+      }
+  }
 }
 
 export default UserRepository;

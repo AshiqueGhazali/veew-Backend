@@ -5,6 +5,7 @@ import {
   IPricingCreationAttributes,
 } from "../../entity/pricingEntity";
 import { resObj } from "./IUserAuthUseCase";
+import { IUserSubscription, IUserSubscriptionCreationAttributes } from "../../entity/userSubscriptionEntity";
 
 export interface editProfileBody {
   id: string;
@@ -23,4 +24,5 @@ export default interface IuserUseCase {
   getAllPricingPlans(): Promise<Model<IPricing, IPricingCreationAttributes>[] | null>;
   createPayment(userId:string,planId:string):Promise<any>
   conformPlanSubscription(userId:string,planId:string,sessionId:string):Promise<resObj|null>;
+  getUserSubscriptionPlan(userId:string):Promise<Model<IUserSubscription,IUserSubscriptionCreationAttributes> | null>
 }

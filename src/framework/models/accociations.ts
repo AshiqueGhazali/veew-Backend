@@ -3,7 +3,6 @@ import Pricing from './PricingModel';
 import UserSubscription from './UserSubscriptionModel';
 import User from './UserModel';
 
-// Define associations
 Pricing.hasMany(UserSubscription, {
   foreignKey: "planId",
   as: "plans"
@@ -23,6 +22,5 @@ User.hasMany(UserSubscription, {
   foreignKey: "userId", 
   as: "subscriptions"
 });
-// Export models if needed elsewhere
 
 export { Pricing, UserSubscription, User };

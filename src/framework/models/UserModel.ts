@@ -52,9 +52,5 @@ const User: ModelDefined<IUser, IUserCreationAttributes> = sequelize.define(
   }
 );
 
-// User.hasMany(UserSubscription, {
-//   foreignKey: "userId", 
-//   as: "subscriptions"
-// });
 
 export default User;

@@ -137,6 +137,25 @@ class UserController implements IUserController {
       }
   }
 
+  async getUserSubscriptionPlan(req: IAuthRequest, res: Response, next: NextFunction): Promise<void> {
+      try {
+        const userId = req.userId || '';
+        console.log("hiiii user :",userId);
+        
+        const response = await this.userUseCase.getUserSubscriptionPlan(userId)
+        if(!response){
+          res.status(404).json({message:"user have no subscription file exist"})
+          return;
+        }
+
+        res.status(200).json(response)
+        return
+      } catch (error) {
+        res.status(500)
+        console.log(error);
+      }
+  }
+
 }
 
 export default UserController;

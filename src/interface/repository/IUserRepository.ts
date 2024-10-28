@@ -23,5 +23,6 @@ export default interface IUserRepository {
   fetchPlanData(planId:string):Promise<Model<IPricing, IPricingCreationAttributes>| null>;
   isUserPlanInSamePayment(paymentIntentId:string):Promise<Model<IUserSubscription,IUserSubscriptionCreationAttributes> | null>
   isUserPlanExist(userId:string,planId:string): Promise<Model<IUserSubscription, IUserSubscriptionCreationAttributes> | null>
-  addUserSubscription(userId:string,paymentIntentId:string,planData:any):Promise<void>
+  addUserSubscription(userId:string,paymentIntentId:string,planData:any):Promise<void>;
+  getUserSubscriptionPlan(userId:string):Promise<Model<IUserSubscription,IUserSubscriptionCreationAttributes> | null>
 }
