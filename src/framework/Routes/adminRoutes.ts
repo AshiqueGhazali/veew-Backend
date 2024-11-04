@@ -5,10 +5,15 @@ import AdminController from "../../adapters/Controllers/AdminController";
 import JwtService from "../utils/jwtService";
 import authorizationMiddleware from "../middleware/admin/adminAuthorization";
 import UserSubscriptionModel from "../models/UserSubscriptionModel";
+import EventModel from "../models/EventModel";
+
 
 
 import UserModel from "../models/UserModel"
 import Pricing from "../models/PricingModel";
+import EventRepository from "../../adapters/Repositories/EventRepository";
+import EventUseCase from "../../usecase/EventUseCase";
+import EventController from "../../adapters/Controllers/EventController";
 
 const adminRoutes: Router = express.Router()
 
@@ -18,6 +23,10 @@ const jwtService = new JwtService()
 const adminRepository = new AdminRepository(UserModel, Pricing, UserSubscriptionModel)
 const adminUseCase = new AdminUseCase(adminRepository,jwtService)
 const adminController = new AdminController(adminUseCase)
+
+const eventRepository = new EventRepository(EventModel,UserModel)
+const eventUseCase = new EventUseCase(eventRepository)
+const eventController = new EventController(eventUseCase)
 
 
 adminRoutes.post('/login',adminController.login.bind(adminController))
@@ -31,5 +40,10 @@ adminRoutes.get('/getPlan',authorizationMiddleware, adminController.getPricingPl
 adminRoutes.put('/updatePlan',adminController.editPricingPlan.bind(adminController))
 adminRoutes.delete('/deletePlan',authorizationMiddleware,adminController.deletePlan.bind(adminController))
 adminRoutes.get('/getAllSubscribers',authorizationMiddleware,adminController.getAllSubscribers.bind(adminController))
+
+
+// admin event management
+adminRoutes.get('/getAllEvents',authorizationMiddleware,eventController.getAllEvents.bind(eventController))
+adminRoutes.get('/getAllCategoris',authorizationMiddleware,eventController.getCategories.bind(eventController))
 
 export default adminRoutes

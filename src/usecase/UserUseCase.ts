@@ -86,8 +86,7 @@ class UserUseCase implements IuserUseCase {
         }
       }
       const response = await this.stripePayment.makePayment(planData?.dataValues.price,planId,null)
-      console.log("the going resss :",response);
-
+      
       return {
         status:true,
         sessionId:response
@@ -101,7 +100,10 @@ class UserUseCase implements IuserUseCase {
   }
 
   async conformPlanSubscription(userId: string, planId: string, sessionId: string): Promise<resObj | null> {
-      try {
+      try {        
+
+        console.log("thes session id is :",sessionId);
+        
         const planData = await this.userRepository.fetchPlanData(planId)
 
         if(!planData){
@@ -112,6 +114,8 @@ class UserUseCase implements IuserUseCase {
         }
         const paymentint = await this.stripePayment.getPaymentIntentFromSession(sessionId)        
         if(!paymentint){
+          console.log("heeeeyyyyyyyyy222222222222222222222");
+
           return {
             status:false,
             message:"Payment intent not found"
@@ -120,10 +124,16 @@ class UserUseCase implements IuserUseCase {
         const isPlan = await this.userRepository.isUserPlanInSamePayment(paymentint?.id)
         const isPlanExist = await this.userRepository.isUserPlanExist(userId,planId)        
 
-        if(isPlan || isPlanExist){
+        if(isPlan){
           return {
             status:false,
             message:"The plan is already subscribed with the same payment"
+          } 
+        }
+        if(isPlanExist){
+          return {
+            status:false,
+            message:"You have same plan!"
           } 
         }
 

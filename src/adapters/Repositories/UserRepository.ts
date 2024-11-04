@@ -147,6 +147,8 @@ class UserRepository implements IUserRepository {
   async addUserSubscription(userId: string, paymentIntentId: string, planData: any): Promise<void> {
       try {
 
+        console.log("ya here is how many times");
+        
         const startDate = new Date();
         let expireDate = undefined
         if(planData.expireAfter){

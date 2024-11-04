@@ -2,6 +2,7 @@
 import Pricing from './PricingModel';
 import UserSubscription from './UserSubscriptionModel';
 import User from './UserModel';
+import Events from './EventModel';
 
 Pricing.hasMany(UserSubscription, {
   foreignKey: "planId",
@@ -23,4 +24,13 @@ User.hasMany(UserSubscription, {
   as: "subscriptions"
 });
 
+User.hasMany(Events,{
+  foreignKey: "hostsId", 
+  as: "events"
+})
+
+Events.belongsTo(User,{
+  foreignKey:'hostsId',
+  as:'user'
+})
 export { Pricing, UserSubscription, User };

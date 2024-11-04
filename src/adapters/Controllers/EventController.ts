@@ -1,4 +1,4 @@
-import { Response, NextFunction } from "express";
+import { Response, NextFunction, Request } from "express";
 import IEventController from "../../interface/controler/IEventController";
 import { IAuthRequest } from "../../interface/controler/IUserController";
 import IEventUseCase, { createEventParams } from "../../interface/useCase/IEventUseCase";
@@ -16,6 +16,9 @@ export default class EventController implements IEventController {
             const userId = req.userId || '';
             const imageUrl = req.file?.path || '';
             const {eventTitle,category,description,date,startTime,endTime,participantCount,ticketPrice} = req.body
+
+            console.log("the image url is :",imageUrl);
+            
 
             const eventsDetails:createEventParams = {
                 eventTitle,
@@ -37,6 +40,78 @@ export default class EventController implements IEventController {
             }
 
             res.status(404).json(response)
+            return
+        } catch (error) {
+            res.status(500).json({message:error})
+            console.log(error);
+            return
+        }
+    }
+
+    async getAllEvents(req: Request, res: Response): Promise<void> {
+        try {
+            const response = await this.eventUseCase.getAllEvents()
+            if(response){
+                res.status(200).json(response)
+            }
+        } catch (error) {
+            res.status(500).json({message:error})
+            console.log(error);
+            return
+        }
+    }
+
+    async getCategories(req: Request, res: Response): Promise<void> {
+        try {
+            const categories = await this.eventUseCase.findAllCategories()
+            
+            if(categories){
+                res.status(200).json(categories)
+                return
+            }
+            res.status(401).json({message:'not found'})
+            return
+        } catch (error) {
+            res.status(500).json({message:error})
+            console.log(error);
+            return
+        }
+    }
+
+    async getEventDetails(req: IAuthRequest, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const eventId:string = req.query.eventId as string
+
+            console.log("the event id is :",eventId);
+
+            const response = await this.eventUseCase.verityEvent(eventId)
+
+            if(response){
+                res.status(200).json(response)
+                return
+            }
+            res.status(401).json({message:'not found'})
+            return
+            
+        } catch (error) {
+            res.status(500).json({message:error})
+            console.log(error);
+            return
+        }
+    }
+
+    async getEventsOfUser(req: IAuthRequest, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const userId = req.userId ? req.userId : req.query.userId as string
+
+            const response = await this.eventUseCase.verifyUserEvents(userId)
+
+            if(response){
+                res.status(200).json(response)
+                return 
+            }
+
+            res.status(404).json({message:"Not found"})
             return
         } catch (error) {
             res.status(500).json({message:error})

@@ -121,7 +121,7 @@ class UserController implements IUserController {
 
         const response = await this.userUseCase.conformPlanSubscription(userId,planId,sessionId)
 
-        console.log("ressppoooo is :",response);
+        console.log(" constroller ressppoooo is :",response);
         
 
         if(response?.status){

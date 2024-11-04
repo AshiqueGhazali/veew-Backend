@@ -33,19 +33,19 @@ const Events: ModelDefined<IEvent,IEventCreationAttributes> = sequelize.define (
             allowNull: false
         },
         startTime: {
-            type: DataTypes.TIME,
+            type: DataTypes.STRING,
             allowNull: false
         },
         endTime: {
-            type: DataTypes.TIME,
+            type: DataTypes.STRING,
             allowNull: false
         },
         participantCount: {
-            type: DataTypes.NUMBER,
+            type: DataTypes.INTEGER,
             allowNull: false
         },
         ticketPrice: {
-            type: DataTypes.NUMBER,
+            type: DataTypes.INTEGER,
             allowNull: true,
             defaultValue: 0
         },

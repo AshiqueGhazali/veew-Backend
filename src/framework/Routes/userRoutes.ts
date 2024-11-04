@@ -38,6 +38,10 @@ userRouter.get("/getPlanOfUser",authorizationMiddleware,userController.getUserSu
 
 // event controller routes :
 userRouter.post('/createEvent',authorizationMiddleware,upload.single("image"),eventController.createEvent.bind(eventController))
+userRouter.get("/getAllEvents",eventController.getAllEvents.bind(eventController))
+userRouter.get("/getAllCategories",eventController.getCategories.bind(eventController))
+userRouter.get("/getEventDetails",authorizationMiddleware,eventController.getEventDetails.bind(eventController))
+userRouter.get("/getHostedEvents",authorizationMiddleware,eventController.getEventsOfUser.bind(eventController))
 
 
 export default userRouter;
