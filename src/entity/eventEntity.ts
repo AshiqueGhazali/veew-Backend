@@ -10,6 +10,7 @@ export interface IEvent {
     participantCount : number;
     ticketPrice : number;
     imageUrl : string;
+    isCancelled ?: boolean;
 }
 
 export interface IEventCreationAttributes extends Omit<IEvent, "id">{}

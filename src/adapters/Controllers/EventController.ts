@@ -119,4 +119,69 @@ export default class EventController implements IEventController {
             return
         }
     }
+
+    async editEventDetails(req: IAuthRequest, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const {eventId , eventTitle , description , ticketPrice} = {...req.body}
+            const data = {
+                eventTitle ,
+                description ,
+                ticketPrice
+            }
+
+            const response = await this.eventUseCase.verifyEditEventDetails(eventId,data)
+            if(response?.status){
+                res.status(200).json(response)
+                return
+            }
+            res.status(400).json('somthing went wrong')   
+        } catch (error) {
+            res.status(500).json({message:error})
+            console.log(error);
+            return
+        }
+    }
+
+    async editEventDate(req: IAuthRequest, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const {eventId , date , startTime , endTime} = {...req.body}
+            const data = {
+                date ,
+                startTime ,
+                endTime
+            }
+
+            const response = await this.eventUseCase.verifyEditEventDate(eventId,data)
+            if(response?.status){
+                res.status(200).json(response)
+                return
+            }
+            res.status(400).json('somthing went wrong')   
+        } catch (error) {
+            res.status(500).json({message:error})
+            console.log(error);
+            return
+        }
+    }
+
+    async cancelEvent(req: IAuthRequest, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const eventId = req.query.eventId as string
+
+            const response = await this.eventUseCase.verifyEventCancellation(eventId)
+
+            if(response?.status){
+                res.status(200).json(response.message)
+                return
+            }
+
+            res.status(400).json(response?.message)
+            return;
+            
+        } catch (error) {
+            res.status(500).json({message:error})
+            console.log(error);
+            return
+        }
+    }
 }

@@ -31,17 +31,19 @@ userRouter.get("/getUserData",authorizationMiddleware,userController.getUserData
 userRouter.patch("/editProfile",authorizationMiddleware,userController.editUserProfile.bind(userController));
 userRouter.post("/upload-img",authorizationMiddleware,upload.single("image"),userController.uploadProfileImg.bind(userController));
 userRouter.get("/getAllPlans",authorizationMiddleware,userController.getAllPlans.bind(userController));
-userRouter.post("/createPayment",authorizationMiddleware,userController.createPayment.bind(userController))
-userRouter.post("/subscribePlan",authorizationMiddleware,userController.conformSubscription.bind(userController))
-userRouter.get("/getPlanOfUser",authorizationMiddleware,userController.getUserSubscriptionPlan.bind(userController))
+userRouter.post("/createPayment",authorizationMiddleware,userController.createPayment.bind(userController));
+userRouter.post("/subscribePlan",authorizationMiddleware,userController.conformSubscription.bind(userController));
+userRouter.get("/getPlanOfUser",authorizationMiddleware,userController.getUserSubscriptionPlan.bind(userController));
 
 
 // event controller routes :
-userRouter.post('/createEvent',authorizationMiddleware,upload.single("image"),eventController.createEvent.bind(eventController))
-userRouter.get("/getAllEvents",eventController.getAllEvents.bind(eventController))
-userRouter.get("/getAllCategories",eventController.getCategories.bind(eventController))
-userRouter.get("/getEventDetails",authorizationMiddleware,eventController.getEventDetails.bind(eventController))
-userRouter.get("/getHostedEvents",authorizationMiddleware,eventController.getEventsOfUser.bind(eventController))
-
+userRouter.post('/createEvent',authorizationMiddleware,upload.single("image"),eventController.createEvent.bind(eventController));
+userRouter.get("/getAllEvents",eventController.getAllEvents.bind(eventController));
+userRouter.get("/getAllCategories",eventController.getCategories.bind(eventController));
+userRouter.get("/getEventDetails",authorizationMiddleware,eventController.getEventDetails.bind(eventController));
+userRouter.get("/getHostedEvents",authorizationMiddleware,eventController.getEventsOfUser.bind(eventController));
+userRouter.patch("/editEventDetails",authorizationMiddleware,eventController.editEventDetails.bind(eventController));
+userRouter.patch("/editEventDate",authorizationMiddleware,eventController.editEventDate.bind(eventController));
+userRouter.patch("/cancelEvent",authorizationMiddleware,eventController.cancelEvent.bind(eventController))
 
 export default userRouter;

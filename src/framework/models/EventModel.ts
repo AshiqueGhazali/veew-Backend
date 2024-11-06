@@ -52,6 +52,10 @@ const Events: ModelDefined<IEvent,IEventCreationAttributes> = sequelize.define (
         imageUrl: {
             type: DataTypes.STRING,
             allowNull: false
+        },
+        isCancelled: {
+            type: DataTypes.BOOLEAN,
+            defaultValue:false
         }
     },
     {
