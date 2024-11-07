@@ -1,5 +1,5 @@
 import Stripe from "stripe";
-import { IStripe } from "../../interface/utils/IStripService";
+import { IStripe, paymentTypes } from "../../interface/utils/IStripService";
 
 
 export default class StripePayment implements IStripe {
@@ -9,7 +9,7 @@ export default class StripePayment implements IStripe {
         this.stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
     }
 
-    async makePayment(totalPrice: number, planId: string | null, eventId: string | null): Promise<string> {
+    async makePayment(totalPrice: number, planId: string | null, eventId: string | null ,  pymentType:paymentTypes): Promise<string> {
         console.log("the price is :", totalPrice);
 
         const line_items: Stripe.Checkout.SessionCreateParams.LineItem[] = [
@@ -33,7 +33,7 @@ export default class StripePayment implements IStripe {
         }
 
         const session = await this.stripe.checkout.sessions.create({
-            success_url: `http://localhost:5173/success?session_id={CHECKOUT_SESSION_ID}&${query}`,
+            success_url: `http://localhost:5173/success?session_id={CHECKOUT_SESSION_ID}&payment_for=${pymentType}&${query}`,
             cancel_url: 'http://localhost:5173/failure',
             line_items: line_items,
             mode: 'payment',

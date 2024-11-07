@@ -14,12 +14,15 @@ import EventModel from "../models/EventModel";
 import EventUseCase from "../../usecase/EventUseCase";
 import EventController from "../../adapters/Controllers/EventController";
 
+import WalletModel from "../models/WalletModel";
+import TransactionModel from "../models/TransactionModel";
+
 const userRouter: Router = express.Router();
 
 const jwtService = new JwtService();
 const stripePayment =new StripePayment()
 
-const userRepository = new UserRepository(UserModel, PricingModel,UserSubscriptionModel);
+const userRepository = new UserRepository(UserModel, PricingModel,UserSubscriptionModel,WalletModel,TransactionModel);
 const userUseCase = new UserUseCase(userRepository, jwtService , stripePayment );
 const userController = new UserController(userUseCase);
 
@@ -46,4 +49,8 @@ userRouter.patch("/editEventDetails",authorizationMiddleware,eventController.edi
 userRouter.patch("/editEventDate",authorizationMiddleware,eventController.editEventDate.bind(eventController));
 userRouter.patch("/cancelEvent",authorizationMiddleware,eventController.cancelEvent.bind(eventController))
 
+
+// user wallet controller routes :
+userRouter.post("/addAmountToWallet",authorizationMiddleware,userController.addFundTowallet.bind(userController))
+userRouter.post("/conformWalletAmount",authorizationMiddleware,userController.conformWalletCredit.bind(userController))
 export default userRouter;

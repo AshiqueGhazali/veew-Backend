@@ -1,6 +1,7 @@
-import { Model, ModelDefined, Sequelize } from "sequelize";
+import { Model, ModelDefined, Sequelize, where } from "sequelize";
 import IUserRepository, {
   editData,
+  transactionParams,
 } from "../../interface/repository/IUserRepository";
 import { IUser, IUserCreationAttributes } from "../../entity/userEntity";
 import {
@@ -9,20 +10,28 @@ import {
 } from "../../entity/pricingEntity";
 import { IUserSubscription, IUserSubscriptionCreationAttributes } from "../../entity/userSubscriptionEntity";
 import { Op } from "sequelize";
+import { IWallet, IWalletCreationAttributes } from "../../entity/walletEntity";
+import { ITransaction, ITransactionCreationAttributes } from "../../entity/transactionEntity";
 
 class UserRepository implements IUserRepository {
   private UserModel: ModelDefined<IUser, IUserCreationAttributes>;
   private PricingModel: ModelDefined<IPricing, IPricingCreationAttributes>;
   private UserSubscriptionModel: ModelDefined<IUserSubscription,IUserSubscriptionCreationAttributes>
+  private WalletModal: ModelDefined<IWallet,IWalletCreationAttributes>;
+  private TransactionModel:ModelDefined<ITransaction,ITransactionCreationAttributes>
 
   constructor(
     UserModel: ModelDefined<IUser, IUserCreationAttributes>,
     PricingModel: ModelDefined<IPricing, IPricingCreationAttributes>,
-    UserSubscriptionModel: ModelDefined<IUserSubscription,IUserSubscriptionCreationAttributes>
+    UserSubscriptionModel: ModelDefined<IUserSubscription,IUserSubscriptionCreationAttributes>,
+    WalletModal: ModelDefined<IWallet,IWalletCreationAttributes>,
+    TransactionModel:ModelDefined<ITransaction,ITransactionCreationAttributes>
   ) {
     this.UserModel = UserModel;
     this.PricingModel = PricingModel;
     this.UserSubscriptionModel = UserSubscriptionModel
+    this.WalletModal = WalletModal;
+    this.TransactionModel = TransactionModel
   }
 
   async fetchProfileData(
@@ -193,6 +202,42 @@ class UserRepository implements IUserRepository {
       } catch (error) {
         console.log(error);
         return null
+      }
+  }
+
+  async addFundToWallet(userId: string, amount: number): Promise<Model<IWallet, IWalletCreationAttributes> | null> {
+      try {
+        let wallet = await this.WalletModal.findOne({
+          where:{userId:userId}
+        })
+
+        if(wallet){
+          const balanceAmount = wallet.dataValues.balanceAmount + amount
+          await this.WalletModal.update({
+            balanceAmount:balanceAmount
+          },{where:{
+            userId:userId}})
+        }else {
+          wallet =await this.WalletModal.create({
+            userId,balanceAmount:amount
+          })
+        }
+        return wallet
+      } catch (error) {
+        throw error
+      }
+  }
+
+  async createTransactions(data: transactionParams): Promise<Model<ITransaction, ITransactionCreationAttributes> | null> {
+      try {
+        // const{ userId,transactionType,paymentIntentId,purpose,amount} = data
+        const transaction = await this.TransactionModel.create({
+          ...data
+        })
+
+        return transaction
+      } catch (error) {
+        throw error
       }
   }
 }

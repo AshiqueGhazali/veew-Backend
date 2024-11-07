@@ -119,10 +119,7 @@ class UserController implements IUserController {
         const userId = req.userId || ''
         const {planId,sessionId} = req.body
 
-        const response = await this.userUseCase.conformPlanSubscription(userId,planId,sessionId)
-
-        console.log(" constroller ressppoooo is :",response);
-        
+        const response = await this.userUseCase.conformPlanSubscription(userId,planId,sessionId)        
 
         if(response?.status){
           res.status(200).json(response)
@@ -150,6 +147,45 @@ class UserController implements IUserController {
 
         res.status(200).json(response)
         return
+      } catch (error) {
+        res.status(500)
+        console.log(error);
+      }
+  }
+
+  async addFundTowallet(req: IAuthRequest, res: Response, next: NextFunction): Promise<void> {
+      try {
+        const userId = req.userId as string
+        const amount = req.body.amount
+
+        const response = await this.userUseCase.addFundToWallet(userId,amount)
+
+        if(response?.status){
+          res.status(200).json({ sessionId: response.sessionId })
+          return
+        }
+        res.status(400).json({message:response?.message})
+        return
+      } catch (error) {
+        res.status(500)
+        console.log(error);
+      }
+  }
+
+  async conformWalletCredit(req: IAuthRequest, res: Response, next: NextFunction): Promise<void> {
+      try {
+        const userId = req.userId as string
+        const {sessionId} =  req.body
+
+        const response = await this.userUseCase.conformWalletCredit(userId , sessionId)
+
+        if(response?.status){
+          res.status(200).json(response)
+          return
+        }
+
+        res.status(400).json(response)
+        return   
       } catch (error) {
         res.status(500)
         console.log(error);

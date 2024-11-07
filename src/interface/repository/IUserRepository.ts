@@ -1,10 +1,12 @@
-import { Model } from "sequelize";
+import { Model, ModelDefined } from "sequelize";
 import { IUser, IUserCreationAttributes } from "../../entity/userEntity";
 import {
   IPricing,
   IPricingCreationAttributes,
 } from "../../entity/pricingEntity";
 import { IUserSubscription, IUserSubscriptionCreationAttributes } from "../../entity/userSubscriptionEntity";
+import { ITransaction, ITransactionCreationAttributes } from "../../entity/transactionEntity";
+import { IWallet, IWalletCreationAttributes } from "../../entity/walletEntity";
 
 export interface editData {
   firstName: string;
@@ -13,6 +15,14 @@ export interface editData {
   gender?: string;
   age?: number;
   image?: string;
+}
+
+export interface transactionParams{
+  userId:string,
+  transactionType:"CREDIT" | "DEBIT";
+  paymentIntentId:string;
+  purpose:'WALLET' | 'PRICING' | 'TICKET'
+  amount:number;
 }
 
 export default interface IUserRepository {
@@ -25,4 +35,6 @@ export default interface IUserRepository {
   isUserPlanExist(userId:string,planId:string): Promise<Model<IUserSubscription, IUserSubscriptionCreationAttributes> | null>
   addUserSubscription(userId:string,paymentIntentId:string,planData:any):Promise<void>;
   getUserSubscriptionPlan(userId:string):Promise<Model<IUserSubscription,IUserSubscriptionCreationAttributes> | null>
+  addFundToWallet(userId:string , amount:number):Promise<Model<IWallet,IWalletCreationAttributes> | null>
+  createTransactions(data:transactionParams):Promise<Model<ITransaction,ITransactionCreationAttributes>|null>
 }

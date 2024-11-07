@@ -2,6 +2,7 @@ import { Model } from "sequelize";
 import { IUser, IUserCreationAttributes } from "../entity/userEntity";
 import IUserRepository, {
   editData,
+  transactionParams,
 } from "../interface/repository/IUserRepository";
 import IuserUseCase, {
   editProfileBody,
@@ -11,7 +12,7 @@ import { IPricing, IPricingCreationAttributes } from "../entity/pricingEntity";
 import Razorpay from "razorpay";
 import Cripto from "crypto";
 import { resObj } from "../interface/useCase/IUserAuthUseCase";
-import { IStripe } from "../interface/utils/IStripService";
+import { IStripe, paymentType } from "../interface/utils/IStripService";
 import { IUserSubscription, IUserSubscriptionCreationAttributes } from "../entity/userSubscriptionEntity";
 
 class UserUseCase implements IuserUseCase {
@@ -85,7 +86,7 @@ class UserUseCase implements IuserUseCase {
           message:"User Already have same plan!"
         }
       }
-      const response = await this.stripePayment.makePayment(planData?.dataValues.price,planId,null)
+      const response = await this.stripePayment.makePayment(planData?.dataValues.price,planId,null,paymentType.SUBSCRIPTION)
       
       return {
         status:true,
@@ -101,8 +102,6 @@ class UserUseCase implements IuserUseCase {
 
   async conformPlanSubscription(userId: string, planId: string, sessionId: string): Promise<resObj | null> {
       try {        
-
-        console.log("thes session id is :",sessionId);
         
         const planData = await this.userRepository.fetchPlanData(planId)
 
@@ -114,8 +113,6 @@ class UserUseCase implements IuserUseCase {
         }
         const paymentint = await this.stripePayment.getPaymentIntentFromSession(sessionId)        
         if(!paymentint){
-          console.log("heeeeyyyyyyyyy222222222222222222222");
-
           return {
             status:false,
             message:"Payment intent not found"
@@ -171,6 +168,59 @@ class UserUseCase implements IuserUseCase {
       }
   }
 
+  async addFundToWallet(userId: string, amount: number): Promise<any> {
+      try {
+        const response = await this.stripePayment.makePayment(amount,null,null,paymentType.WALLET)
+      
+      return {
+        status:true,
+        sessionId:response
+      }
+      } catch (error) {
+        console.log(error);
+        return null
+      }
+  }
+
+  async conformWalletCredit(userId: string, sessionId: string): Promise<resObj | null> {
+      try {
+
+        const paymentint = await this.stripePayment.getPaymentIntentFromSession(sessionId)        
+        if(!paymentint){
+          return {
+            status:false,
+            message:"Payment intent not found"
+          }
+        }
+
+        const wallet = await this.userRepository.addFundToWallet(userId,paymentint.amount)
+        if(wallet){
+          const transactionData:transactionParams ={
+            userId,
+            transactionType:"CREDIT",
+            paymentIntentId:paymentint.id,
+            purpose: "WALLET",
+            amount:paymentint.amount
+          }
+
+          const transaction = await this.userRepository.createTransactions(transactionData)
+
+          if(transaction){
+            return {
+              status:true,
+              message:`${paymentint.amount} addedd to wallet!`
+            }
+          }
+        }
+        return {
+          status:false,
+          message:"not addedd to wallet"
+        }
+      } catch (error) {
+        console.log(error);
+        return null
+      }
+  }
 
 }
 

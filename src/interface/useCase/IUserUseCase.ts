@@ -17,6 +17,8 @@ export interface editProfileBody {
   image?: string;
 }
 
+
+
 export default interface IuserUseCase {
   getUserProfile(userId: string): Promise<Model<IUser, IUserCreationAttributes> | null>;
   editUserProfile(data: editProfileBody): Promise<void>;
@@ -25,4 +27,6 @@ export default interface IuserUseCase {
   createPayment(userId:string,planId:string):Promise<any>
   conformPlanSubscription(userId:string,planId:string,sessionId:string):Promise<resObj|null>;
   getUserSubscriptionPlan(userId:string):Promise<Model<IUserSubscription,IUserSubscriptionCreationAttributes> | null>
+  addFundToWallet(userId:string , amount:number):Promise<any>
+  conformWalletCredit(userId:string , sessionId:string):Promise<resObj|null>;
 }
