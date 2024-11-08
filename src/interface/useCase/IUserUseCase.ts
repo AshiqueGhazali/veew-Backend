@@ -6,6 +6,8 @@ import {
 } from "../../entity/pricingEntity";
 import { resObj } from "./IUserAuthUseCase";
 import { IUserSubscription, IUserSubscriptionCreationAttributes } from "../../entity/userSubscriptionEntity";
+import { IWallet, IWalletCreationAttributes } from "../../entity/walletEntity";
+import { ITransaction, ITransactionCreationAttributes } from "../../entity/transactionEntity";
 
 export interface editProfileBody {
   id: string;
@@ -29,4 +31,6 @@ export default interface IuserUseCase {
   getUserSubscriptionPlan(userId:string):Promise<Model<IUserSubscription,IUserSubscriptionCreationAttributes> | null>
   addFundToWallet(userId:string , amount:number):Promise<any>
   conformWalletCredit(userId:string , sessionId:string):Promise<resObj|null>;
+  getUserWallet(userId:string):Promise<Model<IWallet,IWalletCreationAttributes>|null>;
+  getUserWalletTransactions(userId:string):Promise<Model<ITransaction,ITransactionCreationAttributes>[]|null>;
 }

@@ -6,6 +6,10 @@ import JwtService from "../utils/jwtService";
 import authorizationMiddleware from "../middleware/admin/adminAuthorization";
 import UserSubscriptionModel from "../models/UserSubscriptionModel";
 import EventModel from "../models/EventModel";
+import TicketModel from "../models/TicketModel";
+import WalletModel from "../models/WalletModel";
+import TransactionModel from "../models/TransactionModel";
+
 
 
 
@@ -14,18 +18,21 @@ import Pricing from "../models/PricingModel";
 import EventRepository from "../../adapters/Repositories/EventRepository";
 import EventUseCase from "../../usecase/EventUseCase";
 import EventController from "../../adapters/Controllers/EventController";
+import StripePayment from "../utils/stripePayments";
 
 const adminRoutes: Router = express.Router()
 
 const jwtService = new JwtService()
+const stripePayment =new StripePayment()
+
 
 
 const adminRepository = new AdminRepository(UserModel, Pricing, UserSubscriptionModel)
 const adminUseCase = new AdminUseCase(adminRepository,jwtService)
 const adminController = new AdminController(adminUseCase)
 
-const eventRepository = new EventRepository(EventModel,UserModel)
-const eventUseCase = new EventUseCase(eventRepository)
+const eventRepository = new EventRepository(EventModel,UserModel,TicketModel,WalletModel,TransactionModel)
+const eventUseCase = new EventUseCase(eventRepository,stripePayment)
 const eventController = new EventController(eventUseCase)
 
 

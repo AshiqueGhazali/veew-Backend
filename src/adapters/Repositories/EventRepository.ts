@@ -1,5 +1,5 @@
 import { Model, ModelDefined, Sequelize, where } from "sequelize";
-import IEventRepository from "../../interface/repository/IEventRepository";
+import IEventRepository, { createTicketParams } from "../../interface/repository/IEventRepository";
 import { IEvent, IEventCreationAttributes } from "../../entity/eventEntity";
 import { IUser, IUserCreationAttributes } from "../../entity/userEntity";
 import {
@@ -8,17 +8,31 @@ import {
   editEventDetailsParams,
 } from "../../interface/useCase/IEventUseCase";
 import { table } from "console";
+import { ITicket, ITicketCreationAttributes } from "../../entity/ticketEntity";
+import { transactionParams } from "../../interface/repository/IUserRepository";
+import { ITransaction, ITransactionCreationAttributes } from "../../entity/transactionEntity";
+import { IWallet, IWalletCreationAttributes } from "../../entity/walletEntity";
 
 export default class EventRepository implements IEventRepository {
   private EventModel: ModelDefined<IEvent, IEventCreationAttributes>;
   private UserModel: ModelDefined<IUser, IUserCreationAttributes>;
+  private TicketModel:ModelDefined<ITicket,ITicketCreationAttributes>
+  private WalletModal:ModelDefined<IWallet,IWalletCreationAttributes>
+  private TransactionModel:ModelDefined<ITransaction,ITransactionCreationAttributes>
 
   constructor(
     EventModel: ModelDefined<IEvent, IEventCreationAttributes>,
-    UserModel: ModelDefined<IUser, IUserCreationAttributes>
+    UserModel: ModelDefined<IUser, IUserCreationAttributes>,
+    TicketModel:ModelDefined<ITicket,ITicketCreationAttributes>,
+    WalletModal:ModelDefined<IWallet,IWalletCreationAttributes>,
+    TransactionModel:ModelDefined<ITransaction,ITransactionCreationAttributes>,
+
   ) {
     this.EventModel = EventModel;
     this.UserModel = UserModel;
+    this.TicketModel = TicketModel;
+    this.WalletModal = WalletModal
+    this.TransactionModel = TransactionModel;
   }
 
   async createEvent(
@@ -157,6 +171,49 @@ export default class EventRepository implements IEventRepository {
       return
     } catch (error) {
       throw error;
+    }
+  }
+
+  async createTransactions(data: transactionParams): Promise<Model<ITransaction, ITransactionCreationAttributes> | null> {
+    try {
+      // const{ userId,transactionType,paymentIntentId,purpose,amount} = data
+      const transaction = await this.TransactionModel.create({
+        ...data
+      })
+
+      return transaction
+    } catch (error) {
+      throw error
+    }
+}
+
+
+  async createTicket(data:createTicketParams): Promise<Model<ITicket, ITicketCreationAttributes> | null> {
+      try {
+        const ticket = await this.TicketModel.create({
+          ...data
+      })
+
+      return ticket
+      } catch (error) {
+        throw error
+      }
+  }
+
+  async getUserWallet(userId: string): Promise<Model<IWallet, IWalletCreationAttributes> | null> {
+    try {
+      let wallet = await this.WalletModal.findOne({where:{userId:userId}})
+
+      if(!wallet){
+        wallet = await this.WalletModal.create({
+          userId:userId,
+          balanceAmount:0
+        })
+      }
+
+      return wallet
+    } catch (error) {
+      throw error
     }
   }
 }

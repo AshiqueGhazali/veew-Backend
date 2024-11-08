@@ -5,6 +5,7 @@ import User from './UserModel';
 import Events from './EventModel';
 import Wallet from './WalletModel';
 import Transaction from './TransactionModel';
+import Ticket from './TicketModel';
 
 Pricing.hasMany(UserSubscription, {
   foreignKey: "planId",
@@ -62,5 +63,11 @@ Wallet.belongsTo(User, { foreignKey: 'userId', as: 'walletUser' });
 
 User.hasMany(Transaction, { foreignKey: 'userId', as: 'transactions' });
 Transaction.belongsTo(User, { foreignKey: 'userId', as: 'transactionUser' });
+
+User.hasMany(Ticket, { foreignKey: 'userId', as: 'tickets' });
+Ticket.belongsTo(User, { foreignKey: 'userId', as: 'userTickets' });
+
+Events.hasMany(Ticket, { foreignKey: 'eventId', as: 'tickets' });
+Ticket.belongsTo(Events, { foreignKey: 'eventId', as: 'eventTickets' });
 
 export { Pricing, UserSubscription, User };

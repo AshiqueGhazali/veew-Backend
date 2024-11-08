@@ -14,4 +14,6 @@ export default interface IUserController {
   getUserSubscriptionPlan(req:IAuthRequest, res:Response, next: NextFunction):Promise<void>;
   addFundTowallet(req:IAuthRequest, res:Response, next: NextFunction):Promise<void>;
   conformWalletCredit(req:IAuthRequest, res:Response, next: NextFunction):Promise<void>;
+  getWallet(req:IAuthRequest, res:Response, next: NextFunction):Promise<void>;
+  getWalletTransactions(req:IAuthRequest, res:Response, next: NextFunction):Promise<void>;
 }

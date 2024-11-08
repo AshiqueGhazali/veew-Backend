@@ -34,4 +34,7 @@ export default interface IEventUseCase {
     verifyEditEventDetails(eventId:string , data : editEventDetailsParams):Promise<resObj|null>
     verifyEditEventDate(eventId:string , data : editEventDateParams):Promise<resObj|null>
     verifyEventCancellation(eventId:string):Promise<resObj|null>
+    verifyTicketBooking(userId:string,eventId:string):Promise<any>
+    conformTicketBooket(userId:string,eventId:string,sessionId:string):Promise<resObj|null>;
+    verifyTicketBookingWithWallet(userId:string,eventId:string):Promise<resObj|null>
 }

@@ -10,4 +10,7 @@ export default interface IEventController{
     editEventDetails(req:IAuthRequest,res:Response , next: NextFunction):Promise<void>
     editEventDate(req:IAuthRequest,res:Response , next: NextFunction):Promise<void>
     cancelEvent(req:IAuthRequest,res:Response , next: NextFunction):Promise<void>
+    bookTicket(req:IAuthRequest, res:Response, next: NextFunction):Promise<void>;
+    conformTicketBooking(req:IAuthRequest, res:Response, next: NextFunction):Promise<void>;
+    bookTicketWithWallet(req:IAuthRequest, res:Response, next: NextFunction):Promise<void>;
 }

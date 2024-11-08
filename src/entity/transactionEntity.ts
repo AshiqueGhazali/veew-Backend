@@ -1,11 +1,30 @@
+export enum transactionType {
+  CREDIT="CREDIT",
+  DEBIT= "DEBIT"
+}
+
+export enum transactionPurpose {
+  WALLET = "WALLET",
+  PRICING = "PRICING",
+  TICKET = "TICKET"
+}
+
+export enum paymentMethod {
+  WALLET = "WALLET",
+  ONLINE = "ONLINE"
+}
+
 export interface ITransaction {
     id: string;
     userId:string
-    transactionType:"CREDIT" | "DEBIT";
+    transactionType: transactionType;
     paymentIntentId:string;
-    purpose:"WALLET" | "PRICING" | "TICKET"
+    paymentMethod:paymentMethod;
+    purpose:transactionPurpose;
     amount:number;
   }
+
+
   
 export interface ITransactionCreationAttributes extends Omit<ITransaction, "id"> {}
   

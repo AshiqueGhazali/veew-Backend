@@ -5,7 +5,7 @@ import {
   IPricingCreationAttributes,
 } from "../../entity/pricingEntity";
 import { IUserSubscription, IUserSubscriptionCreationAttributes } from "../../entity/userSubscriptionEntity";
-import { ITransaction, ITransactionCreationAttributes } from "../../entity/transactionEntity";
+import { ITransaction, ITransactionCreationAttributes, paymentMethod, transactionPurpose, transactionType } from "../../entity/transactionEntity";
 import { IWallet, IWalletCreationAttributes } from "../../entity/walletEntity";
 
 export interface editData {
@@ -19,9 +19,10 @@ export interface editData {
 
 export interface transactionParams{
   userId:string,
-  transactionType:"CREDIT" | "DEBIT";
+  transactionType:transactionType;
   paymentIntentId:string;
-  purpose:'WALLET' | 'PRICING' | 'TICKET'
+  paymentMethod:paymentMethod
+  purpose:transactionPurpose
   amount:number;
 }
 
@@ -37,4 +38,6 @@ export default interface IUserRepository {
   getUserSubscriptionPlan(userId:string):Promise<Model<IUserSubscription,IUserSubscriptionCreationAttributes> | null>
   addFundToWallet(userId:string , amount:number):Promise<Model<IWallet,IWalletCreationAttributes> | null>
   createTransactions(data:transactionParams):Promise<Model<ITransaction,ITransactionCreationAttributes>|null>
+  fetchUserWallet(userId:string):Promise<Model<IWallet,IWalletCreationAttributes>|null>;
+  fetchUserWalletTransactions(userId:string):Promise<Model<ITransaction,ITransactionCreationAttributes>[]|null>;
 }

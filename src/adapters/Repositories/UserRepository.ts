@@ -11,7 +11,7 @@ import {
 import { IUserSubscription, IUserSubscriptionCreationAttributes } from "../../entity/userSubscriptionEntity";
 import { Op } from "sequelize";
 import { IWallet, IWalletCreationAttributes } from "../../entity/walletEntity";
-import { ITransaction, ITransactionCreationAttributes } from "../../entity/transactionEntity";
+import { ITransaction, ITransactionCreationAttributes, transactionPurpose, transactionType } from "../../entity/transactionEntity";
 
 class UserRepository implements IUserRepository {
   private UserModel: ModelDefined<IUser, IUserCreationAttributes>;
@@ -25,13 +25,13 @@ class UserRepository implements IUserRepository {
     PricingModel: ModelDefined<IPricing, IPricingCreationAttributes>,
     UserSubscriptionModel: ModelDefined<IUserSubscription,IUserSubscriptionCreationAttributes>,
     WalletModal: ModelDefined<IWallet,IWalletCreationAttributes>,
-    TransactionModel:ModelDefined<ITransaction,ITransactionCreationAttributes>
+    TransactionModel:ModelDefined<ITransaction,ITransactionCreationAttributes>,
   ) {
     this.UserModel = UserModel;
     this.PricingModel = PricingModel;
     this.UserSubscriptionModel = UserSubscriptionModel
     this.WalletModal = WalletModal;
-    this.TransactionModel = TransactionModel
+    this.TransactionModel = TransactionModel;
   }
 
   async fetchProfileData(
@@ -236,6 +236,36 @@ class UserRepository implements IUserRepository {
         })
 
         return transaction
+      } catch (error) {
+        throw error
+      }
+  }
+
+  async fetchUserWallet(userId: string): Promise<Model<IWallet, IWalletCreationAttributes> | null> {
+      try {
+        let wallet = await this.WalletModal.findOne({where:{userId:userId}})
+
+        if(!wallet){
+          wallet = await this.WalletModal.create({
+            userId:userId,
+            balanceAmount:0
+          })
+        }
+
+        return wallet
+      } catch (error) {
+        throw error
+      }
+  }
+
+  async fetchUserWalletTransactions(userId: string): Promise<Model<ITransaction, ITransactionCreationAttributes>[] | null> {
+      try {
+        const transactions = await this.TransactionModel.findAll({where:{
+          userId,
+          purpose:transactionPurpose.WALLET
+        }})
+
+        return transactions
       } catch (error) {
         throw error
       }

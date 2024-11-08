@@ -14,6 +14,8 @@ import Cripto from "crypto";
 import { resObj } from "../interface/useCase/IUserAuthUseCase";
 import { IStripe, paymentType } from "../interface/utils/IStripService";
 import { IUserSubscription, IUserSubscriptionCreationAttributes } from "../entity/userSubscriptionEntity";
+import { IWallet, IWalletCreationAttributes } from "../entity/walletEntity";
+import { ITransaction, ITransactionCreationAttributes, paymentMethod, transactionPurpose, transactionType } from "../entity/transactionEntity";
 
 class UserUseCase implements IuserUseCase {
   private userRepository: IUserRepository;
@@ -135,6 +137,15 @@ class UserUseCase implements IuserUseCase {
         }
 
         await this.userRepository.addUserSubscription(userId,paymentint.id,planData)
+        const transactionData:transactionParams ={
+          userId,
+          transactionType:transactionType.DEBIT,
+          paymentIntentId:paymentint.id,
+          paymentMethod:paymentMethod.ONLINE,
+          purpose: transactionPurpose.PRICING,
+          amount:planData.dataValues.price
+        }
+        const transaction = await this.userRepository.createTransactions(transactionData)
         return {
           status:true,
           message:"plan subscribed successfully"
@@ -169,7 +180,7 @@ class UserUseCase implements IuserUseCase {
   }
 
   async addFundToWallet(userId: string, amount: number): Promise<any> {
-      try {
+      try {        
         const response = await this.stripePayment.makePayment(amount,null,null,paymentType.WALLET)
       
       return {
@@ -193,14 +204,18 @@ class UserUseCase implements IuserUseCase {
           }
         }
 
-        const wallet = await this.userRepository.addFundToWallet(userId,paymentint.amount)
+        const amount = paymentint.amount/100
+        
+
+        const wallet = await this.userRepository.addFundToWallet(userId,amount)
         if(wallet){
           const transactionData:transactionParams ={
             userId,
-            transactionType:"CREDIT",
+            transactionType:transactionType.CREDIT,
             paymentIntentId:paymentint.id,
-            purpose: "WALLET",
-            amount:paymentint.amount
+            paymentMethod:paymentMethod.ONLINE,
+            purpose: transactionPurpose.WALLET,
+            amount:amount
           }
 
           const transaction = await this.userRepository.createTransactions(transactionData)
@@ -208,7 +223,7 @@ class UserUseCase implements IuserUseCase {
           if(transaction){
             return {
               status:true,
-              message:`${paymentint.amount} addedd to wallet!`
+              message:`${amount} addedd to wallet!`
             }
           }
         }
@@ -221,6 +236,24 @@ class UserUseCase implements IuserUseCase {
         return null
       }
   }
+
+  async getUserWallet(userId: string): Promise<Model<IWallet, IWalletCreationAttributes> | null> {
+      try {
+        return await this.userRepository.fetchUserWallet(userId)
+      } catch (error) {
+        throw error
+      }
+  }
+
+  async getUserWalletTransactions(userId: string): Promise<Model<ITransaction, ITransactionCreationAttributes>[] | null> {
+      try {
+        return await this.userRepository.fetchUserWalletTransactions(userId)
+      } catch (error) {
+        throw error
+      }
+  }
+
+  
 
 }
 

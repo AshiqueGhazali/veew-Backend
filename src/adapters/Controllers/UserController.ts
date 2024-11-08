@@ -192,6 +192,43 @@ class UserController implements IUserController {
       }
   }
 
+  async getWallet(req: IAuthRequest, res: Response, next: NextFunction): Promise<void> {
+      try {
+        const userId = req.userId as string
+
+        const response = await this.userUseCase.getUserWallet(userId)
+
+        if(response){
+          res.status(200).json(response);
+          return 
+        }
+
+        res.status(401).json({message:"not found!"})
+      } catch (error) {
+        res.status(500)
+        console.log(error);
+      }
+  }
+
+  async getWalletTransactions(req: IAuthRequest, res: Response, next: NextFunction): Promise<void> {
+      try {
+        const userId = req.userId as string
+
+        const response = await this.userUseCase.getUserWalletTransactions(userId)
+
+        if(response){
+          res.status(200).json(response);
+          return
+        }
+
+        res.status(400).json('transaction not found!')
+      } catch (error) {
+        res.status(500)
+        console.log(error);
+      }
+  }
+
+  
 }
 
 export default UserController;

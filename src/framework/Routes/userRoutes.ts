@@ -16,6 +16,7 @@ import EventController from "../../adapters/Controllers/EventController";
 
 import WalletModel from "../models/WalletModel";
 import TransactionModel from "../models/TransactionModel";
+import TicketModel from "../models/TicketModel";
 
 const userRouter: Router = express.Router();
 
@@ -26,8 +27,8 @@ const userRepository = new UserRepository(UserModel, PricingModel,UserSubscripti
 const userUseCase = new UserUseCase(userRepository, jwtService , stripePayment );
 const userController = new UserController(userUseCase);
 
-const eventRepository = new EventRepository(EventModel,UserModel)
-const eventUseCase = new EventUseCase(eventRepository)
+const eventRepository = new EventRepository(EventModel,UserModel,TicketModel,WalletModel,TransactionModel)
+const eventUseCase = new EventUseCase(eventRepository, stripePayment)
 const eventController = new EventController(eventUseCase)
 
 userRouter.get("/getUserData",authorizationMiddleware,userController.getUserData.bind(userController));
@@ -51,6 +52,13 @@ userRouter.patch("/cancelEvent",authorizationMiddleware,eventController.cancelEv
 
 
 // user wallet controller routes :
+userRouter.get("/getUserWallet",authorizationMiddleware,userController.getWallet.bind(userController))
 userRouter.post("/addAmountToWallet",authorizationMiddleware,userController.addFundTowallet.bind(userController))
 userRouter.post("/conformWalletAmount",authorizationMiddleware,userController.conformWalletCredit.bind(userController))
+userRouter.get("/getWalletTransactions",authorizationMiddleware,userController.getWalletTransactions.bind(userController))
+
+// user ticket controlling routes :
+userRouter.post("/payForTicket",authorizationMiddleware,eventController.bookTicket.bind(eventController))
+userRouter.post("/conformTicketBooking",authorizationMiddleware,eventController.conformTicketBooking.bind(eventController))
+userRouter.post("/bookTicketWithWallet",authorizationMiddleware)
 export default userRouter;
