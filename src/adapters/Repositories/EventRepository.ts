@@ -216,4 +216,53 @@ export default class EventRepository implements IEventRepository {
       throw error
     }
   }
+
+  async checkUserTicket(userId: string, eventId: string): Promise<Model<ITicket, ITicketCreationAttributes> | null> {
+      try {
+        const ticket = await this.TicketModel.findOne({where:{
+          userId:userId,
+          eventId:eventId
+        }})
+
+        return ticket
+      } catch (error) {
+        throw error
+      }
+  }
+
+  async updateWalletAmount(userId: string,amount:number): Promise<void> {
+      try {
+        const wallet = await this.WalletModal.findOne({where:{
+          userId
+        }})
+        if(wallet){
+          const balance = wallet.dataValues.balanceAmount+amount
+          await this.WalletModal.update({balanceAmount:balance},{where:{
+            userId
+          }})
+
+        }
+        return
+      } catch (error) {
+        throw error
+      }
+  }
+
+  async getAllTicketForEvent(eventId: string): Promise<Model<ITicket, ITicketCreationAttributes>[] | null> {
+      try {
+        const tickets = await this.TicketModel.findAll({where:{
+          eventId
+        },include:[
+          {
+            model:this.UserModel,
+            as:'ticketOwner',
+            required:true
+          }
+        ]})
+
+        return tickets
+      } catch (error) {
+        throw error
+      }
+  }
 }

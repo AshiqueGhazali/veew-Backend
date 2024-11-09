@@ -18,7 +18,7 @@ export interface ITransaction {
     id: string;
     userId:string
     transactionType: transactionType;
-    paymentIntentId:string;
+    paymentIntentId?:string;
     paymentMethod:paymentMethod;
     purpose:transactionPurpose;
     amount:number;

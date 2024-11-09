@@ -1,6 +1,8 @@
 import { Model } from "sequelize";
 import { IEvent, IEventCreationAttributes } from "../entity/eventEntity";
-import IEventRepository, { createTicketParams } from "../interface/repository/IEventRepository";
+import IEventRepository, {
+  createTicketParams,
+} from "../interface/repository/IEventRepository";
 import IEventUseCase, {
   createEventParams,
   editEventDateParams,
@@ -8,8 +10,14 @@ import IEventUseCase, {
 } from "../interface/useCase/IEventUseCase";
 import { resObj } from "../interface/useCase/IUserAuthUseCase";
 import { IStripe, paymentType } from "../interface/utils/IStripService";
-import IUserRepository, { transactionParams } from "../interface/repository/IUserRepository";
-import { paymentMethod, transactionPurpose, transactionType } from "../entity/transactionEntity";
+import IUserRepository, {
+  transactionParams,
+} from "../interface/repository/IUserRepository";
+import {
+  paymentMethod,
+  transactionPurpose,
+  transactionType,
+} from "../entity/transactionEntity";
 
 export default class EventUseCase implements IEventUseCase {
   private eventRepository: IEventRepository;
@@ -179,15 +187,32 @@ export default class EventUseCase implements IEventUseCase {
         };
       }
 
-      if(event.dataValues.hostsId === userId){
+      if (event.dataValues.hostsId === userId) {
         return {
-            status: false,
-            message: "This event hosts by you!",
-          };
+          status: false,
+          message: "This event hosts by you!",
+        };
       }
 
+      const isTicket = await this.eventRepository.checkUserTicket(userId,eventId)
+
+      if(isTicket){
+        return {
+          status: false,
+          message: "You already have this ticket!",
+        };
+      }
+
+      const getAllTickets = await this.eventRepository.getAllTicketForEvent(eventId)
+      if(getAllTickets?.length || 0 >= event.dataValues.participantCount){
+        return {
+          status:false,
+          message:"Tickets sold out"
+        }
+      }
+
+
       const amount = event.dataValues.ticketPrice;
-      
 
       const response = await this.stripePayment.makePayment(
         amount,
@@ -205,64 +230,153 @@ export default class EventUseCase implements IEventUseCase {
     }
   }
 
-  async conformTicketBooket(userId: string, eventId: string, sessionId: string): Promise<resObj | null> {
-      try {
-        const event = await this.eventRepository.fetchEventDetails(eventId);
-      if (!event) {
+  generateTicketCode(length = 7) {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let ticketCode = '';
+    for (let i = 0; i < length; i++) {
+        const randomIndex = Math.floor(Math.random() * characters.length);
+        ticketCode += characters[randomIndex];
+    }
+    return ticketCode;
+}
+  async conformTicketBooket(
+    userId: string,
+    eventId: string,
+    sessionId: string
+  ): Promise<resObj | null> {
+    try {
+      const event = await this.eventRepository.fetchEventDetails(eventId);
+      if (!event || event.dataValues.isCancelled) {
         return {
           status: false,
           message: "event not found!",
         };
       }
 
-        const paymentint = await this.stripePayment.getPaymentIntentFromSession(sessionId)        
-        if(!paymentint){
-          return {
-            status:false,
-            message:"Payment intent not found"
-          }
-        }
-
-        const ticketData:createTicketParams = {
-            ticketCode:'afsdfasdf',
-            userId,
-            eventId,
-            amount:event.dataValues.ticketPrice 
-        }
-        const createTicket = await this.eventRepository.createTicket(ticketData)
-
-        
-        if(createTicket){
-            const transactionData:transactionParams ={
-                userId,
-                transactionType:transactionType.DEBIT,
-                paymentIntentId:paymentint.id,
-                paymentMethod:paymentMethod.ONLINE,
-                purpose: transactionPurpose.TICKET,
-                amount:createTicket?.dataValues.amount
-              }
-    
-              const transaction = await this.eventRepository.createTransactions(transactionData)
-
-            return{
-                status:true,
-                message:"Ticket Booked!"
-            }
-        }
+      const paymentint = await this.stripePayment.getPaymentIntentFromSession(
+        sessionId
+      );
+      if (!paymentint) {
         return {
-            status:true,
-            message:"heyyyy"
-        }
-      } catch (error) {
-        throw error;
+          status: false,
+          message: "Payment intent not found",
+        };
       }
+
+      const ticketCode = this.generateTicketCode()
+      const ticketData: createTicketParams = {
+        ticketCode,
+        userId,
+        eventId,
+        amount: event.dataValues.ticketPrice,
+      };
+      const createTicket = await this.eventRepository.createTicket(ticketData);
+
+      if (createTicket) {
+        const transactionData: transactionParams = {
+          userId,
+          transactionType: transactionType.DEBIT,
+          paymentIntentId: paymentint.id,
+          paymentMethod: paymentMethod.ONLINE,
+          purpose: transactionPurpose.TICKET,
+          amount: createTicket?.dataValues.amount,
+        };
+
+        const transaction = await this.eventRepository.createTransactions(
+          transactionData
+        );
+
+        return {
+          status: true,
+          message: "Ticket Booked!",
+        };
+      }
+      return {
+        status: true,
+        message: "heyyyy",
+      };
+    } catch (error) {
+      throw error;
+    }
   }
 
-  async verifyTicketBookingWithWallet(userId: string, eventId: string): Promise<resObj | null> {
-      try {
-        return null
-      } catch (error) {
-        throw error
+  async verifyTicketBookingWithWallet(
+    userId: string,
+    eventId: string
+  ): Promise<resObj | null> {
+    try {
+      const wallet = await this.eventRepository.getUserWallet(userId);
+      const event = await this.eventRepository.fetchEventDetails(eventId);
+      if (!event || event.dataValues.isCancelled) {
+        return {
+          status: false,
+          message: "event not found!",
+        };
       }
+
+      if (event.dataValues.hostsId === userId) {
+        return {
+          status: false,
+          message: "This event hosts by you!",
+        };
+      }
+
+      const isTicket = await this.eventRepository.checkUserTicket(userId,eventId)
+
+      if(isTicket){
+        return {
+          status: false,
+          message: "You already have this ticket!",
+        };
+      }
+
+      if (!wallet || wallet.dataValues.balanceAmount < event.dataValues.ticketPrice) {
+        return {
+          status: false,
+          message: "No enugh balance in wallet!",
+        };
+      }
+
+      const getAllTickets = await this.eventRepository.getAllTicketForEvent(eventId)
+      if(getAllTickets?.length || 0 >= event.dataValues.participantCount){
+        return {
+          status:false,
+          message:"Tickets sold out"
+        }
+      }
+
+
+      const ticketCode = this.generateTicketCode()
+      const ticketData: createTicketParams = {
+        ticketCode,
+        userId,
+        eventId,
+        amount: event.dataValues.ticketPrice,
+      };
+      const createTicket = await this.eventRepository.createTicket(ticketData);
+
+      if(createTicket){
+        await this.eventRepository.updateWalletAmount(userId,-Math.abs(createTicket.dataValues.amount))
+        const transactionData: transactionParams = {
+          userId,
+          transactionType: transactionType.DEBIT,
+          paymentMethod: paymentMethod.WALLET,
+          purpose: transactionPurpose.TICKET,
+          amount: createTicket?.dataValues.amount,
+        };
+
+        const transaction = await this.eventRepository.createTransactions(
+          transactionData
+        );
+        return {
+          status:true,
+          message:"Ticket Conformed!"
+        }
+      }
+
+      return null;
+    } catch (error) {
+      throw error;
+    }
   }
 }

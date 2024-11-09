@@ -11,7 +11,7 @@ import {
 import { IUserSubscription, IUserSubscriptionCreationAttributes } from "../../entity/userSubscriptionEntity";
 import { Op } from "sequelize";
 import { IWallet, IWalletCreationAttributes } from "../../entity/walletEntity";
-import { ITransaction, ITransactionCreationAttributes, transactionPurpose, transactionType } from "../../entity/transactionEntity";
+import { ITransaction, ITransactionCreationAttributes, paymentMethod, transactionPurpose, transactionType } from "../../entity/transactionEntity";
 
 class UserRepository implements IUserRepository {
   private UserModel: ModelDefined<IUser, IUserCreationAttributes>;
@@ -230,7 +230,6 @@ class UserRepository implements IUserRepository {
 
   async createTransactions(data: transactionParams): Promise<Model<ITransaction, ITransactionCreationAttributes> | null> {
       try {
-        // const{ userId,transactionType,paymentIntentId,purpose,amount} = data
         const transaction = await this.TransactionModel.create({
           ...data
         })
@@ -262,7 +261,11 @@ class UserRepository implements IUserRepository {
       try {
         const transactions = await this.TransactionModel.findAll({where:{
           userId,
-          purpose:transactionPurpose.WALLET
+          [Op.or]:[
+            {purpose:transactionPurpose.WALLET},
+            {paymentMethod:paymentMethod.WALLET}
+          ]
+          
         }})
 
         return transactions

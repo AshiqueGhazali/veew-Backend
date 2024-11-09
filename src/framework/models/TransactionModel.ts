@@ -25,7 +25,7 @@ const Transaction: ModelDefined<ITransaction, ITransactionCreationAttributes> =
       },
       paymentIntentId: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       paymentMethod: {
         type: DataTypes.ENUM("WALLET","ONLINE"),

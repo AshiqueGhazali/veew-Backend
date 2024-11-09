@@ -25,5 +25,7 @@ export default interface IEventRepository {
     createTicket(data:createTicketParams):Promise<Model<ITicket,ITicketCreationAttributes> | null>
     createTransactions(data:transactionParams):Promise<Model<ITransaction,ITransactionCreationAttributes>|null>
     getUserWallet(userId:string):Promise<Model<IWallet,IWalletCreationAttributes>|null>;
-
+    checkUserTicket(userId:string,eventId:string):Promise<Model<ITicket,ITicketCreationAttributes> | null>
+    updateWalletAmount(userId:string , amount:number):Promise<void>
+    getAllTicketForEvent(eventId:string):Promise<Model<ITicket,ITicketCreationAttributes>[] | null>
 }

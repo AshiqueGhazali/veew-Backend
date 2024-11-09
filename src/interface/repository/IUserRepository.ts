@@ -20,7 +20,7 @@ export interface editData {
 export interface transactionParams{
   userId:string,
   transactionType:transactionType;
-  paymentIntentId:string;
+  paymentIntentId?:string;
   paymentMethod:paymentMethod
   purpose:transactionPurpose
   amount:number;

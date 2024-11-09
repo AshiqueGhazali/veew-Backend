@@ -37,26 +37,6 @@ Events.belongsTo(User,{
   as:'user'
 })
 
-// User.hasOne(Wallet,{
-//   foreignKey: "userId",
-//   as: "user"
-// })
-
-// Wallet.belongsTo(User, {
-//   foreignKey: "userId",
-//   as : "user"
-// })
-
-// User.hasMany(Transaction,{
-//   foreignKey: "userId",
-//   as: "user"
-// })
-
-// Transaction.belongsTo(User, {
-//   foreignKey: "userId",
-//   as : "user"
-// })
-
 
 User.hasOne(Wallet, { foreignKey: 'userId', as: 'wallet' });
 Wallet.belongsTo(User, { foreignKey: 'userId', as: 'walletUser' });
@@ -65,7 +45,7 @@ User.hasMany(Transaction, { foreignKey: 'userId', as: 'transactions' });
 Transaction.belongsTo(User, { foreignKey: 'userId', as: 'transactionUser' });
 
 User.hasMany(Ticket, { foreignKey: 'userId', as: 'tickets' });
-Ticket.belongsTo(User, { foreignKey: 'userId', as: 'userTickets' });
+Ticket.belongsTo(User, { foreignKey: 'userId', as: 'ticketOwner' });
 
 Events.hasMany(Ticket, { foreignKey: 'eventId', as: 'tickets' });
 Ticket.belongsTo(Events, { foreignKey: 'eventId', as: 'eventTickets' });

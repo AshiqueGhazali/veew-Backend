@@ -228,7 +228,19 @@ export default class EventController implements IEventController {
 
     async bookTicketWithWallet(req: IAuthRequest, res: Response, next: NextFunction): Promise<void> {
         try {
-            
+
+            const userId = req.userId as string
+            const {eventId} = req.body
+
+            const response = await this.eventUseCase.verifyTicketBookingWithWallet(userId,eventId)
+
+            if(response?.status){
+                res.status(200).json(response)
+                return
+            }
+
+            res.status(401).json(response)
+            return
         } catch (error) {
             res.status(500)
             console.log(error);
