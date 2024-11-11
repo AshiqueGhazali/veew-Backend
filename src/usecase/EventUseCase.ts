@@ -18,6 +18,7 @@ import {
   transactionPurpose,
   transactionType,
 } from "../entity/transactionEntity";
+import { ITicket, ITicketCreationAttributes } from "../entity/ticketEntity";
 
 export default class EventUseCase implements IEventUseCase {
   private eventRepository: IEventRepository;
@@ -378,5 +379,79 @@ export default class EventUseCase implements IEventUseCase {
     } catch (error) {
       throw error;
     }
+  }
+
+  async getAllTicketsData(): Promise<Model<ITicket, ITicketCreationAttributes>[] | null> {
+      try {
+        return await this.eventRepository.getAllTicketData()
+      } catch (error) {
+        throw error
+      }
+  }
+
+  async getAllUserTickets(userId: string): Promise<Model<ITicket, ITicketCreationAttributes>[] | null> {
+      try {
+        return await this.eventRepository.getAllUserTickets(userId)
+      } catch (error) {
+        throw error
+      }
+  }
+
+  async userCancelTicket(userId: string, ticketId: string): Promise<resObj | null> {
+      try {
+        const ticket = await this.eventRepository.findTicketById(ticketId)
+        if(!ticket){
+          return {
+            status:false,
+            message:"Ticket Not found"
+          }
+        }
+        const event = await this.eventRepository.fetchEventDetails(ticket.dataValues.eventId)
+
+        if(event){
+          const currentDate = new Date()
+          const eventDate = new Date(event.dataValues.date)
+
+          if(currentDate >= eventDate){
+            return {
+              status:false,
+              message:"cansellation time over"
+            }
+          }
+
+          if(event?.dataValues.isCancelled){
+            return {
+              status:false,
+              message:"Refunded by event cancellation!"
+            }
+          }
+        }else{
+          return {
+            status:false,
+            message: "Event Not Found!"
+          }
+        }
+        await this.eventRepository.userCancelTicket(ticketId)
+        await this.eventRepository.updateWalletAmount(userId, ticket.dataValues.amount)
+        const transactionData: transactionParams = {
+          userId,
+          transactionType: transactionType.CREDIT,
+          paymentMethod: paymentMethod.WALLET,
+          purpose: transactionPurpose.TICKET,
+          amount: ticket?.dataValues.amount,
+        };
+        const transaction = await this.eventRepository.createTransactions(transactionData)
+
+        if(transaction){
+          return {
+            status:true,
+            message:"Ticket Canselled Successfully!"
+          }
+        }
+
+        return null
+      } catch (error) {
+        throw error
+      }
   }
 }

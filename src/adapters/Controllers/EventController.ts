@@ -246,4 +246,57 @@ export default class EventController implements IEventController {
             console.log(error);
         }
     }
+
+    async getAllTicketsData(req: Request, res: Response): Promise<void> {
+        try {
+            const response = await this.eventUseCase.getAllTicketsData()
+
+            if(response){
+                res.status(200).json(response)
+                return
+            }
+
+            res.status(400).json({message:"not found!"})
+        } catch (error) {
+            res.status(500)
+            console.log(error);
+        }
+    }
+
+    async getAllUserTickets(req: IAuthRequest, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const userId = req.userId as string
+
+            const response = await this.eventUseCase.getAllUserTickets(userId)
+
+            if(response){
+                res.status(200).json(response)
+                return
+            }
+
+            res.status(400).json({message:"not found!"})
+        } catch (error) {
+            res.status(500)
+            console.log(error);
+        }
+    }
+
+    async userCancelTicket(req: IAuthRequest, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const userId = req.userId as string;
+            const {ticketId} = req.body
+
+            const response = await this.eventUseCase.userCancelTicket(userId,ticketId)
+
+            if(response?.status){
+                res.status(200).json(response)
+                return
+            }
+
+            res.status(400).json(response?.message)
+        } catch (error) {
+            res.status(500)
+            console.log(error);
+        }
+    }
 }

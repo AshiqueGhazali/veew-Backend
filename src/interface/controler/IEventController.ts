@@ -13,4 +13,7 @@ export default interface IEventController{
     bookTicket(req:IAuthRequest, res:Response, next: NextFunction):Promise<void>;
     conformTicketBooking(req:IAuthRequest, res:Response, next: NextFunction):Promise<void>;
     bookTicketWithWallet(req:IAuthRequest, res:Response, next: NextFunction):Promise<void>;
+    getAllTicketsData(req:Request , res:Response):Promise<void>
+    getAllUserTickets(req:IAuthRequest, res:Response, next: NextFunction):Promise<void>;
+    userCancelTicket(req:IAuthRequest, res:Response, next: NextFunction):Promise<void>;
 }

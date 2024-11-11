@@ -54,4 +54,7 @@ adminRoutes.get('/getAllEvents',authorizationMiddleware,eventController.getAllEv
 adminRoutes.get('/getAllCategoris',authorizationMiddleware,eventController.getCategories.bind(eventController))
 adminRoutes.patch('/cancellEvent',authorizationMiddleware,eventController.cancelEvent.bind(eventController))
 
+// admin ticket management
+adminRoutes.get("/getAllTickets",authorizationMiddleware,eventController.getAllTicketsData.bind(eventController))
+
 export default adminRoutes

@@ -61,4 +61,9 @@ userRouter.get("/getWalletTransactions",authorizationMiddleware,userController.g
 userRouter.post("/payForTicket",authorizationMiddleware,eventController.bookTicket.bind(eventController))
 userRouter.post("/conformTicketBooking",authorizationMiddleware,eventController.conformTicketBooking.bind(eventController))
 userRouter.post("/bookTicketWithWallet",authorizationMiddleware,eventController.bookTicketWithWallet.bind(eventController))
+userRouter.get("/getAllUserTickets",authorizationMiddleware,eventController.getAllUserTickets.bind(eventController))
+userRouter.post("/cancellTicket",authorizationMiddleware,eventController.userCancelTicket.bind(eventController))
+
+
+
 export default userRouter;

@@ -28,4 +28,8 @@ export default interface IEventRepository {
     checkUserTicket(userId:string,eventId:string):Promise<Model<ITicket,ITicketCreationAttributes> | null>
     updateWalletAmount(userId:string , amount:number):Promise<void>
     getAllTicketForEvent(eventId:string):Promise<Model<ITicket,ITicketCreationAttributes>[] | null>
+    getAllTicketData():Promise<Model<ITicket,ITicketCreationAttributes>[] | null>
+    getAllUserTickets(userId:string):Promise<Model<ITicket,ITicketCreationAttributes>[] | null>;
+    userCancelTicket(ticketId:string):Promise<void>;
+    findTicketById(ticketId:string):Promise<Model<ITicket,ITicketCreationAttributes> | null>
 }

@@ -265,4 +265,73 @@ export default class EventRepository implements IEventRepository {
         throw error
       }
   }
+
+  async getAllTicketData(): Promise<Model<ITicket, ITicketCreationAttributes>[] | null> {
+      try {
+        const tickets = await this.TicketModel.findAll({
+          include:[
+            {
+              model:this.UserModel,
+              as:'ticketOwner',
+              required:true
+            }
+          ]
+        })
+        
+        return tickets
+      } catch (error) {
+        throw error
+      }
+  }
+
+  async getAllUserTickets(userId: string): Promise<Model<ITicket, ITicketCreationAttributes>[] | null> {
+      try {
+        const tickets = await this.TicketModel.findAll(
+          {where:{
+            userId
+          },
+          include:[
+            {
+              model:this.UserModel,
+              as:"ticketOwner",
+              required:true
+            },
+            {
+              model:this.EventModel,
+              as:"eventDetails",
+              required:true
+            }
+          ]
+      })
+
+      return tickets
+      } catch (error) {
+        throw error
+      }
+  }
+
+  async userCancelTicket(ticketId: string): Promise<void> {
+      try {
+        const cancelled = await this.TicketModel.update(
+          {isCancelled:true},
+          {where:{id:ticketId}}
+        )
+
+        return
+      } catch (error) {
+        throw error
+      }
+  }
+
+  async findTicketById(ticketId: string): Promise<Model<ITicket, ITicketCreationAttributes> | null> {
+      try {
+        const ticket = await this.TicketModel.findOne({where:
+          {id:ticketId}
+        })
+
+        return ticket
+      } catch (error) {
+        throw error
+      }
+  }
 }

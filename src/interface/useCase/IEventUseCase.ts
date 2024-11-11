@@ -1,6 +1,7 @@
 import { Model } from "sequelize";
 import { resObj } from "./IUserAuthUseCase";
 import { IEvent, IEventCreationAttributes } from "../../entity/eventEntity";
+import { ITicket, ITicketCreationAttributes } from "../../entity/ticketEntity";
 
 export interface createEventParams{
     eventTitle : string;
@@ -37,4 +38,7 @@ export default interface IEventUseCase {
     verifyTicketBooking(userId:string,eventId:string):Promise<any>
     conformTicketBooket(userId:string,eventId:string,sessionId:string):Promise<resObj|null>;
     verifyTicketBookingWithWallet(userId:string,eventId:string):Promise<resObj|null>
+    getAllTicketsData():Promise<Model<ITicket,ITicketCreationAttributes>[] | null>
+    getAllUserTickets(userId:string):Promise<Model<ITicket,ITicketCreationAttributes>[] | null>;
+    userCancelTicket(userId:string , ticketId : string):Promise<resObj|null>;
 }

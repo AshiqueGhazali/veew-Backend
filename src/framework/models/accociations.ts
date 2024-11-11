@@ -48,6 +48,6 @@ User.hasMany(Ticket, { foreignKey: 'userId', as: 'tickets' });
 Ticket.belongsTo(User, { foreignKey: 'userId', as: 'ticketOwner' });
 
 Events.hasMany(Ticket, { foreignKey: 'eventId', as: 'tickets' });
-Ticket.belongsTo(Events, { foreignKey: 'eventId', as: 'eventTickets' });
+Ticket.belongsTo(Events, { foreignKey: 'eventId', as: 'eventDetails' });
 
 export { Pricing, UserSubscription, User };
