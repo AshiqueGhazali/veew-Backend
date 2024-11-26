@@ -168,6 +168,26 @@ export default class EventUseCase implements IEventUseCase {
       }
 
       await this.eventRepository.cancellEvent(eventId);
+      const eventTickets = await this.eventRepository.getAllTicketForEvent(eventId)
+
+      
+      const transactionData = {
+        transactionType: transactionType.CREDIT,
+        paymentMethod: paymentMethod.WALLET,
+        purpose: transactionPurpose.TICKET,
+        amount: event?.dataValues.ticketPrice,
+      };
+
+      eventTickets?.filter((ticket)=>{
+        return (
+          !ticket.dataValues.isCancelled
+        )
+      }).map((ticket)=>{
+        return (
+          this.eventRepository.updateWalletAmount(ticket.dataValues.userId , ticket.dataValues.amount),
+          this.eventRepository.createTransactions({...transactionData,userId:ticket.dataValues.userId})
+        )
+      })
 
       return {
         status: true,
@@ -450,6 +470,14 @@ export default class EventUseCase implements IEventUseCase {
         }
 
         return null
+      } catch (error) {
+        throw error
+      }
+  }
+
+  async getAllTicketForEvent(eventId: string): Promise<Model<ITicket, ITicketCreationAttributes>[] | null> {
+      try {
+        return await this.eventRepository.getAllTicketForEvent(eventId)
       } catch (error) {
         throw error
       }

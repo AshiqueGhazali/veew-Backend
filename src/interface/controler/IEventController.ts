@@ -16,4 +16,5 @@ export default interface IEventController{
     getAllTicketsData(req:Request , res:Response):Promise<void>
     getAllUserTickets(req:IAuthRequest, res:Response, next: NextFunction):Promise<void>;
     userCancelTicket(req:IAuthRequest, res:Response, next: NextFunction):Promise<void>;
+    getAllTicketForEvent(req:IAuthRequest, res:Response, next: NextFunction):Promise<void>;
 }

@@ -299,4 +299,23 @@ export default class EventController implements IEventController {
             console.log(error);
         }
     }
+
+    async getAllTicketForEvent(req: IAuthRequest, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const eventId = req.query.eventId as string
+
+            const response = await this.eventUseCase.getAllTicketForEvent(eventId)
+
+            if(response){
+                res.status(200).json(response)
+                return
+            }
+
+            res.status(400).json(response)
+
+        } catch (error) {
+            res.status(500)
+            console.log(error);
+        }
+    }
 }

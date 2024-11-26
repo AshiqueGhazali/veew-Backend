@@ -41,4 +41,5 @@ export default interface IEventUseCase {
     getAllTicketsData():Promise<Model<ITicket,ITicketCreationAttributes>[] | null>
     getAllUserTickets(userId:string):Promise<Model<ITicket,ITicketCreationAttributes>[] | null>;
     userCancelTicket(userId:string , ticketId : string):Promise<resObj|null>;
+    getAllTicketForEvent(eventId:string):Promise<Model<ITicket,ITicketCreationAttributes>[] | null>;
 }

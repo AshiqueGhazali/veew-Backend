@@ -56,6 +56,11 @@ const Events: ModelDefined<IEvent,IEventCreationAttributes> = sequelize.define (
         isCancelled: {
             type: DataTypes.BOOLEAN,
             defaultValue:false
+        },
+        eventMeetUrl: {
+            type: DataTypes.STRING,
+            defaultValue:'',
+            allowNull:true
         }
     },
     {

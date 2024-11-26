@@ -9,8 +9,6 @@ import IuserUseCase, {
 } from "../interface/useCase/IUserUseCase";
 import IJwtService from "../interface/utils/IJwtService";
 import { IPricing, IPricingCreationAttributes } from "../entity/pricingEntity";
-import Razorpay from "razorpay";
-import Cripto from "crypto";
 import { resObj } from "../interface/useCase/IUserAuthUseCase";
 import { IStripe, paymentType } from "../interface/utils/IStripService";
 import { IUserSubscription, IUserSubscriptionCreationAttributes } from "../entity/userSubscriptionEntity";

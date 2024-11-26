@@ -63,6 +63,7 @@ userRouter.post("/conformTicketBooking",authorizationMiddleware,eventController.
 userRouter.post("/bookTicketWithWallet",authorizationMiddleware,eventController.bookTicketWithWallet.bind(eventController))
 userRouter.get("/getAllUserTickets",authorizationMiddleware,eventController.getAllUserTickets.bind(eventController))
 userRouter.post("/cancellTicket",authorizationMiddleware,eventController.userCancelTicket.bind(eventController))
+userRouter.get("/getAllTicketForEvent",authorizationMiddleware,eventController.getAllTicketForEvent.bind(eventController))
 
 
 
