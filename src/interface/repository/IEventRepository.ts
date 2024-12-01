@@ -1,6 +1,6 @@
 import { Model } from "sequelize";
 import { IEvent, IEventCreationAttributes } from "../../entity/eventEntity";
-import { createEventParams, editEventDateParams, editEventDetailsParams } from "../useCase/IEventUseCase";
+import { createEventParams, dataCountResponse, editEventDateParams, editEventDetailsParams, startEventRes } from "../useCase/IEventUseCase";
 import { ITicket, ITicketCreationAttributes } from "../../entity/ticketEntity";
 import { transactionParams } from "./IUserRepository";
 import { ITransaction, ITransactionCreationAttributes } from "../../entity/transactionEntity";
@@ -32,4 +32,7 @@ export default interface IEventRepository {
     getAllUserTickets(userId:string):Promise<Model<ITicket,ITicketCreationAttributes>[] | null>;
     userCancelTicket(ticketId:string):Promise<void>;
     findTicketById(ticketId:string):Promise<Model<ITicket,ITicketCreationAttributes> | null>
+    saveMeetUrl(eventId:string , eventMeetUrl:string):Promise<void>
+    getEventByMeetLink(meetURL:string):Promise<Model<IEvent,IEventCreationAttributes> | null>
+    getDataCounts():Promise<dataCountResponse | null>
 }

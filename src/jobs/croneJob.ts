@@ -1,6 +1,7 @@
 import cron from 'node-cron';
 import OtpModel  from '../framework/models/OtpModel'; 
 import { Op } from 'sequelize'; 
+import Events from '../framework/models/EventModel';
 
 cron.schedule('* * * * *', async () => {
     const now = new Date();
@@ -17,6 +18,24 @@ cron.schedule('* * * * *', async () => {
         // console.log(`Deleted ${result} expired OTP(s).`);
     } catch (error) {
         console.error('Error deleting expired OTPs:', error);
+    }
+
+
+    const eventUrlExpirationTime = new Date(now.getTime() - 1 * 60 * 60 * 1000);
+    try {
+        const updatedEvents = await Events.update(
+            { eventMeetUrl: '' },
+            {
+                where: {
+                    eventMeetUrlUpdatedAt: {
+                        [Op.lt]: eventUrlExpirationTime,
+                    },
+                },
+            }
+        );
+        // console.log(`Cleared eventMeetUrls for ${updatedEvents[0]} event(s).`);
+    } catch (error) {
+        console.error('Error clearing expired eventMeetUrls:', error);
     }
 });
 

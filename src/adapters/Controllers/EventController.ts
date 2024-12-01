@@ -12,12 +12,14 @@ export default class EventController implements IEventController {
     }
 
     async createEvent(req: IAuthRequest, res: Response, next: NextFunction): Promise<void> {
-        try {
+        try {            
             const userId = req.userId || '';
             const imageUrl = req.file?.path || '';
             const {eventTitle,category,description,date,startTime,endTime,participantCount,ticketPrice} = req.body
 
             console.log("the image url is :",imageUrl);
+            console.log("helllllllow");
+            
             
 
             const eventsDetails:createEventParams = {
@@ -33,6 +35,8 @@ export default class EventController implements IEventController {
             }            
             
             const response = await this.eventUseCase.verifyEventCreation(userId,eventsDetails)
+            console.log(response);
+            
 
             if(response?.status){
                 res.status(200).json(response)
@@ -42,6 +46,8 @@ export default class EventController implements IEventController {
             res.status(404).json(response)
             return
         } catch (error) {
+            console.log("hafskdhfksjfhfhfhfhfhfhfhfhfhfhfhfhfhfhfhfhfhfhfhfhfhfhfha");
+            
             res.status(500).json({message:error})
             console.log(error);
             return
@@ -313,6 +319,64 @@ export default class EventController implements IEventController {
 
             res.status(400).json(response)
 
+        } catch (error) {
+            res.status(500)
+            console.log(error);
+        }
+    }
+
+    async startEvent(req: IAuthRequest, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const userId = req.userId as string
+            const  eventId  = req.query.eventId as string
+
+            const response = await this.eventUseCase.verifyStartEvent(userId,eventId)
+
+            if(response?.status){
+                res.status(200).json(response)
+                return
+            }
+
+            res.status(400).json(response)
+            return
+
+        } catch (error) {
+            res.status(500)
+            console.log(error);
+        }
+    }
+
+    async verifyEventJoining(req: IAuthRequest, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const userId = req.userId as string
+            const meetURL = req.body.meetURL as string
+
+            const response = await this.eventUseCase.verifyEventJoining(meetURL,userId)
+
+            if(response?.status){
+                res.status(200).json(response)
+                return
+            }
+
+            res.status(400).json(response)
+            return
+        } catch (error) {
+            res.status(500)
+            console.log(error);
+        }
+    }
+
+    async getDataCounts(req: IAuthRequest, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const response = await this.eventUseCase.getDataCounts()
+
+            if(response){
+                res.status(200).json(response)
+                return
+            }
+
+            res.status(400).json({message:"didt get enithing.."})
+            return
         } catch (error) {
             res.status(500)
             console.log(error);

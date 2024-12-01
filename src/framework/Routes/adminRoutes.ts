@@ -47,6 +47,7 @@ adminRoutes.get('/getPlan',authorizationMiddleware, adminController.getPricingPl
 adminRoutes.put('/updatePlan',adminController.editPricingPlan.bind(adminController))
 adminRoutes.delete('/deletePlan',authorizationMiddleware,adminController.deletePlan.bind(adminController))
 adminRoutes.get('/getAllSubscribers',authorizationMiddleware,adminController.getAllSubscribers.bind(adminController))
+adminRoutes.get('/getDataCounts',authorizationMiddleware,eventController.getDataCounts.bind(eventController))
 
 
 // admin event management

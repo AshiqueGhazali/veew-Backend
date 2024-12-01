@@ -65,6 +65,10 @@ userRouter.get("/getAllUserTickets",authorizationMiddleware,eventController.getA
 userRouter.post("/cancellTicket",authorizationMiddleware,eventController.userCancelTicket.bind(eventController))
 userRouter.get("/getAllTicketForEvent",authorizationMiddleware,eventController.getAllTicketForEvent.bind(eventController))
 
+// event start routes :
+userRouter.get("/startEvent",authorizationMiddleware,eventController.startEvent.bind(eventController))
+userRouter.get("/verifyEventJoining",authorizationMiddleware)
+
 
 
 export default userRouter;

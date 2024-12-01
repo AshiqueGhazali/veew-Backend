@@ -4,14 +4,17 @@ import { IEvent, IEventCreationAttributes } from "../../entity/eventEntity";
 import { IUser, IUserCreationAttributes } from "../../entity/userEntity";
 import {
   createEventParams,
+  dataCountResponse,
   editEventDateParams,
   editEventDetailsParams,
+  startEventRes,
 } from "../../interface/useCase/IEventUseCase";
 import { table } from "console";
 import { ITicket, ITicketCreationAttributes } from "../../entity/ticketEntity";
 import { transactionParams } from "../../interface/repository/IUserRepository";
 import { ITransaction, ITransactionCreationAttributes } from "../../entity/transactionEntity";
 import { IWallet, IWalletCreationAttributes } from "../../entity/walletEntity";
+import UserSubscription from "../../framework/models/UserSubscriptionModel";
 
 export default class EventRepository implements IEventRepository {
   private EventModel: ModelDefined<IEvent, IEventCreationAttributes>;
@@ -330,6 +333,54 @@ export default class EventRepository implements IEventRepository {
         })
 
         return ticket
+      } catch (error) {
+        throw error
+      }
+  }
+
+  async saveMeetUrl(eventId: string, eventMeetUrl: string): Promise<void> {
+      try {
+        const currentDate = new Date()
+        const event = await this.EventModel.update({
+          eventMeetUrl:eventMeetUrl,
+          eventMeetUrlUpdatedAt:currentDate
+        },
+        {where:
+          {
+            id:eventId
+          }
+        })
+
+      } catch (error) {
+        throw error
+      }
+  }
+
+  async getEventByMeetLink(meetURL: string): Promise<Model<IEvent, IEventCreationAttributes> | null> {
+      try {
+        const event = await this.EventModel.findOne({where:{
+          eventMeetUrl:meetURL
+        }})
+
+        return event
+      } catch (error) {
+        throw error
+      }
+  }
+
+  async getDataCounts(): Promise<dataCountResponse | null> {
+      try {
+        const totalUsers = await this.UserModel.count()
+        const totalEvents = await this.EventModel.count()
+        const totalSubscribers = await UserSubscription.count()
+        const totalTickets = await this.TicketModel.count()
+
+        return {
+          totalUsers,
+          totalEvents,
+          totalSubscribers,
+          totalTickets
+        }
       } catch (error) {
         throw error
       }

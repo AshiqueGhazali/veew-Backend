@@ -61,7 +61,11 @@ const Events: ModelDefined<IEvent,IEventCreationAttributes> = sequelize.define (
             type: DataTypes.STRING,
             defaultValue:'',
             allowNull:true
-        }
+        },
+        eventMeetUrlUpdatedAt: {
+            type: DataTypes.DATE,
+            allowNull: true
+        }  
     },
     {
         tableName: "events",

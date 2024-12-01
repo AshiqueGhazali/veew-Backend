@@ -11,7 +11,8 @@ export interface IEvent {
     ticketPrice : number;
     imageUrl : string;
     isCancelled ?: boolean;
-    eventMeetUrl?:string
+    eventMeetUrl?:string;
+    eventMeetUrlUpdatedAt?:Date
 }
 
 export interface IEventCreationAttributes extends Omit<IEvent, "id">{}

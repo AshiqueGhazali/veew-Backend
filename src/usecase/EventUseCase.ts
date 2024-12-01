@@ -5,8 +5,10 @@ import IEventRepository, {
 } from "../interface/repository/IEventRepository";
 import IEventUseCase, {
   createEventParams,
+  dataCountResponse,
   editEventDateParams,
   editEventDetailsParams,
+  startEventRes,
 } from "../interface/useCase/IEventUseCase";
 import { resObj } from "../interface/useCase/IUserAuthUseCase";
 import { IStripe, paymentType } from "../interface/utils/IStripService";
@@ -35,6 +37,10 @@ export default class EventUseCase implements IEventUseCase {
   ): Promise<resObj | null> {
     try {
       const response = await this.eventRepository.createEvent(userId, data);
+
+      console.log("create data is ",data);
+      
+      
 
       if (!response) {
         return {
@@ -478,6 +484,148 @@ export default class EventUseCase implements IEventUseCase {
   async getAllTicketForEvent(eventId: string): Promise<Model<ITicket, ITicketCreationAttributes>[] | null> {
       try {
         return await this.eventRepository.getAllTicketForEvent(eventId)
+      } catch (error) {
+        throw error
+      }
+  }
+
+  async verifyStartEvent(userId: string, eventId: string): Promise<startEventRes | null> {
+      try {
+
+        const event = await this.eventRepository.fetchEventDetails(eventId)
+
+        const generateURL =()=> {
+          let result = '';
+          const chars = '12345qwertyuiopasdfgh67890jklmnbvcxzMNBVCZXASDQWERTYHGFUIOLKJP';
+          const len = 7;
+          for (let i = 0; i < len; i++) {
+            result += chars.charAt(Math.floor(Math.random() * chars.length));
+          }
+          return result;
+        }
+
+        if(event?.dataValues.hostsId !== userId){
+          return {
+            status:false,
+            message:"Only hosts can start event"
+          }
+        }
+        if(event.dataValues.eventMeetUrl){
+          return {
+            status:true,
+            message:"contine",
+            eventMeetUrl:event.dataValues.eventMeetUrl
+          }
+        }else{
+          const currentDate = new Date()
+          const eventDate = new Date(event.dataValues.date)
+          const startDateTime = new Date(
+            `${eventDate.toISOString().split('T')[0]}T${event.dataValues.startTime}`
+          );
+          const endDateTime = new Date(
+            `${eventDate.toISOString().split('T')[0]}T${event.dataValues.endTime}`
+          );
+
+          if(currentDate.getDate()!==eventDate.getDate()){
+            let message = ''
+            if(currentDate.getDate()<eventDate.getDate()){
+              message = 'Event date is in future!'
+            }else{
+              message = 'Event Time Expired'
+            }
+
+            return {
+              status:false,
+              message:message
+            }
+          }
+  
+          // if (eventDateOnly === currentDateOnly) {
+            const currentTime =
+              currentDate.getHours() * 60 + currentDate.getMinutes();
+            const startMinutes =
+              startDateTime.getHours() * 60 + startDateTime.getMinutes();
+            const endMinutes =
+              endDateTime.getHours() * 60 + endDateTime.getMinutes();
+  
+          if(currentTime >= startMinutes && currentTime <= endMinutes){
+            const eventMeetUrl = generateURL()
+            await this.eventRepository.saveMeetUrl(eventId,eventMeetUrl)
+
+            return {
+              status:true,
+              message:"event started",
+              eventMeetUrl
+            }
+
+          }else{
+            let timeMessage = ''
+            currentTime < startMinutes ? timeMessage='scheduled time over!' : timeMessage='Start event only at the scheduled time.'
+            return {
+              status:false,
+              message:timeMessage
+            }
+          }
+        }
+      } catch (error) {
+        throw error
+      }
+  }
+
+  async verifyEventJoining(meetUrl: string, userId: string): Promise<resObj | null> {
+      try {
+
+        console.log("hi amm hereee");
+        
+        const event = await this.eventRepository.getEventByMeetLink(meetUrl)
+        if(!event){
+          return {
+            status:false,
+            message:"Meet Not Found!"
+          }
+        }
+
+        if(event.dataValues.hostsId === userId){
+          return {
+            status:false,
+            message:"You are the creator!"
+          }
+        }
+
+        if(event.dataValues.ticketPrice > 0){
+          const isTicke = await this.eventRepository.checkUserTicket(userId,event.dataValues.id)
+          console.log("is tickettttt");
+          
+
+          if(isTicke){
+            console.log("ssssssssssssssssssssssssssssssssss");
+            
+            return {
+              status:true,
+              message:"ticket verified!"
+            }
+          }else{
+            console.log("dfassssssssssssssssssssssssss");
+            
+            return {
+              status: false,
+              message:"please conform your ticket!"
+            }
+          }
+        }else{
+          return {
+            status:true,
+            message:"You are joining..."
+          }
+        }
+      } catch (error) {
+        throw error
+      }
+  }
+
+  async getDataCounts(): Promise<dataCountResponse | null> {
+      try {
+        return await this.eventRepository.getDataCounts()
       } catch (error) {
         throw error
       }

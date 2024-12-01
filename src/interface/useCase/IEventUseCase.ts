@@ -26,6 +26,17 @@ export interface editEventDateParams {
     startTime : string;
     endTime : string;
 }
+
+export interface startEventRes extends resObj {
+    eventMeetUrl?:string
+}
+
+export interface dataCountResponse {
+    totalUsers:number;
+    totalEvents:number;
+    totalSubscribers:number;
+    totalTickets:number
+}
 export default interface IEventUseCase {
     verifyEventCreation(userId:string,data:createEventParams):Promise<resObj|null>
     getAllEvents():Promise<Model<IEvent,IEventCreationAttributes>[] | null>
@@ -42,4 +53,7 @@ export default interface IEventUseCase {
     getAllUserTickets(userId:string):Promise<Model<ITicket,ITicketCreationAttributes>[] | null>;
     userCancelTicket(userId:string , ticketId : string):Promise<resObj|null>;
     getAllTicketForEvent(eventId:string):Promise<Model<ITicket,ITicketCreationAttributes>[] | null>;
+    verifyStartEvent(userId:string , eventId:string):Promise<startEventRes | null>
+    verifyEventJoining(meetUrl:string,userId:string):Promise<resObj | null>
+    getDataCounts():Promise<dataCountResponse | null>
 }
