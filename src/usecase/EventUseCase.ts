@@ -46,7 +46,7 @@ export default class EventUseCase implements IEventUseCase {
       }
 
       const message = `Your event ${response.dataValues.eventTitle} has been successfully created. Start promoting it now!`
-      await this.eventRepository.createNotification(response.dataValues.hostsId , message)
+      await this.eventRepository.createNotification(response.dataValues.hostsId ,'Event Created Successfully! ' , message)
 
       return {
         status: true,
@@ -192,12 +192,12 @@ export default class EventUseCase implements IEventUseCase {
         return (
           this.eventRepository.updateWalletAmount(ticket.dataValues.userId , ticket.dataValues.amount),
           this.eventRepository.createTransactions({...transactionData,userId:ticket.dataValues.userId}),
-          this.eventRepository.createNotification(ticket.dataValues.userId,refundNotification)
+          this.eventRepository.createNotification(ticket.dataValues.userId, 'Refund Processed:',refundNotification)
         )
       })
 
       const message = `The event ${event.dataValues.eventTitle} has been successfully canceled.`
-      await this.eventRepository.createNotification(event.dataValues.hostsId,message)
+      await this.eventRepository.createNotification(event.dataValues.hostsId, 'Event Canceled:',message)
 
       return {
         status: true,
@@ -319,7 +319,7 @@ export default class EventUseCase implements IEventUseCase {
 
         if(transaction){
           const message= `Your ticket for ${event.dataValues.eventTitle} has been successfully booked. Enjoy the event!`
-          await this.eventRepository.createNotification(userId,message)
+          await this.eventRepository.createNotification(userId, 'Ticket Booking Confirmed:' ,message)
         }
 
         return {
@@ -407,7 +407,8 @@ export default class EventUseCase implements IEventUseCase {
 
         if(transaction){
           const message= `Your ticket for ${event.dataValues.eventTitle} has been successfully booked. Enjoy the event!`
-          await this.eventRepository.createNotification(userId,message)
+          const nofificationHead = 'Ticket Booking Confirmed: '
+          await this.eventRepository.createNotification(userId, nofificationHead, message)
         }
         return {
           status:true,
@@ -567,6 +568,7 @@ export default class EventUseCase implements IEventUseCase {
             await this.eventRepository.saveMeetUrl(eventId,eventMeetUrl)
 
             const eventTickets = await this.eventRepository.getAllTicketForEvent(eventId)
+            const eventStartNotificationHead = `Reminder`
             const eventStartNotification = `Reminder: The event ${event.dataValues.eventTitle} is now live! Join us and make the most of it.`
             eventTickets?.filter((ticket)=>{
               return (
@@ -574,7 +576,7 @@ export default class EventUseCase implements IEventUseCase {
               )
             }).map((ticket)=>{
               return (
-                this.eventRepository.createNotification(ticket.dataValues.userId,eventStartNotification)
+                this.eventRepository.createNotification(ticket.dataValues.userId, eventStartNotificationHead ,eventStartNotification)
               )
             })
 
@@ -623,16 +625,12 @@ export default class EventUseCase implements IEventUseCase {
           console.log("is tickettttt");
           
 
-          if(isTicke){
-            console.log("ssssssssssssssssssssssssssssssssss");
-            
+          if(isTicke){            
             return {
               status:true,
               message:"ticket verified!"
             }
-          }else{
-            console.log("dfassssssssssssssssssssssssss");
-            
+          }else{            
             return {
               status: false,
               message:"please conform your ticket!"
@@ -645,6 +643,7 @@ export default class EventUseCase implements IEventUseCase {
           }
         }
       } catch (error) {
+        console.log("looooooooogggggg",error);
         throw error
       }
   }

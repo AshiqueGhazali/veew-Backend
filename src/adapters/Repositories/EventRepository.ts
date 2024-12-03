@@ -363,12 +363,22 @@ export default class EventRepository implements IEventRepository {
 
   async getEventByMeetLink(meetURL: string): Promise<Model<IEvent, IEventCreationAttributes> | null> {
       try {
+        console.log("meet url is ",meetURL);
+        
         const event = await this.EventModel.findOne({where:{
           eventMeetUrl:meetURL
         }})
 
-        return event
+        if(event){
+          return event
+        }else{
+          console.log("dsafaffffffffffffffffffffffffffffqwrwerewr");
+          return null
+          
+        }
       } catch (error) {
+        console.log("isssssssssssss",error);
+        
         throw error
       }
   }
@@ -436,10 +446,11 @@ export default class EventRepository implements IEventRepository {
       }
   }
 
-  async createNotification(userId: string, notification: string): Promise<Model<INotification, INotificationCreationAttributes>> {
+  async createNotification(userId: string,notificationHead:string, notification: string): Promise<Model<INotification, INotificationCreationAttributes>> {
     try {
       const newNotification = await this.NotificationModel.create({
         userId,
+        notificationHead,
         notification
       })
       return newNotification

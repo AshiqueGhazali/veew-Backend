@@ -16,6 +16,10 @@ const Notification: ModelDefined<INotification,INotificationCreationAttributes> 
             allowNull: false,
             references: {model: "user", key: "id"}
         },
+        notificationHead: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
         notification: {
             type: DataTypes.STRING,
             allowNull: false

@@ -8,6 +8,7 @@ import { resObj } from "./IUserAuthUseCase";
 import { IUserSubscription, IUserSubscriptionCreationAttributes } from "../../entity/userSubscriptionEntity";
 import { IWallet, IWalletCreationAttributes } from "../../entity/walletEntity";
 import { ITransaction, ITransactionCreationAttributes } from "../../entity/transactionEntity";
+import { INotification, INotificationCreationAttributes } from "../../entity/notificationsEntity";
 
 export interface editProfileBody {
   id: string;
@@ -33,4 +34,5 @@ export default interface IuserUseCase {
   conformWalletCredit(userId:string , sessionId:string):Promise<resObj|null>;
   getUserWallet(userId:string):Promise<Model<IWallet,IWalletCreationAttributes>|null>;
   getUserWalletTransactions(userId:string):Promise<Model<ITransaction,ITransactionCreationAttributes>[]|null>;
+  getUserNotifications(userId:string):Promise<Model<INotification,INotificationCreationAttributes>[] | null>
 }

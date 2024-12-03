@@ -117,10 +117,11 @@ class UserAuthRepository implements IUserAuthRepository {
     }
  }
 
- async createNotification(userId: string, notification: string): Promise<Model<INotification, INotificationCreationAttributes>> {
+ async createNotification(userId: string,notificationHead:string, notification: string): Promise<Model<INotification, INotificationCreationAttributes>> {
     try {
       const newNotification = await this.NotificationModel.create({
         userId,
+        notificationHead,
         notification
       })
       return newNotification

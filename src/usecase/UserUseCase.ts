@@ -14,6 +14,7 @@ import { IStripe, paymentType } from "../interface/utils/IStripService";
 import { IUserSubscription, IUserSubscriptionCreationAttributes } from "../entity/userSubscriptionEntity";
 import { IWallet, IWalletCreationAttributes } from "../entity/walletEntity";
 import { ITransaction, ITransactionCreationAttributes, paymentMethod, transactionPurpose, transactionType } from "../entity/transactionEntity";
+import { INotification, INotificationCreationAttributes } from "../entity/notificationsEntity";
 
 class UserUseCase implements IuserUseCase {
   private userRepository: IUserRepository;
@@ -146,10 +147,10 @@ class UserUseCase implements IuserUseCase {
         const transaction = await this.userRepository.createTransactions(transactionData)
         if(transaction){
           const messege = `Transaction Successful! Your payment for plan subscription has been completed.`
-          await this.userRepository.createNotification(userId,messege)  
+          await this.userRepository.createNotification(userId, 'Transaction Successful!', messege)  
         }
         const notificationMessage = `Your subscription to ${planData.dataValues.title} has been successfully activated.`
-        const notification = await this.userRepository.createNotification(userId,notificationMessage)
+        const notification = await this.userRepository.createNotification(userId,'Subscription Confirmed!', notificationMessage)
         
         return {
           status:true,
@@ -227,7 +228,7 @@ class UserUseCase implements IuserUseCase {
 
           if(transaction){
             const message = `Awesome! You've added ${transaction.dataValues.amount} to your wallet. Happy spending!`
-            await this.userRepository.createNotification(userId,message)
+            await this.userRepository.createNotification(userId, 'Funds Added Successfully!' ,message)
             return {
               status:true,
               message:`${amount} addedd to wallet!`
@@ -260,7 +261,13 @@ class UserUseCase implements IuserUseCase {
       }
   }
 
-  
+  async getUserNotifications(userId: string): Promise<Model<INotification, INotificationCreationAttributes>[] | null> {
+      try {
+        return await this.userRepository.fetchUserNotifications(userId)
+      } catch (error) {
+        throw error
+      }
+  }
 
 }
 

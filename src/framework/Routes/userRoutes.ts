@@ -41,6 +41,7 @@ userRouter.post("/createPayment",authorizationMiddleware,userController.createPa
 userRouter.post("/subscribePlan",authorizationMiddleware,userController.conformSubscription.bind(userController));
 userRouter.get("/getPlanOfUser",authorizationMiddleware,userController.getUserSubscriptionPlan.bind(userController));
 userRouter.get('/getDataCounts',authorizationMiddleware,eventController.getDataCounts.bind(eventController))
+userRouter.get('/getNotifications',authorizationMiddleware,userController.getUserNotification.bind(userController))
 
 
 
@@ -71,7 +72,7 @@ userRouter.get("/getAllTicketForEvent",authorizationMiddleware,eventController.g
 
 // event start routes :
 userRouter.get("/startEvent",authorizationMiddleware,eventController.startEvent.bind(eventController))
-userRouter.get("/verifyEventJoining",authorizationMiddleware)
+userRouter.get("/verifyEventJoining",authorizationMiddleware,eventController.verifyEventJoining.bind(eventController))
 
 
 

@@ -46,10 +46,7 @@ export default class EventController implements IEventController {
             res.status(404).json(response)
             return
         } catch (error) {
-            console.log("hafskdhfksjfhfhfhfhfhfhfhfhfhfhfhfhfhfhfhfhfhfhfhfhfhfhfha");
-            
-            res.status(500).json({message:error})
-            console.log(error);
+            res.status(500).json(error)
             return
         }
     }
@@ -61,8 +58,7 @@ export default class EventController implements IEventController {
                 res.status(200).json(response)
             }
         } catch (error) {
-            res.status(500).json({message:error})
-            console.log(error);
+            res.status(500).json(error)
             return
         }
     }
@@ -78,8 +74,7 @@ export default class EventController implements IEventController {
             res.status(401).json({message:'not found'})
             return
         } catch (error) {
-            res.status(500).json({message:error})
-            console.log(error);
+            res.status(500).json(error)
             return
         }
     }
@@ -100,8 +95,7 @@ export default class EventController implements IEventController {
             return
             
         } catch (error) {
-            res.status(500).json({message:error})
-            console.log(error);
+            res.status(500).json(error)
             return
         }
     }
@@ -120,8 +114,7 @@ export default class EventController implements IEventController {
             res.status(404).json({message:"Not found"})
             return
         } catch (error) {
-            res.status(500).json({message:error})
-            console.log(error);
+            res.status(500).json(error)
             return
         }
     }
@@ -142,8 +135,7 @@ export default class EventController implements IEventController {
             }
             res.status(400).json('somthing went wrong')   
         } catch (error) {
-            res.status(500).json({message:error})
-            console.log(error);
+            res.status(500).json(error)
             return
         }
     }
@@ -164,8 +156,7 @@ export default class EventController implements IEventController {
             }
             res.status(400).json('somthing went wrong')   
         } catch (error) {
-            res.status(500).json({message:error})
-            console.log(error);
+            res.status(500).json(error)
             return
         }
     }
@@ -185,8 +176,7 @@ export default class EventController implements IEventController {
             return;
             
         } catch (error) {
-            res.status(500).json({message:error})
-            console.log(error);
+            res.status(500).json(error)
             return
         }
     }
@@ -205,8 +195,8 @@ export default class EventController implements IEventController {
           res.status(400).json({message:response?.message})
           return
         } catch (error) {
-          res.status(500)
-          console.log(error);
+            res.status(500).json(error)
+            return
         }
     }
 
@@ -227,8 +217,8 @@ export default class EventController implements IEventController {
 
             res.status(401).json(response)
         } catch (error) {
-            res.status(500)
-            console.log(error);
+            res.status(500).json(error)
+            return
         }
     }
 
@@ -248,8 +238,8 @@ export default class EventController implements IEventController {
             res.status(401).json(response)
             return
         } catch (error) {
-            res.status(500)
-            console.log(error);
+            res.status(500).json(error)
+            return
         }
     }
 
@@ -264,8 +254,8 @@ export default class EventController implements IEventController {
 
             res.status(400).json({message:"not found!"})
         } catch (error) {
-            res.status(500)
-            console.log(error);
+            res.status(500).json(error)
+            return
         }
     }
 
@@ -282,8 +272,8 @@ export default class EventController implements IEventController {
 
             res.status(400).json({message:"not found!"})
         } catch (error) {
-            res.status(500)
-            console.log(error);
+            res.status(500).json(error)
+            return
         }
     }
 
@@ -301,8 +291,8 @@ export default class EventController implements IEventController {
 
             res.status(400).json(response?.message)
         } catch (error) {
-            res.status(500)
-            console.log(error);
+            res.status(500).json(error)
+            return
         }
     }
 
@@ -320,8 +310,8 @@ export default class EventController implements IEventController {
             res.status(400).json(response)
 
         } catch (error) {
-            res.status(500)
-            console.log(error);
+            res.status(500).json(error)
+            return
         }
     }
 
@@ -341,15 +331,15 @@ export default class EventController implements IEventController {
             return
 
         } catch (error) {
-            res.status(500)
-            console.log(error);
+            res.status(500).json(error)
+            return
         }
     }
 
     async verifyEventJoining(req: IAuthRequest, res: Response, next: NextFunction): Promise<void> {
         try {
             const userId = req.userId as string
-            const meetURL = req.body.meetURL as string
+            const meetURL = req.query.meetURL as string
 
             const response = await this.eventUseCase.verifyEventJoining(meetURL,userId)
 
@@ -361,8 +351,8 @@ export default class EventController implements IEventController {
             res.status(400).json(response)
             return
         } catch (error) {
-            res.status(500)
-            console.log(error);
+            res.status(500).json(error)
+            return
         }
     }
 
@@ -378,8 +368,8 @@ export default class EventController implements IEventController {
             res.status(400).json({message:"didt get enithing.."})
             return
         } catch (error) {
-            res.status(500)
-            console.log(error);
+            res.status(500).json(error)
+            return
         }
     }
 }

@@ -36,6 +36,6 @@ export default interface IEventRepository {
     saveMeetUrl(eventId:string , eventMeetUrl:string):Promise<void>
     getEventByMeetLink(meetURL:string):Promise<Model<IEvent,IEventCreationAttributes> | null>
     getDataCounts():Promise<dataCountResponse | null>
-    createNotification(userId:string,notification:string):Promise<Model<INotification,INotificationCreationAttributes>>
+    createNotification(userId:string,notificationHead:string,notification:string):Promise<Model<INotification,INotificationCreationAttributes>>
 
 }

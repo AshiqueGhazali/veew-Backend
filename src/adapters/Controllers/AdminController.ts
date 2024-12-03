@@ -28,7 +28,8 @@ class AdminController implements IAdminController {
       res.status(200).json({ success: true, message: "login successfull" });
       return;
     } catch (error) {
-      throw error;
+      res.status(500).json(error)
+      return
     }
   }
 
@@ -43,7 +44,8 @@ class AdminController implements IAdminController {
       res.status(401).json({ status: false });
       return;
     } catch (error) {
-      throw error;
+      res.status(500).json(error)
+      return
     }
   }
 
@@ -54,7 +56,8 @@ class AdminController implements IAdminController {
 
       return;
     } catch (error) {
-      throw error;
+      res.status(500).json(error)
+      return
     }
   }
 
@@ -66,7 +69,8 @@ class AdminController implements IAdminController {
 
       return;
     } catch (error) {
-      throw error;
+      res.status(500).json(error)
+      return
     }
   }
 
@@ -83,7 +87,8 @@ class AdminController implements IAdminController {
       res.status(401).json({ message: "could't find user" });
       return;
     } catch (error) {
-      throw error;
+      res.status(500).json(error)
+      return
     }
   }
 
@@ -96,7 +101,8 @@ class AdminController implements IAdminController {
       }
       res.status(200).json(response);
     } catch (error) {
-      throw error;
+      res.status(500).json(error)
+      return
     }
   }
 
@@ -107,7 +113,8 @@ class AdminController implements IAdminController {
       res.status(200).json(plans);
       return;
     } catch (error) {
-      throw error;
+      res.status(500).json(error)
+      return
     }
   }
 
@@ -129,7 +136,8 @@ class AdminController implements IAdminController {
       res.status(200).json(response.message);
       return;
     } catch (error) {
-      throw error;
+      res.status(500).json(error)
+      return
     }
   }
 
@@ -147,7 +155,8 @@ class AdminController implements IAdminController {
         res.status(200).json(response)
         return;
       } catch (error) {
-        throw error;
+        res.status(500).json(error)
+        return
       }
   }
 
@@ -163,7 +172,7 @@ class AdminController implements IAdminController {
         res.status(400).json({message:"somthing went wrong!"})
         
       } catch (error) {
-        console.log(error);
+        res.status(500).json(error)
         return
       }
   }

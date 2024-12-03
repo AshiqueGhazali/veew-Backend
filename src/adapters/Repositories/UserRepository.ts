@@ -278,13 +278,27 @@ class UserRepository implements IUserRepository {
       }
   }
 
-  async createNotification(userId: string, notification: string): Promise<Model<INotification, INotificationCreationAttributes>> {
+  async createNotification(userId: string, notificationHead:string, notification: string): Promise<Model<INotification, INotificationCreationAttributes>> {
       try {
         const newNotification = await this.NotificationModel.create({
           userId,
+          notificationHead,
           notification
         })
         return newNotification
+      } catch (error) {
+        throw error
+      }
+  }
+
+  async fetchUserNotifications(userId: string): Promise<Model<INotification, INotificationCreationAttributes>[] | null> {
+      try {
+        const notifications = await this.NotificationModel.findAll({
+          where: {userId},
+          order: [['createdAt', 'DESC']],
+        })
+
+        return notifications
       } catch (error) {
         throw error
       }

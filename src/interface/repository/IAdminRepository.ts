@@ -20,6 +20,6 @@ export default interface IAdminRepository {
   getEventCountPerCategory():Promise<IEventCountPerCategory[] | null>
   getLetestUsers():Promise<Model<IUser | IUserCreationAttributes>[] | null>
   getLastMonthTransactions():Promise<ILastMonthTransactions>
-  createNotification(userId:string,notification:string):Promise<Model<INotification,INotificationCreationAttributes>>
+  createNotification(userId:string,notificationHead:string, notification:string):Promise<Model<INotification,INotificationCreationAttributes>>
 
 }

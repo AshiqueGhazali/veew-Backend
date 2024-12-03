@@ -77,8 +77,8 @@ class UserAuthUseCase implements IUserAuthUseCase {
 
       const user = await this.userAuthRepository.createUser(data);
       if(user){
-        const message = 'Registration Successful! Welcome to veew. Start exploring now!'
-        const notification = await this.userAuthRepository.createNotification(user?.dataValues.id,message)
+        const message = 'Welcome to veew. Start exploring now!'
+        const notification = await this.userAuthRepository.createNotification(user?.dataValues.id, 'Registration Successful!' , message)
       }
     } catch (error) {
       throw error

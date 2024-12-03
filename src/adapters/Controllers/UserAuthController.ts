@@ -30,7 +30,7 @@ class UserAuthController implements IUserAuthController {
       app.locals.email = email;
       res.status(200).json({ message: "OTP sent successfully" });
     } catch (error) {
-      res.status(500).json({ message: "Internal server error" });
+      res.status(500).json(error)
     }
   }
 
@@ -49,7 +49,7 @@ class UserAuthController implements IUserAuthController {
       app.locals.email = email;
       res.status(200).json({ message: "OTP sent successfully" });
     } catch (error) {
-      res.status(500).json({ message: "Internal server error" });
+      res.status(500).json(error)
     }
   }
 
@@ -67,8 +67,8 @@ class UserAuthController implements IUserAuthController {
       } else {
         res.status(401).json({ message: "otp verification failed" });
       }
-    } catch (err) {
-      res.status(500).json({ message: "Internal server error" });
+    } catch (error) {
+      res.status(500).json(error)
     }
   }
 
@@ -86,8 +86,8 @@ class UserAuthController implements IUserAuthController {
       } else {
         res.status(401).json({ message: "otp verification failed" });
       }
-    } catch (err) {
-      res.status(500).json({ message: "Internal server error" });
+    } catch (error) {
+      res.status(500).json(error)
     }
   }
 
@@ -101,8 +101,7 @@ class UserAuthController implements IUserAuthController {
         .status(200)
         .json({ success: true, message: "successfylly created new account" });
     } catch (error) {
-      console.log(error);
-      res.status(500).json({ message: "Internal server error" });
+      res.status(500).json(error)
     }
   }
 
@@ -126,7 +125,7 @@ class UserAuthController implements IUserAuthController {
 
       res.status(200).json(status);
     } catch (error) {
-      res.status(500).json({ message: "Internal server error" });
+      res.status(500).json(error)
     }
   }
 
@@ -135,7 +134,8 @@ class UserAuthController implements IUserAuthController {
       res.cookie("token", "", { httpOnly: true, expires: new Date() });
       res.status(200).json({ status: true, message: "logout completed" });
     } catch (error) {
-      res.json(error);
+      res.status(500).json(error)
+      return
     }
   }
 
@@ -145,8 +145,8 @@ class UserAuthController implements IUserAuthController {
       const response = await this.userAuthUseCase.verifyToken(token);
       res.status(200).json(response);
     } catch (error) {
-      res.status(401).json(error);
-      console.log(error);
+      res.status(500).json(error)
+      return
     }
   }
 
@@ -167,8 +167,8 @@ class UserAuthController implements IUserAuthController {
       res.status(401).json(response?.message);
       return;
     } catch (error) {
-      res.status(401).json(error);
-      console.log(error);
+      res.status(500).json(error)
+      return
     }
   }
 
@@ -194,7 +194,8 @@ class UserAuthController implements IUserAuthController {
         return
       }
     } catch (error) {
-      console.log(error);
+      res.status(500).json(error)
+      return
     }
 
   }

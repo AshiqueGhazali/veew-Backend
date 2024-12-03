@@ -24,7 +24,7 @@ class UserController implements IUserController {
       }
       res.status(200).json({ userData: data });
     } catch (error) {
-      throw error;
+        res.status(500).json(error)
     }
   }
 
@@ -50,7 +50,7 @@ class UserController implements IUserController {
 
       return;
     } catch (error) {
-      throw error;
+        res.status(500).json(error)
     }
   }
 
@@ -68,7 +68,9 @@ class UserController implements IUserController {
       } else {
         res.status(401).json({ message: "user id is not getting" });
       }
-    } catch (error) {}
+    } catch (error) {
+      res.status(500).json(error)
+    }
   }
 
   async getAllPlans(
@@ -86,8 +88,7 @@ class UserController implements IUserController {
       res.status(200).json(response);
       return;
     } catch (error) {
-      res.status(500)
-      console.log(error);
+      res.status(500).json(error)
     }
   }
 
@@ -107,9 +108,7 @@ class UserController implements IUserController {
         res.status(400).json({message:response?.message})
         return
       } catch (error) {
-        res.status(500)
-        console.log(error);
-        
+        res.status(500).json(error)
       }
   }
 
@@ -129,8 +128,7 @@ class UserController implements IUserController {
         res.status(400).json(response)
         return   
       } catch (error) {
-        res.status(500)
-        console.log(error);
+        res.status(500).json(error)
       }
   }
 
@@ -148,8 +146,7 @@ class UserController implements IUserController {
         res.status(200).json(response)
         return
       } catch (error) {
-        res.status(500)
-        console.log(error);
+        res.status(500).json(error)
       }
   }
 
@@ -167,8 +164,7 @@ class UserController implements IUserController {
         res.status(400).json({message:response?.message})
         return
       } catch (error) {
-        res.status(500)
-        console.log(error);
+        res.status(500).json(error)
       }
   }
 
@@ -187,8 +183,7 @@ class UserController implements IUserController {
         res.status(400).json(response)
         return   
       } catch (error) {
-        res.status(500)
-        console.log(error);
+        res.status(500).json(error)
       }
   }
 
@@ -205,8 +200,7 @@ class UserController implements IUserController {
 
         res.status(401).json({message:"not found!"})
       } catch (error) {
-        res.status(500)
-        console.log(error);
+        res.status(500).json(error)
       }
   }
 
@@ -223,12 +217,27 @@ class UserController implements IUserController {
 
         res.status(400).json('transaction not found!')
       } catch (error) {
-        res.status(500)
-        console.log(error);
+        res.status(500).json(error)
       }
   }
 
-  
+  async getUserNotification(req: IAuthRequest, res: Response, next: NextFunction): Promise<void> {
+      try {
+        const userId = req.userId as string
+
+        const response = await this.userUseCase.getUserNotifications(userId)
+
+        if(response){
+          res.status(200).json(response);
+          return
+        }
+
+        res.status(400).json('Notifications not found')
+
+      } catch (error) {
+        res.status(500).json(error)
+      }
+  }
 }
 
 export default UserController;

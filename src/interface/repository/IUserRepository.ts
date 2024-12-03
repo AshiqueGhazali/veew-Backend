@@ -41,5 +41,6 @@ export default interface IUserRepository {
   createTransactions(data:transactionParams):Promise<Model<ITransaction,ITransactionCreationAttributes>|null>
   fetchUserWallet(userId:string):Promise<Model<IWallet,IWalletCreationAttributes>|null>;
   fetchUserWalletTransactions(userId:string):Promise<Model<ITransaction,ITransactionCreationAttributes>[]|null>;
-  createNotification(userId:string,notification:string):Promise<Model<INotification,INotificationCreationAttributes>>
+  createNotification(userId:string,notificationHead:string,notification:string):Promise<Model<INotification,INotificationCreationAttributes>>
+  fetchUserNotifications(userId:string):Promise<Model<INotification,INotificationCreationAttributes>[] | null>
 }

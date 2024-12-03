@@ -15,6 +15,6 @@ export default interface IUserAuthRepository {
   isBlock(userId: string): Promise<boolean>;
   updatePassword(password: string, email: string): Promise<void>;
   saveGooogleAuth(data:googleAuthBody):Promise<Model<IUser|IUserCreationAttributes>>
-  createNotification(userId:string,notification:string):Promise<Model<INotification,INotificationCreationAttributes>>
+  createNotification(userId:string,notificationHead:string,notification:string):Promise<Model<INotification,INotificationCreationAttributes>>
 
 }
