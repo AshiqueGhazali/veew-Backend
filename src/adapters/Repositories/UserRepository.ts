@@ -12,6 +12,7 @@ import { IUserSubscription, IUserSubscriptionCreationAttributes } from "../../en
 import { Op } from "sequelize";
 import { IWallet, IWalletCreationAttributes } from "../../entity/walletEntity";
 import { ITransaction, ITransactionCreationAttributes, paymentMethod, transactionPurpose, transactionType } from "../../entity/transactionEntity";
+import { INotification, INotificationCreationAttributes } from "../../entity/notificationsEntity";
 
 class UserRepository implements IUserRepository {
   private UserModel: ModelDefined<IUser, IUserCreationAttributes>;
@@ -19,6 +20,7 @@ class UserRepository implements IUserRepository {
   private UserSubscriptionModel: ModelDefined<IUserSubscription,IUserSubscriptionCreationAttributes>
   private WalletModal: ModelDefined<IWallet,IWalletCreationAttributes>;
   private TransactionModel:ModelDefined<ITransaction,ITransactionCreationAttributes>
+  private NotificationModel:ModelDefined<INotification,INotificationCreationAttributes>
 
   constructor(
     UserModel: ModelDefined<IUser, IUserCreationAttributes>,
@@ -26,12 +28,14 @@ class UserRepository implements IUserRepository {
     UserSubscriptionModel: ModelDefined<IUserSubscription,IUserSubscriptionCreationAttributes>,
     WalletModal: ModelDefined<IWallet,IWalletCreationAttributes>,
     TransactionModel:ModelDefined<ITransaction,ITransactionCreationAttributes>,
+    NotificationModel:ModelDefined<INotification,INotificationCreationAttributes>
   ) {
     this.UserModel = UserModel;
     this.PricingModel = PricingModel;
     this.UserSubscriptionModel = UserSubscriptionModel
     this.WalletModal = WalletModal;
     this.TransactionModel = TransactionModel;
+    this.NotificationModel = NotificationModel
   }
 
   async fetchProfileData(
@@ -269,6 +273,18 @@ class UserRepository implements IUserRepository {
         }})
 
         return transactions
+      } catch (error) {
+        throw error
+      }
+  }
+
+  async createNotification(userId: string, notification: string): Promise<Model<INotification, INotificationCreationAttributes>> {
+      try {
+        const newNotification = await this.NotificationModel.create({
+          userId,
+          notification
+        })
+        return newNotification
       } catch (error) {
         throw error
       }

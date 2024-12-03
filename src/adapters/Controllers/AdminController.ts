@@ -167,6 +167,22 @@ class AdminController implements IAdminController {
         return
       }
   }
+
+  async getDashboardDatas(req: Request, res: Response): Promise<void> {
+      try {
+        const response = await this.adminUsecase.getDashboardDatas()
+
+        if(response){
+          res.status(200).json(response)
+          return
+        }
+
+        res.status(400).json({message:"nothinngg"})
+      } catch (error) {
+        res.status(500).json(error)
+        return
+      }
+  }
 }
 
 export default AdminController;

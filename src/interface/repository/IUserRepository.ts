@@ -7,6 +7,7 @@ import {
 import { IUserSubscription, IUserSubscriptionCreationAttributes } from "../../entity/userSubscriptionEntity";
 import { ITransaction, ITransactionCreationAttributes, paymentMethod, transactionPurpose, transactionType } from "../../entity/transactionEntity";
 import { IWallet, IWalletCreationAttributes } from "../../entity/walletEntity";
+import { INotification, INotificationCreationAttributes } from "../../entity/notificationsEntity";
 
 export interface editData {
   firstName: string;
@@ -40,4 +41,5 @@ export default interface IUserRepository {
   createTransactions(data:transactionParams):Promise<Model<ITransaction,ITransactionCreationAttributes>|null>
   fetchUserWallet(userId:string):Promise<Model<IWallet,IWalletCreationAttributes>|null>;
   fetchUserWalletTransactions(userId:string):Promise<Model<ITransaction,ITransactionCreationAttributes>[]|null>;
+  createNotification(userId:string,notification:string):Promise<Model<INotification,INotificationCreationAttributes>>
 }

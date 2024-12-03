@@ -71,10 +71,18 @@ class UserAuthUseCase implements IUserAuthUseCase {
   }
 
   async UserRegister(data: registerBody): Promise<void> {
-    const bcryptPassword = await this.hashingService.hashing(data.password);
-    data.password = bcryptPassword;
+    try {
+      const bcryptPassword = await this.hashingService.hashing(data.password);
+      data.password = bcryptPassword;
 
-    await this.userAuthRepository.createUser(data);
+      const user = await this.userAuthRepository.createUser(data);
+      if(user){
+        const message = 'Registration Successful! Welcome to veew. Start exploring now!'
+        const notification = await this.userAuthRepository.createNotification(user?.dataValues.id,message)
+      }
+    } catch (error) {
+      throw error
+    }
   }
 
   async isEmailExist(email: string): Promise<resObj | null> {

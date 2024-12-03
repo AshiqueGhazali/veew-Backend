@@ -17,17 +17,19 @@ import EventController from "../../adapters/Controllers/EventController";
 import WalletModel from "../models/WalletModel";
 import TransactionModel from "../models/TransactionModel";
 import TicketModel from "../models/TicketModel";
+import NotificationModel from "../models/NotificationModel";
+
 
 const userRouter: Router = express.Router();
 
 const jwtService = new JwtService();
 const stripePayment =new StripePayment()
 
-const userRepository = new UserRepository(UserModel, PricingModel,UserSubscriptionModel,WalletModel,TransactionModel);
+const userRepository = new UserRepository(UserModel, PricingModel,UserSubscriptionModel,WalletModel,TransactionModel, NotificationModel);
 const userUseCase = new UserUseCase(userRepository, jwtService , stripePayment );
 const userController = new UserController(userUseCase);
 
-const eventRepository = new EventRepository(EventModel,UserModel,TicketModel,WalletModel,TransactionModel)
+const eventRepository = new EventRepository(EventModel,UserModel,TicketModel,WalletModel,TransactionModel, NotificationModel)
 const eventUseCase = new EventUseCase(eventRepository, stripePayment)
 const eventController = new EventController(eventUseCase)
 
@@ -38,6 +40,8 @@ userRouter.get("/getAllPlans",authorizationMiddleware,userController.getAllPlans
 userRouter.post("/createPayment",authorizationMiddleware,userController.createPayment.bind(userController));
 userRouter.post("/subscribePlan",authorizationMiddleware,userController.conformSubscription.bind(userController));
 userRouter.get("/getPlanOfUser",authorizationMiddleware,userController.getUserSubscriptionPlan.bind(userController));
+userRouter.get('/getDataCounts',authorizationMiddleware,eventController.getDataCounts.bind(eventController))
+
 
 
 // event controller routes :

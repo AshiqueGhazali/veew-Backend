@@ -9,6 +9,7 @@ import EventModel from "../models/EventModel";
 import TicketModel from "../models/TicketModel";
 import WalletModel from "../models/WalletModel";
 import TransactionModel from "../models/TransactionModel";
+import NotificationModel from "../models/NotificationModel";
 
 
 
@@ -27,11 +28,11 @@ const stripePayment =new StripePayment()
 
 
 
-const adminRepository = new AdminRepository(UserModel, Pricing, UserSubscriptionModel)
+const adminRepository = new AdminRepository(UserModel, Pricing, UserSubscriptionModel , EventModel , TicketModel , TransactionModel, NotificationModel)
 const adminUseCase = new AdminUseCase(adminRepository,jwtService)
 const adminController = new AdminController(adminUseCase)
 
-const eventRepository = new EventRepository(EventModel,UserModel,TicketModel,WalletModel,TransactionModel)
+const eventRepository = new EventRepository(EventModel,UserModel,TicketModel,WalletModel,TransactionModel, NotificationModel)
 const eventUseCase = new EventUseCase(eventRepository,stripePayment)
 const eventController = new EventController(eventUseCase)
 
@@ -48,7 +49,7 @@ adminRoutes.put('/updatePlan',adminController.editPricingPlan.bind(adminControll
 adminRoutes.delete('/deletePlan',authorizationMiddleware,adminController.deletePlan.bind(adminController))
 adminRoutes.get('/getAllSubscribers',authorizationMiddleware,adminController.getAllSubscribers.bind(adminController))
 adminRoutes.get('/getDataCounts',authorizationMiddleware,eventController.getDataCounts.bind(eventController))
-
+adminRoutes.get('/getDashboardData',authorizationMiddleware,adminController.getDashboardDatas.bind(adminController))
 
 // admin event management
 adminRoutes.get('/getAllEvents',authorizationMiddleware,eventController.getAllEvents.bind(eventController))

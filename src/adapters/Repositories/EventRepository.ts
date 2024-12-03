@@ -15,6 +15,8 @@ import { transactionParams } from "../../interface/repository/IUserRepository";
 import { ITransaction, ITransactionCreationAttributes } from "../../entity/transactionEntity";
 import { IWallet, IWalletCreationAttributes } from "../../entity/walletEntity";
 import UserSubscription from "../../framework/models/UserSubscriptionModel";
+import { Op } from "sequelize";
+import { INotification, INotificationCreationAttributes } from "../../entity/notificationsEntity";
 
 export default class EventRepository implements IEventRepository {
   private EventModel: ModelDefined<IEvent, IEventCreationAttributes>;
@@ -22,6 +24,7 @@ export default class EventRepository implements IEventRepository {
   private TicketModel:ModelDefined<ITicket,ITicketCreationAttributes>
   private WalletModal:ModelDefined<IWallet,IWalletCreationAttributes>
   private TransactionModel:ModelDefined<ITransaction,ITransactionCreationAttributes>
+  private NotificationModel:ModelDefined<INotification,INotificationCreationAttributes>
 
   constructor(
     EventModel: ModelDefined<IEvent, IEventCreationAttributes>,
@@ -29,6 +32,7 @@ export default class EventRepository implements IEventRepository {
     TicketModel:ModelDefined<ITicket,ITicketCreationAttributes>,
     WalletModal:ModelDefined<IWallet,IWalletCreationAttributes>,
     TransactionModel:ModelDefined<ITransaction,ITransactionCreationAttributes>,
+    NotificationModel:ModelDefined<INotification,INotificationCreationAttributes>
 
   ) {
     this.EventModel = EventModel;
@@ -36,6 +40,7 @@ export default class EventRepository implements IEventRepository {
     this.TicketModel = TicketModel;
     this.WalletModal = WalletModal
     this.TransactionModel = TransactionModel;
+    this.NotificationModel = NotificationModel
   }
 
   async createEvent(
@@ -370,19 +375,76 @@ export default class EventRepository implements IEventRepository {
 
   async getDataCounts(): Promise<dataCountResponse | null> {
       try {
+        const now = new Date();
+
         const totalUsers = await this.UserModel.count()
-        const totalEvents = await this.EventModel.count()
+        const totalExpairedEvents = await this.EventModel.count({
+          where: {
+            [Op.or]: [
+              {
+                date: {
+                  [Op.lt]: now,
+                },
+              },
+              {
+                [Op.and]: [
+                  { date: { [Op.eq]: now.toISOString().split("T")[0] } },
+                  {
+                    endTime: {
+                      [Op.lt]: now.toTimeString().split(" ")[0],
+                    },
+                  },
+                ],
+              },
+            ],
+          },
+        });
+
+        const totalUpcomingEvents = await this.EventModel.count({
+          where: {
+            [Op.or]: [
+              {
+                date: {
+                  [Op.gt]: now,
+                },
+              },
+              {
+                [Op.and]: [
+                  { date: { [Op.eq]: now.toISOString().split("T")[0] } },
+                  {
+                    endTime: {
+                      [Op.gte]: now.toTimeString().split(" ")[0],
+                    },
+                  },
+                ],
+              },
+            ],
+          },
+        });
         const totalSubscribers = await UserSubscription.count()
         const totalTickets = await this.TicketModel.count()
 
         return {
           totalUsers,
-          totalEvents,
+          totalExpairedEvents,
+          totalUpcomingEvents,
           totalSubscribers,
           totalTickets
         }
       } catch (error) {
         throw error
       }
+  }
+
+  async createNotification(userId: string, notification: string): Promise<Model<INotification, INotificationCreationAttributes>> {
+    try {
+      const newNotification = await this.NotificationModel.create({
+        userId,
+        notification
+      })
+      return newNotification
+    } catch (error) {
+      throw error
+    }
   }
 }

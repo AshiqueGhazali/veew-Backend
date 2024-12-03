@@ -33,7 +33,8 @@ export interface startEventRes extends resObj {
 
 export interface dataCountResponse {
     totalUsers:number;
-    totalEvents:number;
+    totalUpcomingEvents:number;
+    totalExpairedEvents:number;
     totalSubscribers:number;
     totalTickets:number
 }

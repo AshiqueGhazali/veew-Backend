@@ -22,6 +22,8 @@ export interface ITransaction {
     paymentMethod:paymentMethod;
     purpose:transactionPurpose;
     amount:number;
+    createdAt?: Date;
+    updatedAt?:Date
   }
 
 

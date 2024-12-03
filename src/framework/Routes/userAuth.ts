@@ -6,6 +6,8 @@ import UserAuthRepository from "../../adapters/Repositories/UserAuthRepository";
 const router: Router = express.Router()
 
 import OtpModel  from "../models/OtpModel";
+import NotificationModel from "../models/NotificationModel";
+
 
 import OtpService from "../utils/otpService";
 import HashingService from "../utils/hashingService";
@@ -17,7 +19,7 @@ const hashingService = new HashingService()
 const jwtService = new JwtService()
 
 
-const userAuthRepository = new UserAuthRepository(OtpModel)
+const userAuthRepository = new UserAuthRepository(OtpModel, NotificationModel)
 const userAuthUseCase = new UserAuthUseCase(userAuthRepository,otpService,hashingService,jwtService)
 const userAuthController = new UserAuthController(userAuthUseCase);
 

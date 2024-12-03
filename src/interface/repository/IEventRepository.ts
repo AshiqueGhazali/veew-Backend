@@ -5,6 +5,7 @@ import { ITicket, ITicketCreationAttributes } from "../../entity/ticketEntity";
 import { transactionParams } from "./IUserRepository";
 import { ITransaction, ITransactionCreationAttributes } from "../../entity/transactionEntity";
 import { IWallet, IWalletCreationAttributes } from "../../entity/walletEntity";
+import { INotification, INotificationCreationAttributes } from "../../entity/notificationsEntity";
 
 export interface createTicketParams {
     ticketCode:string
@@ -35,4 +36,6 @@ export default interface IEventRepository {
     saveMeetUrl(eventId:string , eventMeetUrl:string):Promise<void>
     getEventByMeetLink(meetURL:string):Promise<Model<IEvent,IEventCreationAttributes> | null>
     getDataCounts():Promise<dataCountResponse | null>
+    createNotification(userId:string,notification:string):Promise<Model<INotification,INotificationCreationAttributes>>
+
 }

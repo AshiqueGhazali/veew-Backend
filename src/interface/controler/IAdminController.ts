@@ -17,4 +17,5 @@ export default interface IAdminController {
   editPricingPlan(req: Request, res: Response): Promise<void>;
   deletePlan(req:IPlanDeleteRequest, res:Response): Promise<void>
   getAllSubscribers(req: Request, res: Response): Promise<void>;
+  getDashboardDatas(req: Request, res: Response): Promise<void>;
 }

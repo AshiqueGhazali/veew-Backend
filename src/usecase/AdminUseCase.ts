@@ -5,6 +5,7 @@ import IAdminUseCase, {
   addPlanParams,
   adminresObj,
   adminVerifyTokenResponse,
+  IDashboardDataResponse,
   loginParams,
 } from "../interface/useCase/IAdminUseCase";
 import IJwtService from "../interface/utils/IJwtService";
@@ -206,6 +207,26 @@ class AdminUseCase implements IAdminUseCase {
       } catch (error) {
         console.log(error);
         return
+      }
+  }
+
+  async getDashboardDatas(): Promise<IDashboardDataResponse | null> {
+      try {
+        const eventCountPerDay = await this.adminRepository.getEventCountPerDay()
+        const eventCountPerCategory = await this.adminRepository.getEventCountPerCategory()
+        const latestUsers = await this.adminRepository.getLetestUsers()  
+        const LastMonthTransactions = await this.adminRepository.getLastMonthTransactions()             
+
+        console.log("afdsafsf",LastMonthTransactions.debitData);
+        
+        return {
+          eventCountPerDay,
+          eventCountPerCategory,
+          latestUsers,
+          LastMonthTransactions
+        }
+      } catch (error) {
+        throw error
       }
   }
 }

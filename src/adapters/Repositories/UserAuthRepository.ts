@@ -6,12 +6,15 @@ import { Model } from "sequelize";
 import { registerBody } from "../../interface/useCase/IUserAuthUseCase";
 import { IUserCreationAttributes, IUser } from "../../entity/userEntity";
 import { googleAuthBody } from "../../interface/controler/IUserAuthController";
+import { INotification, INotificationCreationAttributes } from "../../entity/notificationsEntity";
 
 class UserAuthRepository implements IUserAuthRepository {
   private OtpModel: ModelDefined<IOtp, IOtpCreationAttributes>;
+  private NotificationModel:ModelDefined<INotification,INotificationCreationAttributes>
 
-  constructor(OtpModel: ModelDefined<IOtp, IOtpCreationAttributes>) {
+  constructor(OtpModel: ModelDefined<IOtp, IOtpCreationAttributes>, NotificationModel:ModelDefined<INotification,INotificationCreationAttributes>) {
     this.OtpModel = OtpModel;
+    this.NotificationModel = NotificationModel
   }
 
   async savedOtp(email: string, otp: number): Promise<void> {
@@ -53,14 +56,21 @@ class UserAuthRepository implements IUserAuthRepository {
     return otpdata;
   }
 
-  async createUser(data: registerBody): Promise<void> {
-    const { firstName, lastName, email, password } = data;
-    const newUser = await User.create({
-      firstName: firstName,
-      lastName: lastName,
-      email: email,
-      password: password,
-    });
+  async createUser(data: registerBody): Promise<Model<IUser, IUserCreationAttributes> | null> {
+    try {
+      const { firstName, lastName, email, password } = data;
+      const newUser = await User.create({
+        firstName: firstName,
+        lastName: lastName,
+        email: email,
+        password: password,
+      });
+
+      return newUser
+  
+    } catch (error) {
+      throw error
+    }
   }
 
   async isBlock(userId: string): Promise<boolean> {
@@ -106,6 +116,18 @@ class UserAuthRepository implements IUserAuthRepository {
        throw Error()
     }
  }
+
+ async createNotification(userId: string, notification: string): Promise<Model<INotification, INotificationCreationAttributes>> {
+    try {
+      const newNotification = await this.NotificationModel.create({
+        userId,
+        notification
+      })
+      return newNotification
+    } catch (error) {
+      throw error
+    }
+  }
 }
 
 export default UserAuthRepository;

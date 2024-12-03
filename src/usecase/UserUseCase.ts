@@ -144,6 +144,13 @@ class UserUseCase implements IuserUseCase {
           amount:planData.dataValues.price
         }
         const transaction = await this.userRepository.createTransactions(transactionData)
+        if(transaction){
+          const messege = `Transaction Successful! Your payment for plan subscription has been completed.`
+          await this.userRepository.createNotification(userId,messege)  
+        }
+        const notificationMessage = `Your subscription to ${planData.dataValues.title} has been successfully activated.`
+        const notification = await this.userRepository.createNotification(userId,notificationMessage)
+        
         return {
           status:true,
           message:"plan subscribed successfully"
@@ -219,6 +226,8 @@ class UserUseCase implements IuserUseCase {
           const transaction = await this.userRepository.createTransactions(transactionData)
 
           if(transaction){
+            const message = `Awesome! You've added ${transaction.dataValues.amount} to your wallet. Happy spending!`
+            await this.userRepository.createNotification(userId,message)
             return {
               status:true,
               message:`${amount} addedd to wallet!`

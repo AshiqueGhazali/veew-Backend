@@ -27,6 +27,35 @@ export interface addPlanParams{
     idealFor:string;
 }
 
+export interface IEventCountPerDay {
+    date: string; 
+    count: number;
+}
+
+export interface IEventCountPerCategory {
+    category: string; 
+    count: number;
+}
+
+export interface ChartDataPoint {
+    date: string; 
+    amount: number; 
+  }
+  
+ export interface ILastMonthTransactions {
+    debitData: ChartDataPoint[];
+    creditData: ChartDataPoint[];
+  }
+
+export interface IDashboardDataResponse {
+    eventCountPerDay:IEventCountPerDay[]|null;
+    eventCountPerCategory:IEventCountPerCategory[] | null;
+    latestUsers:Model<IUser | IUserCreationAttributes>[] | null
+    LastMonthTransactions: ILastMonthTransactions | null
+}
+
+
+
 export default interface IAdminUseCase {
     verifyLogin({userName,password}:loginParams):Promise<adminresObj | null>
     verifyToken(token:string):Promise<adminVerifyTokenResponse>
@@ -37,4 +66,5 @@ export default interface IAdminUseCase {
     editPricingPlan(planId:string,data:addPlanParams):Promise<adminresObj>
     softDeletePlan(planId:string):Promise<adminresObj | null>
     getSubscribersData():Promise<any>
+    getDashboardDatas():Promise<IDashboardDataResponse | null>
 }
