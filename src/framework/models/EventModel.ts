@@ -65,7 +65,17 @@ const Events: ModelDefined<IEvent,IEventCreationAttributes> = sequelize.define (
         eventMeetUrlUpdatedAt: {
             type: DataTypes.DATE,
             allowNull: true
-        }  
+        },
+        likes: {
+            type: DataTypes.NUMBER,
+            allowNull: true,
+            defaultValue:0
+        },
+        comments: {
+            type: DataTypes.NUMBER,
+            allowNull: true,
+            defaultValue:0
+        } 
     },
     {
         tableName: "events",

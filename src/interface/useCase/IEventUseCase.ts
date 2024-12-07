@@ -57,4 +57,6 @@ export default interface IEventUseCase {
     verifyStartEvent(userId:string , eventId:string):Promise<startEventRes | null>
     verifyEventJoining(meetUrl:string,userId:string):Promise<resObj | null>
     getDataCounts():Promise<dataCountResponse | null>
+    setStartTime(eventId:string,startTime:string):Promise<void>
+    updateEndTime(eventId:string,endTime:string):Promise<void>
 }

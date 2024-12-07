@@ -372,4 +372,28 @@ export default class EventController implements IEventController {
             return
         }
     }
+
+    async setEventStartTime(req: IAuthRequest, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const {eventId , startTime} = req.body
+            await this.eventUseCase.setStartTime(eventId,startTime)
+
+            res.status(200).json({message:"ok"})
+        } catch (error) {
+            res.status(500).json(error)
+            return
+        }
+    }
+
+    async setEventEndTime(req: IAuthRequest, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const {eventId , endTime} = req.body
+            await this.eventUseCase.updateEndTime(eventId,endTime)
+
+            res.status(200).json({message:"ok"})
+        } catch (error) {
+            res.status(500).json(error)
+            return
+        }
+    }
 }

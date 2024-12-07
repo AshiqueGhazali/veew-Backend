@@ -6,7 +6,8 @@ export enum transactionType {
 export enum transactionPurpose {
   WALLET = "WALLET",
   PRICING = "PRICING",
-  TICKET = "TICKET"
+  TICKET = "TICKET",
+  EVENT = "EVENT"
 }
 
 export enum paymentMethod {

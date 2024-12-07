@@ -20,7 +20,12 @@ export interface editProfileBody {
   image?: string;
 }
 
-
+export interface IProfileStatusesResponse {
+  totalEvents:number;
+  subscription:string;
+  totalTickets:number;
+  totalEarnings:number
+}
 
 export default interface IuserUseCase {
   getUserProfile(userId: string): Promise<Model<IUser, IUserCreationAttributes> | null>;
@@ -35,4 +40,5 @@ export default interface IuserUseCase {
   getUserWallet(userId:string):Promise<Model<IWallet,IWalletCreationAttributes>|null>;
   getUserWalletTransactions(userId:string):Promise<Model<ITransaction,ITransactionCreationAttributes>[]|null>;
   getUserNotifications(userId:string):Promise<Model<INotification,INotificationCreationAttributes>[] | null>
+  getProfileStatus(userId:string):Promise<IProfileStatusesResponse | null>
 }

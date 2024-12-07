@@ -20,4 +20,6 @@ export default interface IEventController{
     startEvent(req:IAuthRequest, res:Response, next: NextFunction):Promise<void>
     verifyEventJoining(req:IAuthRequest, res:Response, next: NextFunction):Promise<void>
     getDataCounts(req:IAuthRequest, res:Response, next: NextFunction):Promise<void>
+    setEventStartTime(req:IAuthRequest, res:Response, next: NextFunction):Promise<void>
+    setEventEndTime(req:IAuthRequest, res:Response, next: NextFunction):Promise<void>
 }

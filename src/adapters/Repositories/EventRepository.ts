@@ -17,6 +17,7 @@ import { IWallet, IWalletCreationAttributes } from "../../entity/walletEntity";
 import UserSubscription from "../../framework/models/UserSubscriptionModel";
 import { Op } from "sequelize";
 import { INotification, INotificationCreationAttributes } from "../../entity/notificationsEntity";
+import { IILiveStatusCreationAttributes, ILiveStatus } from "../../entity/liveStatus";
 
 export default class EventRepository implements IEventRepository {
   private EventModel: ModelDefined<IEvent, IEventCreationAttributes>;
@@ -25,6 +26,7 @@ export default class EventRepository implements IEventRepository {
   private WalletModal:ModelDefined<IWallet,IWalletCreationAttributes>
   private TransactionModel:ModelDefined<ITransaction,ITransactionCreationAttributes>
   private NotificationModel:ModelDefined<INotification,INotificationCreationAttributes>
+  private LiveStatusModel:ModelDefined<ILiveStatus,IILiveStatusCreationAttributes>
 
   constructor(
     EventModel: ModelDefined<IEvent, IEventCreationAttributes>,
@@ -32,7 +34,8 @@ export default class EventRepository implements IEventRepository {
     TicketModel:ModelDefined<ITicket,ITicketCreationAttributes>,
     WalletModal:ModelDefined<IWallet,IWalletCreationAttributes>,
     TransactionModel:ModelDefined<ITransaction,ITransactionCreationAttributes>,
-    NotificationModel:ModelDefined<INotification,INotificationCreationAttributes>
+    NotificationModel:ModelDefined<INotification,INotificationCreationAttributes>,
+    LiveStatusModel:ModelDefined<ILiveStatus,IILiveStatusCreationAttributes>
 
   ) {
     this.EventModel = EventModel;
@@ -40,7 +43,8 @@ export default class EventRepository implements IEventRepository {
     this.TicketModel = TicketModel;
     this.WalletModal = WalletModal
     this.TransactionModel = TransactionModel;
-    this.NotificationModel = NotificationModel
+    this.NotificationModel = NotificationModel;
+    this.LiveStatusModel = LiveStatusModel
   }
 
   async createEvent(
@@ -74,6 +78,7 @@ export default class EventRepository implements IEventRepository {
             required: true,
           },
         ],
+        order: [['createdAt', 'DESC']],
       });
 
       return events;
@@ -132,6 +137,7 @@ export default class EventRepository implements IEventRepository {
         where: {
           hostsId: userId,
         },
+        order: [['createdAt', 'DESC']],
       });
       return userEvents;
     } catch (error) {
@@ -372,13 +378,10 @@ export default class EventRepository implements IEventRepository {
         if(event){
           return event
         }else{
-          console.log("dsafaffffffffffffffffffffffffffffqwrwerewr");
           return null
           
         }
-      } catch (error) {
-        console.log("isssssssssssss",error);
-        
+      } catch (error) {        
         throw error
       }
   }
@@ -458,4 +461,35 @@ export default class EventRepository implements IEventRepository {
       throw error
     }
   }
+
+  async setEventStartTime(eventId: string, startTime: string): Promise<void> {
+      try {
+        const now = new Date();
+        const endTime = new Date(now.getTime() + 1 * 60 * 60 * 1000).toISOString()
+
+        const isLive = await this.LiveStatusModel.findOne({
+          where: { eventId },
+        });
+        if (!isLive) {
+          await this.LiveStatusModel.create({
+            eventId,
+            startTime,
+            endTime
+          });
+        }
+        return
+      } catch (error) {
+        throw error;
+      }
+  }
+
+  async setEventEndTime(eventId: string, endTime: string): Promise<void> {
+      try {
+        const isLive = await this.LiveStatusModel.update({endTime},{where:{eventId}})
+        return
+      } catch (error) {
+        throw error
+      }
+  }
+
 }

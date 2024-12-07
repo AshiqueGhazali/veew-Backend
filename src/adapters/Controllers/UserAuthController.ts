@@ -143,7 +143,12 @@ class UserAuthController implements IUserAuthController {
     try {
       const token = req.cookies.token;
       const response = await this.userAuthUseCase.verifyToken(token);
-      res.status(200).json(response);
+      if(response.status){
+        res.status(200).json(response);
+        return
+      }
+
+      res.status(401).json({message:"user not found"})
     } catch (error) {
       res.status(500).json(error)
       return

@@ -235,7 +235,9 @@ export default class EventUseCase implements IEventUseCase {
       }
 
       const getAllTickets = await this.eventRepository.getAllTicketForEvent(eventId)
-      if(getAllTickets?.length || 0 >= event.dataValues.participantCount){
+      if(getAllTickets && getAllTickets?.length > event.dataValues.participantCount){
+        console.log("the ticketttt is ",getAllTickets?.length)
+        console.log("the parrrrrrrr is ",event.dataValues.participantCount)
         return {
           status:false,
           message:"Tickets sold out"
@@ -374,7 +376,12 @@ export default class EventUseCase implements IEventUseCase {
       }
 
       const getAllTickets = await this.eventRepository.getAllTicketForEvent(eventId)
-      if(getAllTickets?.length || 0 >= event.dataValues.participantCount){
+      
+      if(getAllTickets && getAllTickets?.length > event.dataValues.participantCount){
+        console.log("the ticketttt is ",getAllTickets?.length)
+        console.log("the parrrrrrrr is ",event.dataValues.participantCount)
+
+
         return {
           status:false,
           message:"Tickets sold out"
@@ -654,5 +661,21 @@ export default class EventUseCase implements IEventUseCase {
       } catch (error) {
         throw error
       }
+  }
+
+  async setStartTime(eventId: string, startTime: string): Promise<void> {
+      try {
+        await this.eventRepository.setEventStartTime(eventId,startTime)
+      } catch (error) {
+        throw error
+      }
+  }
+
+  async updateEndTime(eventId: string, endTime: string): Promise<void> {
+    try {
+        await this.eventRepository.setEventEndTime(eventId,endTime)
+    } catch (error) {
+      throw error
+    }
   }
 }

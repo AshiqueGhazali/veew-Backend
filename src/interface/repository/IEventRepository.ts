@@ -37,5 +37,7 @@ export default interface IEventRepository {
     getEventByMeetLink(meetURL:string):Promise<Model<IEvent,IEventCreationAttributes> | null>
     getDataCounts():Promise<dataCountResponse | null>
     createNotification(userId:string,notificationHead:string,notification:string):Promise<Model<INotification,INotificationCreationAttributes>>
+    setEventStartTime(eventId:string , startTime:string):Promise<void>
+    setEventEndTime(eventId:string , endTime:string):Promise<void>
 
 }

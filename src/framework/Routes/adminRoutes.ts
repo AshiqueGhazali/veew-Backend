@@ -10,6 +10,8 @@ import TicketModel from "../models/TicketModel";
 import WalletModel from "../models/WalletModel";
 import TransactionModel from "../models/TransactionModel";
 import NotificationModel from "../models/NotificationModel";
+import LiveStatusModel from "../models/LiveStatusModel";
+
 
 
 
@@ -32,7 +34,7 @@ const adminRepository = new AdminRepository(UserModel, Pricing, UserSubscription
 const adminUseCase = new AdminUseCase(adminRepository,jwtService)
 const adminController = new AdminController(adminUseCase)
 
-const eventRepository = new EventRepository(EventModel,UserModel,TicketModel,WalletModel,TransactionModel, NotificationModel)
+const eventRepository = new EventRepository(EventModel,UserModel,TicketModel,WalletModel,TransactionModel, NotificationModel, LiveStatusModel)
 const eventUseCase = new EventUseCase(eventRepository,stripePayment)
 const eventController = new EventController(eventUseCase)
 

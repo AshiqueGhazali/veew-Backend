@@ -7,6 +7,8 @@ import Wallet from './WalletModel';
 import Transaction from './TransactionModel';
 import Ticket from './TicketModel';
 import Notification from './NotificationModel';
+import LiveStatus from './LiveStatusModel';
+import Likes from './LikesModel';
 
 Pricing.hasMany(UserSubscription, {
   foreignKey: "planId",
@@ -53,5 +55,14 @@ Ticket.belongsTo(Events, { foreignKey: 'eventId', as: 'eventDetails' });
 
 User.hasMany(Notification, { foreignKey: 'userId', as: 'notifications' })
 Notification.belongsTo(User, { foreignKey: 'userId', as: 'userNotifications' })
+
+Events.hasOne(LiveStatus, { foreignKey: 'eventId', as: 'eventStatus' })
+LiveStatus.belongsTo(Events, { foreignKey: 'eventId', as: 'liveEvent' })
+
+Events.hasMany(Likes, { foreignKey: 'eventId', as: 'eventLikes' })
+Likes.belongsTo(Events, { foreignKey: 'eventId', as: 'likedEvent' })
+
+User.hasMany(Likes, { foreignKey: 'userId', as: 'userLikes' })
+Likes.belongsTo(User, { foreignKey: 'userId', as: 'likedBy' })
 
 export { Pricing, UserSubscription, User };

@@ -199,9 +199,7 @@ class UserRepository implements IUserRepository {
             }
           ]
         })
-
-        console.log("user plan is :::",userPlan);
-        
+                
         return userPlan
       } catch (error) {
         console.log(error);
@@ -263,14 +261,16 @@ class UserRepository implements IUserRepository {
 
   async fetchUserWalletTransactions(userId: string): Promise<Model<ITransaction, ITransactionCreationAttributes>[] | null> {
       try {
-        const transactions = await this.TransactionModel.findAll({where:{
-          userId,
-          [Op.or]:[
-            {purpose:transactionPurpose.WALLET},
-            {paymentMethod:paymentMethod.WALLET}
-          ]
-          
-        }})
+        const transactions = await this.TransactionModel.findAll({
+          where: {
+            userId,
+            [Op.or]: [
+              { purpose: transactionPurpose.WALLET },
+              { paymentMethod: paymentMethod.WALLET },
+            ],
+          },
+          order: [['createdAt', 'DESC']] 
+        });
 
         return transactions
       } catch (error) {
@@ -299,6 +299,21 @@ class UserRepository implements IUserRepository {
         })
 
         return notifications
+      } catch (error) {
+        throw error
+      }
+  }
+
+  async getTotelEarningsFromEvents(userId: string): Promise<number> {
+      try {
+        const totalAmount = await this.TransactionModel.sum("amount",{
+          where:{
+            userId,
+            transactionType:transactionType.CREDIT,
+            purpose:transactionPurpose.EVENT
+          }
+        })
+        return totalAmount || 0
       } catch (error) {
         throw error
       }

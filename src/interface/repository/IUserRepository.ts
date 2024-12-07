@@ -43,4 +43,5 @@ export default interface IUserRepository {
   fetchUserWalletTransactions(userId:string):Promise<Model<ITransaction,ITransactionCreationAttributes>[]|null>;
   createNotification(userId:string,notificationHead:string,notification:string):Promise<Model<INotification,INotificationCreationAttributes>>
   fetchUserNotifications(userId:string):Promise<Model<INotification,INotificationCreationAttributes>[] | null>
+  getTotelEarningsFromEvents(userId:string):Promise<number>
 }

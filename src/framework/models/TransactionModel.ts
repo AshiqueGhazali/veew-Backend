@@ -32,7 +32,7 @@ const Transaction: ModelDefined<ITransaction, ITransactionCreationAttributes> =
         allowNull: false,
       },
       purpose: {
-        type: DataTypes.ENUM("WALLET", "PRICING", "TICKET"),
+        type: DataTypes.ENUM("WALLET", "PRICING", "TICKET" , "EVENT"),
         allowNull: false,
       },
       amount: {

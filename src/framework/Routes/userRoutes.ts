@@ -18,6 +18,7 @@ import WalletModel from "../models/WalletModel";
 import TransactionModel from "../models/TransactionModel";
 import TicketModel from "../models/TicketModel";
 import NotificationModel from "../models/NotificationModel";
+import LiveStatusModel from "../models/LiveStatusModel";
 
 
 const userRouter: Router = express.Router();
@@ -25,13 +26,15 @@ const userRouter: Router = express.Router();
 const jwtService = new JwtService();
 const stripePayment =new StripePayment()
 
-const userRepository = new UserRepository(UserModel, PricingModel,UserSubscriptionModel,WalletModel,TransactionModel, NotificationModel);
-const userUseCase = new UserUseCase(userRepository, jwtService , stripePayment );
-const userController = new UserController(userUseCase);
-
-const eventRepository = new EventRepository(EventModel,UserModel,TicketModel,WalletModel,TransactionModel, NotificationModel)
+const eventRepository = new EventRepository(EventModel,UserModel,TicketModel,WalletModel,TransactionModel, NotificationModel, LiveStatusModel)
 const eventUseCase = new EventUseCase(eventRepository, stripePayment)
 const eventController = new EventController(eventUseCase)
+
+const userRepository = new UserRepository(UserModel, PricingModel,UserSubscriptionModel,WalletModel,TransactionModel, NotificationModel);
+const userUseCase = new UserUseCase(userRepository, jwtService , stripePayment, eventRepository );
+const userController = new UserController(userUseCase);
+
+
 
 userRouter.get("/getUserData",authorizationMiddleware,userController.getUserData.bind(userController));
 userRouter.patch("/editProfile",authorizationMiddleware,userController.editUserProfile.bind(userController));
@@ -42,6 +45,7 @@ userRouter.post("/subscribePlan",authorizationMiddleware,userController.conformS
 userRouter.get("/getPlanOfUser",authorizationMiddleware,userController.getUserSubscriptionPlan.bind(userController));
 userRouter.get('/getDataCounts',authorizationMiddleware,eventController.getDataCounts.bind(eventController))
 userRouter.get('/getNotifications',authorizationMiddleware,userController.getUserNotification.bind(userController))
+userRouter.get('/getProfileStatus',authorizationMiddleware,userController.getProfileStatus.bind(userController))
 
 
 
@@ -54,6 +58,9 @@ userRouter.get("/getHostedEvents",authorizationMiddleware,eventController.getEve
 userRouter.patch("/editEventDetails",authorizationMiddleware,eventController.editEventDetails.bind(eventController));
 userRouter.patch("/editEventDate",authorizationMiddleware,eventController.editEventDate.bind(eventController));
 userRouter.patch("/cancelEvent",authorizationMiddleware,eventController.cancelEvent.bind(eventController))
+userRouter.post("/setEventStartTime",authorizationMiddleware,eventController.setEventStartTime.bind(eventController))
+userRouter.post("/setEventEndTime",authorizationMiddleware,eventController.setEventEndTime.bind(eventController))
+
 
 
 // user wallet controller routes :

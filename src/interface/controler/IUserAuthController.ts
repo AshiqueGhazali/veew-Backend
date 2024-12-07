@@ -1,4 +1,5 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
+import { IAuthRequest } from "./IUserController";
 
 export interface emailBody {
   email: string;
@@ -25,7 +26,7 @@ export default interface IUserAuthController {
   register(req: Request, res: Response): Promise<void>;
   login(req: Request, res: Response): Promise<void>;
   logout(req: Request, res: Response): Promise<void>;
-  getToken(req: Request, res: Response): Promise<void>;
+  getToken(req: IAuthRequest,res: Response,next: NextFunction): Promise<void>;
   resetPassword(req: Request, res: Response): Promise<void>;
   googleAuth(req:Request,res:Response):Promise<void>
 }

@@ -6,6 +6,7 @@ import IUserRepository, {
 } from "../interface/repository/IUserRepository";
 import IuserUseCase, {
   editProfileBody,
+  IProfileStatusesResponse,
 } from "../interface/useCase/IUserUseCase";
 import IJwtService from "../interface/utils/IJwtService";
 import { IPricing, IPricingCreationAttributes } from "../entity/pricingEntity";
@@ -15,16 +16,19 @@ import { IUserSubscription, IUserSubscriptionCreationAttributes } from "../entit
 import { IWallet, IWalletCreationAttributes } from "../entity/walletEntity";
 import { ITransaction, ITransactionCreationAttributes, paymentMethod, transactionPurpose, transactionType } from "../entity/transactionEntity";
 import { INotification, INotificationCreationAttributes } from "../entity/notificationsEntity";
+import IEventRepository from "../interface/repository/IEventRepository";
 
 class UserUseCase implements IuserUseCase {
   private userRepository: IUserRepository;
   private jwtService: IJwtService;
-  private stripePayment : IStripe
+  private stripePayment : IStripe;
+  private eventRepository : IEventRepository
 
-  constructor(userRepository: IUserRepository, jwtService: IJwtService, stripePayment : IStripe) {
+  constructor(userRepository: IUserRepository, jwtService: IJwtService, stripePayment : IStripe , eventRepository : IEventRepository) {
     this.userRepository = userRepository;
     this.jwtService = jwtService;
-    this.stripePayment = stripePayment
+    this.stripePayment = stripePayment;
+    this.eventRepository = eventRepository
   }
 
   async getUserProfile(
@@ -146,7 +150,7 @@ class UserUseCase implements IuserUseCase {
         }
         const transaction = await this.userRepository.createTransactions(transactionData)
         if(transaction){
-          const messege = `Transaction Successful! Your payment for plan subscription has been completed.`
+          const messege = `Your payment for plan subscription has been completed.`
           await this.userRepository.createNotification(userId, 'Transaction Successful!', messege)  
         }
         const notificationMessage = `Your subscription to ${planData.dataValues.title} has been successfully activated.`
@@ -265,6 +269,34 @@ class UserUseCase implements IuserUseCase {
       try {
         return await this.userRepository.fetchUserNotifications(userId)
       } catch (error) {
+        throw error
+      }
+  }
+
+  async getProfileStatus(userId: string): Promise<IProfileStatusesResponse | null> {
+      try {
+        const userEvents = await this.eventRepository.fetchUserEvents(userId)
+        const subscriptionPlan = await this.userRepository.getUserSubscriptionPlan(userId)
+        const tickets = await this.eventRepository.getAllUserTickets(userId)
+        const totalEarnings = await this.userRepository.getTotelEarningsFromEvents(userId)
+
+        let subscription = 'No Subscriptions'
+        if(subscriptionPlan){
+          const plan = await this.userRepository.fetchPlanData(subscriptionPlan.dataValues.planId)
+          subscription = plan?.dataValues.title || 'No Subscriptions'
+        }
+
+        const totalEvents = userEvents?.length || 0
+        const totalTickets = tickets?.length || 0
+        return {
+          totalEvents,
+          subscription,
+          totalTickets,
+          totalEarnings
+        }
+      } catch (error) {
+        console.log(error);
+        
         throw error
       }
   }

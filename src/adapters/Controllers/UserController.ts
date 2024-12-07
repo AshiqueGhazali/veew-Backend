@@ -25,6 +25,7 @@ class UserController implements IUserController {
       res.status(200).json({ userData: data });
     } catch (error) {
         res.status(500).json(error)
+        return
     }
   }
 
@@ -51,6 +52,7 @@ class UserController implements IUserController {
       return;
     } catch (error) {
         res.status(500).json(error)
+        return
     }
   }
 
@@ -70,6 +72,7 @@ class UserController implements IUserController {
       }
     } catch (error) {
       res.status(500).json(error)
+      return
     }
   }
 
@@ -89,6 +92,7 @@ class UserController implements IUserController {
       return;
     } catch (error) {
       res.status(500).json(error)
+      return
     }
   }
 
@@ -109,6 +113,7 @@ class UserController implements IUserController {
         return
       } catch (error) {
         res.status(500).json(error)
+        return
       }
   }
 
@@ -129,6 +134,7 @@ class UserController implements IUserController {
         return   
       } catch (error) {
         res.status(500).json(error)
+        return
       }
   }
 
@@ -147,6 +153,7 @@ class UserController implements IUserController {
         return
       } catch (error) {
         res.status(500).json(error)
+        return
       }
   }
 
@@ -165,6 +172,7 @@ class UserController implements IUserController {
         return
       } catch (error) {
         res.status(500).json(error)
+        return
       }
   }
 
@@ -184,6 +192,7 @@ class UserController implements IUserController {
         return   
       } catch (error) {
         res.status(500).json(error)
+        return
       }
   }
 
@@ -201,6 +210,7 @@ class UserController implements IUserController {
         res.status(401).json({message:"not found!"})
       } catch (error) {
         res.status(500).json(error)
+        return
       }
   }
 
@@ -218,6 +228,7 @@ class UserController implements IUserController {
         res.status(400).json('transaction not found!')
       } catch (error) {
         res.status(500).json(error)
+        return
       }
   }
 
@@ -236,6 +247,26 @@ class UserController implements IUserController {
 
       } catch (error) {
         res.status(500).json(error)
+        return
+      }
+  }
+
+  async getProfileStatus(req: IAuthRequest, res: Response, next: NextFunction): Promise<void> {
+      try {
+        const userId = req.userId as string
+
+        const response = await this.userUseCase.getProfileStatus(userId)
+
+        if(response){
+          res.status(200).json(response);
+          return
+        }
+
+        res.status(401).json({message:"not getting"});
+        return
+      } catch (error) {
+        res.status(500).json(error)
+        return
       }
   }
 }

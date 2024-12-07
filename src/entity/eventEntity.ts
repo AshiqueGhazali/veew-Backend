@@ -13,6 +13,8 @@ export interface IEvent {
     isCancelled ?: boolean;
     eventMeetUrl?:string;
     eventMeetUrlUpdatedAt?:Date
+    likes?:number;
+    comments?:number
 }
 
 export interface IEventCreationAttributes extends Omit<IEvent, "id">{}
