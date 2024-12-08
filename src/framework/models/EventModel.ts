@@ -67,12 +67,12 @@ const Events: ModelDefined<IEvent,IEventCreationAttributes> = sequelize.define (
             allowNull: true
         },
         likes: {
-            type: DataTypes.NUMBER,
+            type: DataTypes.INTEGER,
             allowNull: true,
             defaultValue:0
         },
         comments: {
-            type: DataTypes.NUMBER,
+            type: DataTypes.INTEGER,
             allowNull: true,
             defaultValue:0
         } 

@@ -22,4 +22,7 @@ export default interface IEventController{
     getDataCounts(req:IAuthRequest, res:Response, next: NextFunction):Promise<void>
     setEventStartTime(req:IAuthRequest, res:Response, next: NextFunction):Promise<void>
     setEventEndTime(req:IAuthRequest, res:Response, next: NextFunction):Promise<void>
+    addLike(req:IAuthRequest, res:Response, next: NextFunction):Promise<void>
+    removeLike(req:IAuthRequest, res:Response, next: NextFunction):Promise<void>
+    getLikedEventsId(req:IAuthRequest, res:Response, next: NextFunction):Promise<void>
 }

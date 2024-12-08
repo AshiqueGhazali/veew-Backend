@@ -396,4 +396,66 @@ export default class EventController implements IEventController {
             return
         }
     }
+
+    async addLike(req: IAuthRequest, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const {eventId} = req.body
+            const userId = req.userId as string
+
+            const response = await this.eventUseCase.addLike(eventId,userId)
+
+            if(response?.status){
+                res.status(200).json(response)
+                return
+            }
+
+            res.status(400).json(response)
+            return
+        } catch (error) {
+            res.status(500).json(error)
+            return
+        }
+    }
+
+    async removeLike(req: IAuthRequest, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const {eventId} = req.body
+            const userId = req.userId as string
+
+            const response = await this.eventUseCase.removeLike(eventId,userId)
+
+            if(response?.status){
+                res.status(200).json(response)
+                return
+            }
+
+            res.status(400).json(response)
+            return
+        } catch (error) {
+            res.status(500).json(error)
+            return
+        }
+    }
+
+    async getLikedEventsId(req: IAuthRequest, res: Response, next: NextFunction): Promise<void> {
+        try {
+            console.log("heeeeeeeeeeeeee ladfjlafkjd afdsl fasdljsaldfjlkfjds dfsaljfsdlj");
+            
+            const userId = req.userId as string
+
+            const response = await this.eventUseCase.getLikedEventsId(userId)
+
+            if(!response){
+                res.status(400).json(response)
+                return
+            }
+            res.status(200).json(response)
+            return
+        } catch (error) {
+            console.log("th errr isss",error);
+            
+            res.status(500).json(error)
+            return
+        }
+    }
 }

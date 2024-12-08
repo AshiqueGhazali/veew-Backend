@@ -11,8 +11,7 @@ import WalletModel from "../models/WalletModel";
 import TransactionModel from "../models/TransactionModel";
 import NotificationModel from "../models/NotificationModel";
 import LiveStatusModel from "../models/LiveStatusModel";
-
-
+import LikesModel from "../models/LikesModel";
 
 
 
@@ -34,7 +33,7 @@ const adminRepository = new AdminRepository(UserModel, Pricing, UserSubscription
 const adminUseCase = new AdminUseCase(adminRepository,jwtService)
 const adminController = new AdminController(adminUseCase)
 
-const eventRepository = new EventRepository(EventModel,UserModel,TicketModel,WalletModel,TransactionModel, NotificationModel, LiveStatusModel)
+const eventRepository = new EventRepository(EventModel,UserModel,TicketModel,WalletModel,TransactionModel, NotificationModel, LiveStatusModel, LikesModel)
 const eventUseCase = new EventUseCase(eventRepository,stripePayment)
 const eventController = new EventController(eventUseCase)
 

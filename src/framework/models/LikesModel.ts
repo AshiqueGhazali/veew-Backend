@@ -27,6 +27,7 @@ const Likes: ModelDefined<ILikes,IILikesCreationAttributes> =
     {
       tableName: "likes",
       timestamps: true,
+      paranoid: true
     }
   );
 

@@ -6,6 +6,8 @@ import { transactionParams } from "./IUserRepository";
 import { ITransaction, ITransactionCreationAttributes } from "../../entity/transactionEntity";
 import { IWallet, IWalletCreationAttributes } from "../../entity/walletEntity";
 import { INotification, INotificationCreationAttributes } from "../../entity/notificationsEntity";
+import { IUser, IUserCreationAttributes } from "../../entity/userEntity";
+import { Mode } from "fs";
 
 export interface createTicketParams {
     ticketCode:string
@@ -39,5 +41,8 @@ export default interface IEventRepository {
     createNotification(userId:string,notificationHead:string,notification:string):Promise<Model<INotification,INotificationCreationAttributes>>
     setEventStartTime(eventId:string , startTime:string):Promise<void>
     setEventEndTime(eventId:string , endTime:string):Promise<void>
-
+    findUser(userId:string):Promise<Model<IUser,IUserCreationAttributes> | null>
+    AddLike(eventId:string , userId:string):Promise<void>
+    removeLike(eventId:string , userId:string):Promise<void>
+    getLikedEventIds(userId:string):Promise<string[] | null>
 }

@@ -59,4 +59,7 @@ export default interface IEventUseCase {
     getDataCounts():Promise<dataCountResponse | null>
     setStartTime(eventId:string,startTime:string):Promise<void>
     updateEndTime(eventId:string,endTime:string):Promise<void>
+    addLike(eventId:string, userId:string):Promise<resObj | null>
+    removeLike(eventId:string, userId:string):Promise<resObj | null>
+    getLikedEventsId(userId:string):Promise<string[]|null>
 }

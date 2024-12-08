@@ -21,6 +21,7 @@ import {
   transactionType,
 } from "../entity/transactionEntity";
 import { ITicket, ITicketCreationAttributes } from "../entity/ticketEntity";
+import UserRepository from "../adapters/Repositories/UserRepository";
 
 export default class EventUseCase implements IEventUseCase {
   private eventRepository: IEventRepository;
@@ -677,5 +678,66 @@ export default class EventUseCase implements IEventUseCase {
     } catch (error) {
       throw error
     }
+  }
+
+  async addLike(eventId: string, userId: string): Promise<resObj | null> {
+      try {
+
+        const user = await this.eventRepository.findUser(userId)
+        const event = await this.eventRepository.fetchEventDetails(eventId)
+        if(!user || !event){
+          return {
+            status:false,
+            message:"user not found"
+          }
+        }
+        await this.eventRepository.AddLike(eventId,userId)
+
+        const notificationHead = `${user.dataValues.firstName} ${user.dataValues.lastName} liked your post`
+        const message = `${user.dataValues.firstName} ${user.dataValues.lastName} liked your post: ${event.dataValues.eventTitle}`
+        const notification = await this.eventRepository.createNotification(event.dataValues.hostsId, notificationHead,message)
+
+        console.log(notification);
+
+        return {
+          status:true,
+          message:"Liked for event"
+        }
+      } catch (error) {
+        console.log(error);
+        
+        throw error
+      }
+  }
+
+  async removeLike(eventId: string, userId: string): Promise<resObj | null> {
+      try {
+        const user = await this.eventRepository.findUser(userId)
+        const event = await this.eventRepository.fetchEventDetails(eventId)
+        if(!user || !event){
+          return {
+            status:false,
+            message:"user not found"
+          }
+        }
+        await this.eventRepository.removeLike(eventId,userId)
+        
+        return {
+          status:true,
+          message:"Like removed"
+        }
+      } catch (error) {
+        throw error
+      }
+  }
+
+  async getLikedEventsId(userId: string): Promise<string[] | null> {
+      try {
+        return await this.eventRepository.getLikedEventIds(userId)
+      } catch (error) {
+        console.log(error);
+        
+        throw error
+      }
   }
 }

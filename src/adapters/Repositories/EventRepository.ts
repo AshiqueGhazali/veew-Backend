@@ -18,6 +18,7 @@ import UserSubscription from "../../framework/models/UserSubscriptionModel";
 import { Op } from "sequelize";
 import { INotification, INotificationCreationAttributes } from "../../entity/notificationsEntity";
 import { IILiveStatusCreationAttributes, ILiveStatus } from "../../entity/liveStatus";
+import { IILikesCreationAttributes, ILikes } from "../../entity/likesEntity";
 
 export default class EventRepository implements IEventRepository {
   private EventModel: ModelDefined<IEvent, IEventCreationAttributes>;
@@ -27,6 +28,7 @@ export default class EventRepository implements IEventRepository {
   private TransactionModel:ModelDefined<ITransaction,ITransactionCreationAttributes>
   private NotificationModel:ModelDefined<INotification,INotificationCreationAttributes>
   private LiveStatusModel:ModelDefined<ILiveStatus,IILiveStatusCreationAttributes>
+  private LikesModel:ModelDefined<ILikes,IILikesCreationAttributes>
 
   constructor(
     EventModel: ModelDefined<IEvent, IEventCreationAttributes>,
@@ -35,7 +37,8 @@ export default class EventRepository implements IEventRepository {
     WalletModal:ModelDefined<IWallet,IWalletCreationAttributes>,
     TransactionModel:ModelDefined<ITransaction,ITransactionCreationAttributes>,
     NotificationModel:ModelDefined<INotification,INotificationCreationAttributes>,
-    LiveStatusModel:ModelDefined<ILiveStatus,IILiveStatusCreationAttributes>
+    LiveStatusModel:ModelDefined<ILiveStatus,IILiveStatusCreationAttributes>,
+    LikesModel:ModelDefined<ILikes,IILikesCreationAttributes>,
 
   ) {
     this.EventModel = EventModel;
@@ -44,7 +47,8 @@ export default class EventRepository implements IEventRepository {
     this.WalletModal = WalletModal
     this.TransactionModel = TransactionModel;
     this.NotificationModel = NotificationModel;
-    this.LiveStatusModel = LiveStatusModel
+    this.LiveStatusModel = LiveStatusModel;
+    this.LikesModel = LikesModel
   }
 
   async createEvent(
@@ -487,6 +491,89 @@ export default class EventRepository implements IEventRepository {
       try {
         const isLive = await this.LiveStatusModel.update({endTime},{where:{eventId}})
         return
+      } catch (error) {
+        throw error
+      }
+  }
+
+  async findUser(userId: string): Promise<Model<IUser, IUserCreationAttributes> | null> {
+      try {
+        const user = await this.UserModel.findOne({where:{id:userId}})
+
+        return user
+      } catch (error) {
+        throw error
+      }
+  }
+
+  async AddLike(eventId: string, userId: string): Promise<void> {
+      try {
+        let isLike = await this.LikesModel.findOne({
+          where: {
+            eventId,
+            userId
+          },
+          paranoid: false
+        });
+
+        if(isLike){
+           await this.LikesModel.restore({
+            where: {
+              eventId,
+              userId
+            },
+          })
+        }else {
+          isLike = await this.LikesModel.create({eventId,userId})
+        }
+
+        const updateLikeCount = await this.EventModel.increment('likes',{
+          by:1,
+          where:{
+            id:eventId
+          }
+        })
+        return
+      } catch (error) {
+        throw error
+      }
+  }
+
+  async removeLike(eventId: string, userId: string): Promise<void> {
+      try {
+        const isLike = await this.LikesModel.destroy({
+          where:{
+            eventId,userId
+          }
+        })
+
+        const updateLikeCount = await this.EventModel.decrement('likes',{
+          by:1,
+          where:{
+            id:eventId
+          }
+        })
+
+        return
+      } catch (error) {
+        throw error
+      }
+  }
+
+  async getLikedEventIds(userId: string): Promise<string[] | null> {
+      try {
+        const likes = await this.LikesModel.findAll({where:{
+          userId
+        }})
+
+        if(!likes){
+          return null
+        }
+        const eventIds = likes.map(like=>like.dataValues.eventId)
+
+        console.log("likeddddd",eventIds);
+        
+        return eventIds
       } catch (error) {
         throw error
       }

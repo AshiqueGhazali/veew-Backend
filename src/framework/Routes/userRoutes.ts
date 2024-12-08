@@ -19,6 +19,7 @@ import TransactionModel from "../models/TransactionModel";
 import TicketModel from "../models/TicketModel";
 import NotificationModel from "../models/NotificationModel";
 import LiveStatusModel from "../models/LiveStatusModel";
+import LikesModel from "../models/LikesModel";
 
 
 const userRouter: Router = express.Router();
@@ -26,7 +27,7 @@ const userRouter: Router = express.Router();
 const jwtService = new JwtService();
 const stripePayment =new StripePayment()
 
-const eventRepository = new EventRepository(EventModel,UserModel,TicketModel,WalletModel,TransactionModel, NotificationModel, LiveStatusModel)
+const eventRepository = new EventRepository(EventModel,UserModel,TicketModel,WalletModel,TransactionModel, NotificationModel, LiveStatusModel, LikesModel)
 const eventUseCase = new EventUseCase(eventRepository, stripePayment)
 const eventController = new EventController(eventUseCase)
 
@@ -80,6 +81,11 @@ userRouter.get("/getAllTicketForEvent",authorizationMiddleware,eventController.g
 // event start routes :
 userRouter.get("/startEvent",authorizationMiddleware,eventController.startEvent.bind(eventController))
 userRouter.get("/verifyEventJoining",authorizationMiddleware,eventController.verifyEventJoining.bind(eventController))
+
+// like and comment management :
+userRouter.post("/addLike",authorizationMiddleware,eventController.addLike.bind(eventController))
+userRouter.post("/removeLike",authorizationMiddleware,eventController.removeLike.bind(eventController))
+userRouter.get("/getLikedEventsId",authorizationMiddleware,eventController.getLikedEventsId.bind(eventController))
 
 
 
