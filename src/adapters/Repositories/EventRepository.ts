@@ -7,6 +7,7 @@ import {
   dataCountResponse,
   editEventDateParams,
   editEventDetailsParams,
+  IAddCommentParms,
   startEventRes,
 } from "../../interface/useCase/IEventUseCase";
 import { table } from "console";
@@ -19,6 +20,7 @@ import { Op } from "sequelize";
 import { INotification, INotificationCreationAttributes } from "../../entity/notificationsEntity";
 import { IILiveStatusCreationAttributes, ILiveStatus } from "../../entity/liveStatus";
 import { IILikesCreationAttributes, ILikes } from "../../entity/likesEntity";
+import { IComments, ICommentsCreationAttributes } from "../../entity/commentsEntity";
 
 export default class EventRepository implements IEventRepository {
   private EventModel: ModelDefined<IEvent, IEventCreationAttributes>;
@@ -29,6 +31,7 @@ export default class EventRepository implements IEventRepository {
   private NotificationModel:ModelDefined<INotification,INotificationCreationAttributes>
   private LiveStatusModel:ModelDefined<ILiveStatus,IILiveStatusCreationAttributes>
   private LikesModel:ModelDefined<ILikes,IILikesCreationAttributes>
+  private CommentsModel:ModelDefined<IComments,ICommentsCreationAttributes>
 
   constructor(
     EventModel: ModelDefined<IEvent, IEventCreationAttributes>,
@@ -39,6 +42,7 @@ export default class EventRepository implements IEventRepository {
     NotificationModel:ModelDefined<INotification,INotificationCreationAttributes>,
     LiveStatusModel:ModelDefined<ILiveStatus,IILiveStatusCreationAttributes>,
     LikesModel:ModelDefined<ILikes,IILikesCreationAttributes>,
+    CommentsModel:ModelDefined<IComments,ICommentsCreationAttributes>
 
   ) {
     this.EventModel = EventModel;
@@ -49,6 +53,7 @@ export default class EventRepository implements IEventRepository {
     this.NotificationModel = NotificationModel;
     this.LiveStatusModel = LiveStatusModel;
     this.LikesModel = LikesModel
+    this.CommentsModel = CommentsModel
   }
 
   async createEvent(
@@ -372,9 +377,7 @@ export default class EventRepository implements IEventRepository {
   }
 
   async getEventByMeetLink(meetURL: string): Promise<Model<IEvent, IEventCreationAttributes> | null> {
-      try {
-        console.log("meet url is ",meetURL);
-        
+      try {        
         const event = await this.EventModel.findOne({where:{
           eventMeetUrl:meetURL
         }})
@@ -569,13 +572,103 @@ export default class EventRepository implements IEventRepository {
         if(!likes){
           return null
         }
-        const eventIds = likes.map(like=>like.dataValues.eventId)
-
-        console.log("likeddddd",eventIds);
-        
+        const eventIds = likes.map(like=>like.dataValues.eventId)        
         return eventIds
       } catch (error) {
         throw error
+      }
+  }
+
+  async addComment(data: IAddCommentParms): Promise<void> {
+      try {
+        const comment = await this.CommentsModel.create(data)
+
+        const updateLikeCount = await this.EventModel.increment('comments',{
+          by:1,
+          where:{
+            id:data.eventId
+          }
+        })
+        return
+      } catch (error) {
+        throw error
+      }
+  }
+
+  async findEventComments(eventId: string): Promise<Model<IComments, ICommentsCreationAttributes>[] | null> {
+      try {
+        const comments = await this.CommentsModel.findAll({where:{
+          eventId,
+          parentId:null
+        },include:[
+          {
+            model:this.UserModel,
+            as:"CommentedBy",
+            required:true
+          },
+          {
+            model:this.EventModel,
+            as:"CommentedEvent",
+            required:true
+          },
+          {
+            model: this.CommentsModel,
+            as: "replies",
+            include: [
+              {
+                model: this.UserModel,
+                as: "CommentedBy",
+                required: true,
+              },
+              {
+                model: this.EventModel,
+                as: "CommentedEvent",
+                required: true,
+              },
+            ],
+          },
+        ],
+        order: [['createdAt', 'DESC']],
+      })
+
+        return comments
+      } catch (error) {
+        throw error
+      }
+  }
+
+  async deleteComment(commentId: string): Promise<void> {
+      try {
+        const comment = await this.CommentsModel.findOne({where:{
+          id:commentId
+        }})
+        if(!comment){
+          return
+        }
+        comment.destroy()
+        // const deleted = await this.CommentsModel.destroy({where:{id:commentId}})
+
+        const updateLikeCount = await this.EventModel.decrement('comments',{
+          by:1,
+          where:{
+            id:comment.dataValues.eventId
+          }
+        })
+        return
+      } catch (error) {
+        throw error
+      }
+  }
+
+  async findCommentById(commentId: string): Promise<Model<IComments, ICommentsCreationAttributes> | null> {
+      try {
+        const comment = await this.CommentsModel.findOne({where:{
+          id:commentId
+        }})
+
+        return comment
+      } catch (error) {
+       throw error 
       }
   }
 

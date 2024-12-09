@@ -8,6 +8,7 @@ import IEventUseCase, {
   dataCountResponse,
   editEventDateParams,
   editEventDetailsParams,
+  IAddCommentParms,
   startEventRes,
 } from "../interface/useCase/IEventUseCase";
 import { resObj } from "../interface/useCase/IUserAuthUseCase";
@@ -22,6 +23,7 @@ import {
 } from "../entity/transactionEntity";
 import { ITicket, ITicketCreationAttributes } from "../entity/ticketEntity";
 import UserRepository from "../adapters/Repositories/UserRepository";
+import { IComments, ICommentsCreationAttributes } from "../entity/commentsEntity";
 
 export default class EventUseCase implements IEventUseCase {
   private eventRepository: IEventRepository;
@@ -735,8 +737,55 @@ export default class EventUseCase implements IEventUseCase {
       try {
         return await this.eventRepository.getLikedEventIds(userId)
       } catch (error) {
-        console.log(error);
+        throw error
+      }
+  }
+
+  async addNewComment(data: IAddCommentParms): Promise<resObj | null> {
+      try {
+        await this.eventRepository.addComment(data)
+        return {
+          status:true,
+          message:"new comment addedd"
+        }
+      } catch (error) {
+        throw error
+      }
+  }
+
+  async getEventComments(eventId: string): Promise<Model<IComments, ICommentsCreationAttributes>[] | null> {
+      try {
+        return await this.eventRepository.findEventComments(eventId)
+      } catch (error) {
+        throw error
+      }
+  }
+
+  async removeComment(commentId: string, userId: string): Promise<resObj | null> {
+      try {
+
+        const comment = await this.eventRepository.findCommentById(commentId)
+        if(!comment){
+          return {
+            status:false,
+            message:"comment not found!"
+          }
+        }
+        const event = await this.eventRepository.fetchEventDetails(comment?.dataValues.eventId)
+        if(comment.dataValues.userId === userId || userId === event?.dataValues.hostsId){
+          await this.eventRepository.deleteComment(commentId);
+          return {
+            status: true,
+            message: "comment removed!",
+          };
+        }else{
+          return {
+            status: false,
+            message:"comments can delete only by event creater or who post comment"
+          }
+        }
         
+      } catch (error) {
         throw error
       }
   }

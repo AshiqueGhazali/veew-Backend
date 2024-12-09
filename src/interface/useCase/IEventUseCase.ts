@@ -2,6 +2,7 @@ import { Model } from "sequelize";
 import { resObj } from "./IUserAuthUseCase";
 import { IEvent, IEventCreationAttributes } from "../../entity/eventEntity";
 import { ITicket, ITicketCreationAttributes } from "../../entity/ticketEntity";
+import { IComments, ICommentsCreationAttributes } from "../../entity/commentsEntity";
 
 export interface createEventParams{
     eventTitle : string;
@@ -38,6 +39,13 @@ export interface dataCountResponse {
     totalSubscribers:number;
     totalTickets:number
 }
+
+export interface IAddCommentParms {
+    eventId:string;
+    userId:string;
+    comment:string;
+    parentId:string | null
+}
 export default interface IEventUseCase {
     verifyEventCreation(userId:string,data:createEventParams):Promise<resObj|null>
     getAllEvents():Promise<Model<IEvent,IEventCreationAttributes>[] | null>
@@ -62,4 +70,7 @@ export default interface IEventUseCase {
     addLike(eventId:string, userId:string):Promise<resObj | null>
     removeLike(eventId:string, userId:string):Promise<resObj | null>
     getLikedEventsId(userId:string):Promise<string[]|null>
+    addNewComment(data:IAddCommentParms):Promise<resObj | null>
+    getEventComments(eventId:string):Promise<Model<IComments,ICommentsCreationAttributes>[] | null>
+    removeComment(commentId:string, userId:string):Promise<resObj | null>
 }

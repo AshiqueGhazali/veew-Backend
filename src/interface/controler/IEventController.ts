@@ -25,4 +25,7 @@ export default interface IEventController{
     addLike(req:IAuthRequest, res:Response, next: NextFunction):Promise<void>
     removeLike(req:IAuthRequest, res:Response, next: NextFunction):Promise<void>
     getLikedEventsId(req:IAuthRequest, res:Response, next: NextFunction):Promise<void>
+    addComment(req:IAuthRequest, res:Response, next: NextFunction):Promise<void>
+    getEventComments(req:IAuthRequest, res:Response, next: NextFunction):Promise<void>
+    removeComment(req:IAuthRequest, res:Response, next: NextFunction):Promise<void>
 }

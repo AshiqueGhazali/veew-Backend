@@ -20,6 +20,7 @@ import TicketModel from "../models/TicketModel";
 import NotificationModel from "../models/NotificationModel";
 import LiveStatusModel from "../models/LiveStatusModel";
 import LikesModel from "../models/LikesModel";
+import CommentsModel from "../models/CommentsModel";
 
 
 const userRouter: Router = express.Router();
@@ -27,12 +28,34 @@ const userRouter: Router = express.Router();
 const jwtService = new JwtService();
 const stripePayment =new StripePayment()
 
-const eventRepository = new EventRepository(EventModel,UserModel,TicketModel,WalletModel,TransactionModel, NotificationModel, LiveStatusModel, LikesModel)
-const eventUseCase = new EventUseCase(eventRepository, stripePayment)
-const eventController = new EventController(eventUseCase)
+const eventRepository = new EventRepository(
+  EventModel,
+  UserModel,
+  TicketModel,
+  WalletModel,
+  TransactionModel,
+  NotificationModel,
+  LiveStatusModel,
+  LikesModel,
+  CommentsModel
+);
+const eventUseCase = new EventUseCase(eventRepository, stripePayment);
+const eventController = new EventController(eventUseCase);
 
-const userRepository = new UserRepository(UserModel, PricingModel,UserSubscriptionModel,WalletModel,TransactionModel, NotificationModel);
-const userUseCase = new UserUseCase(userRepository, jwtService , stripePayment, eventRepository );
+const userRepository = new UserRepository(
+  UserModel,
+  PricingModel,
+  UserSubscriptionModel,
+  WalletModel,
+  TransactionModel,
+  NotificationModel
+);
+const userUseCase = new UserUseCase(
+  userRepository,
+  jwtService,
+  stripePayment,
+  eventRepository
+);
 const userController = new UserController(userUseCase);
 
 
@@ -86,6 +109,9 @@ userRouter.get("/verifyEventJoining",authorizationMiddleware,eventController.ver
 userRouter.post("/addLike",authorizationMiddleware,eventController.addLike.bind(eventController))
 userRouter.post("/removeLike",authorizationMiddleware,eventController.removeLike.bind(eventController))
 userRouter.get("/getLikedEventsId",authorizationMiddleware,eventController.getLikedEventsId.bind(eventController))
+userRouter.post("/addNewComment",authorizationMiddleware,eventController.addComment.bind(eventController))
+userRouter.get("/getEventComments",authorizationMiddleware,eventController.getEventComments.bind(eventController))
+userRouter.delete("/deleteComment",authorizationMiddleware,eventController.removeComment.bind(eventController))
 
 
 

@@ -458,4 +458,61 @@ export default class EventController implements IEventController {
             return
         }
     }
+
+    async addComment(req: IAuthRequest, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const {eventId , comment , parentId} = req.body             
+            const userId = req.userId as string
+
+            const response  = await this.eventUseCase.addNewComment({eventId,userId,comment,parentId})
+
+            if(response?.status){
+                res.status(200).json(response)
+                return
+            }
+
+            res.status(400).json(response)
+            return
+        } catch (error) {
+            throw error
+        }
+    }
+
+    async getEventComments(req: IAuthRequest, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const eventId = req.query.eventId as string
+
+            const response = await this.eventUseCase.getEventComments(eventId)
+            if(response){
+                res.status(200).json(response)
+                return
+            }
+
+            res.status(400).json(response)
+            return
+        } catch (error) {
+            throw error
+        }
+    }
+
+    async removeComment(req: IAuthRequest, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const userId = req.userId as string
+            const commentId = req.query.commentId as string
+
+            const response = await this.eventUseCase.removeComment(commentId,userId)
+
+            console.log(response);
+            
+            if(response?.status){
+                res.status(200).json(response)
+                return
+            }
+
+            res.status(400).json(response)
+            return
+        } catch (error) {
+            throw error
+        }
+    }
 }

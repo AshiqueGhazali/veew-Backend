@@ -1,6 +1,6 @@
 import { Model } from "sequelize";
 import { IEvent, IEventCreationAttributes } from "../../entity/eventEntity";
-import { createEventParams, dataCountResponse, editEventDateParams, editEventDetailsParams, startEventRes } from "../useCase/IEventUseCase";
+import { createEventParams, dataCountResponse, editEventDateParams, editEventDetailsParams, IAddCommentParms, startEventRes } from "../useCase/IEventUseCase";
 import { ITicket, ITicketCreationAttributes } from "../../entity/ticketEntity";
 import { transactionParams } from "./IUserRepository";
 import { ITransaction, ITransactionCreationAttributes } from "../../entity/transactionEntity";
@@ -8,6 +8,7 @@ import { IWallet, IWalletCreationAttributes } from "../../entity/walletEntity";
 import { INotification, INotificationCreationAttributes } from "../../entity/notificationsEntity";
 import { IUser, IUserCreationAttributes } from "../../entity/userEntity";
 import { Mode } from "fs";
+import { IComments, ICommentsCreationAttributes } from "../../entity/commentsEntity";
 
 export interface createTicketParams {
     ticketCode:string
@@ -45,4 +46,8 @@ export default interface IEventRepository {
     AddLike(eventId:string , userId:string):Promise<void>
     removeLike(eventId:string , userId:string):Promise<void>
     getLikedEventIds(userId:string):Promise<string[] | null>
+    addComment(data:IAddCommentParms):Promise<void>
+    findEventComments(eventId:string):Promise<Model<IComments,ICommentsCreationAttributes>[] | null>
+    deleteComment(commentId:string):Promise<void>
+    findCommentById(commentId:string):Promise<Model<IComments,ICommentsCreationAttributes> | null>
 }
