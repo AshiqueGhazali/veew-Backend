@@ -9,6 +9,7 @@ import IEventUseCase, {
   editEventDateParams,
   editEventDetailsParams,
   IAddCommentParms,
+  IReportUserParams,
   startEventRes,
 } from "../interface/useCase/IEventUseCase";
 import { resObj } from "../interface/useCase/IUserAuthUseCase";
@@ -24,6 +25,7 @@ import {
 import { ITicket, ITicketCreationAttributes } from "../entity/ticketEntity";
 import UserRepository from "../adapters/Repositories/UserRepository";
 import { IComments, ICommentsCreationAttributes } from "../entity/commentsEntity";
+import { ILiveStatus, IILiveStatusCreationAttributes } from "../entity/liveStatus";
 
 export default class EventUseCase implements IEventUseCase {
   private eventRepository: IEventRepository;
@@ -676,7 +678,10 @@ export default class EventUseCase implements IEventUseCase {
 
   async updateEndTime(eventId: string, endTime: string): Promise<void> {
     try {
-        await this.eventRepository.setEventEndTime(eventId,endTime)
+       const tickeAmount = await this.eventRepository.getTotalTicketAmountForEvent(eventId)
+       console.log("ticketAmountIs",tickeAmount);
+       
+        await this.eventRepository.setEventEndTime(eventId,endTime,tickeAmount)
     } catch (error) {
       throw error
     }
@@ -785,6 +790,70 @@ export default class EventUseCase implements IEventUseCase {
           }
         }
         
+      } catch (error) {
+        throw error
+      }
+  }
+
+  async getAdminEventApprovals(): Promise<Model<ILiveStatus, IILiveStatusCreationAttributes>[] | null> {
+      try {
+        return await this.eventRepository.getAdminEventApprovals()
+      } catch (error) {
+        throw error
+      }
+  }
+
+  async approveEventsFund(eventId: string): Promise<resObj | null> {
+      try {
+        const event = await this.eventRepository.fetchEventDetails(eventId)
+
+        if(!event){
+          return {
+            status:false,
+            message:"event is not found!"
+          }
+        }
+        await this.eventRepository.updateApprovalStatus(eventId)
+        const totalAmount = await this.eventRepository.getTotalTicketAmountForEvent(eventId)
+        const updateWallet = await this.eventRepository.updateWalletAmount(event.dataValues.hostsId, totalAmount)
+        const transactionData: transactionParams = {
+          userId:event.dataValues.hostsId,
+          transactionType: transactionType.CREDIT,
+          paymentMethod: paymentMethod.WALLET,
+          purpose: transactionPurpose.EVENT,
+          amount: totalAmount,
+        };
+        const transaction = await this.eventRepository.createTransactions(transactionData)
+        const head = "Fund Approved!";
+        const message = `Funds of ₹${totalAmount} have been successfully approved for the event ${event.dataValues.eventTitle}.`
+
+        const notification = await this.eventRepository.createNotification(event.dataValues.hostsId,head,message)
+
+        return {
+          status:true,
+          message:"fund approved!"
+        }
+      } catch (error) {
+        console.log(error);
+        
+        throw error
+      }
+  }
+
+  async verifyReportUser(data: IReportUserParams): Promise<resObj | null> {
+      try {
+        if(data.reporterId===data.reportedUserId){
+          return {
+            status:false,
+            message:"You can't report Your self"
+          }
+        }
+
+        const response = await this.eventRepository.reportUser(data)
+        return {
+          status:true,
+          message:"report submitted"
+        }
       } catch (error) {
         throw error
       }

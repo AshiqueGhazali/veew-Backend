@@ -24,6 +24,15 @@ const LiveStatus: ModelDefined<ILiveStatus,IILiveStatusCreationAttributes> =
       endTime:{
         type: DataTypes.STRING,
         allowNull: true
+      },
+      isApproved:{
+        type: DataTypes.BOOLEAN,
+        allowNull: true,
+        defaultValue: false
+      },
+      approvedAmount:{
+        type: DataTypes.INTEGER,
+        allowNull: true
       }
       
     },

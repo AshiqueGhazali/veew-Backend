@@ -3,7 +3,7 @@ export interface IComments {
     eventId:string;
     userId:string;
     comment:string;
-    parentId:string | null
+    parentId:string | null;
 }
 
 export interface ICommentsCreationAttributes extends Omit<IComments,"id">{}

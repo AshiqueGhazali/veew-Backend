@@ -1,6 +1,6 @@
 import { Model } from "sequelize";
 import { IEvent, IEventCreationAttributes } from "../../entity/eventEntity";
-import { createEventParams, dataCountResponse, editEventDateParams, editEventDetailsParams, IAddCommentParms, startEventRes } from "../useCase/IEventUseCase";
+import { createEventParams, dataCountResponse, editEventDateParams, editEventDetailsParams, IAddCommentParms, IReportUserParams, startEventRes } from "../useCase/IEventUseCase";
 import { ITicket, ITicketCreationAttributes } from "../../entity/ticketEntity";
 import { transactionParams } from "./IUserRepository";
 import { ITransaction, ITransactionCreationAttributes } from "../../entity/transactionEntity";
@@ -9,6 +9,8 @@ import { INotification, INotificationCreationAttributes } from "../../entity/not
 import { IUser, IUserCreationAttributes } from "../../entity/userEntity";
 import { Mode } from "fs";
 import { IComments, ICommentsCreationAttributes } from "../../entity/commentsEntity";
+import { IILiveStatusCreationAttributes, ILiveStatus } from "../../entity/liveStatus";
+import { IUserReport, IUserReportCreationAttributes } from "../../entity/userReportEntity";
 
 export interface createTicketParams {
     ticketCode:string
@@ -41,7 +43,7 @@ export default interface IEventRepository {
     getDataCounts():Promise<dataCountResponse | null>
     createNotification(userId:string,notificationHead:string,notification:string):Promise<Model<INotification,INotificationCreationAttributes>>
     setEventStartTime(eventId:string , startTime:string):Promise<void>
-    setEventEndTime(eventId:string , endTime:string):Promise<void>
+    setEventEndTime(eventId:string , endTime:string, approvedAmount:number):Promise<void>
     findUser(userId:string):Promise<Model<IUser,IUserCreationAttributes> | null>
     AddLike(eventId:string , userId:string):Promise<void>
     removeLike(eventId:string , userId:string):Promise<void>
@@ -50,4 +52,8 @@ export default interface IEventRepository {
     findEventComments(eventId:string):Promise<Model<IComments,ICommentsCreationAttributes>[] | null>
     deleteComment(commentId:string):Promise<void>
     findCommentById(commentId:string):Promise<Model<IComments,ICommentsCreationAttributes> | null>
+    getAdminEventApprovals():Promise<Model<ILiveStatus,IILiveStatusCreationAttributes>[] | null>
+    getTotalTicketAmountForEvent(eventId:string):Promise<number>
+    updateApprovalStatus(eventId:string):Promise<void>
+    reportUser(data:IReportUserParams):Promise<Model<IUserReport,IUserReportCreationAttributes> | null>
 }

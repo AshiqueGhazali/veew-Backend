@@ -8,6 +8,7 @@ import {
   editEventDateParams,
   editEventDetailsParams,
   IAddCommentParms,
+  IReportUserParams,
   startEventRes,
 } from "../../interface/useCase/IEventUseCase";
 import { table } from "console";
@@ -21,6 +22,7 @@ import { INotification, INotificationCreationAttributes } from "../../entity/not
 import { IILiveStatusCreationAttributes, ILiveStatus } from "../../entity/liveStatus";
 import { IILikesCreationAttributes, ILikes } from "../../entity/likesEntity";
 import { IComments, ICommentsCreationAttributes } from "../../entity/commentsEntity";
+import { IUserReport, IUserReportCreationAttributes } from "../../entity/userReportEntity";
 
 export default class EventRepository implements IEventRepository {
   private EventModel: ModelDefined<IEvent, IEventCreationAttributes>;
@@ -32,6 +34,7 @@ export default class EventRepository implements IEventRepository {
   private LiveStatusModel:ModelDefined<ILiveStatus,IILiveStatusCreationAttributes>
   private LikesModel:ModelDefined<ILikes,IILikesCreationAttributes>
   private CommentsModel:ModelDefined<IComments,ICommentsCreationAttributes>
+  private UserReportModel:ModelDefined<IUserReport,IUserReportCreationAttributes>
 
   constructor(
     EventModel: ModelDefined<IEvent, IEventCreationAttributes>,
@@ -42,8 +45,8 @@ export default class EventRepository implements IEventRepository {
     NotificationModel:ModelDefined<INotification,INotificationCreationAttributes>,
     LiveStatusModel:ModelDefined<ILiveStatus,IILiveStatusCreationAttributes>,
     LikesModel:ModelDefined<ILikes,IILikesCreationAttributes>,
-    CommentsModel:ModelDefined<IComments,ICommentsCreationAttributes>
-
+    CommentsModel:ModelDefined<IComments,ICommentsCreationAttributes>,
+    UserReportModel:ModelDefined<IUserReport,IUserReportCreationAttributes>
   ) {
     this.EventModel = EventModel;
     this.UserModel = UserModel;
@@ -53,7 +56,8 @@ export default class EventRepository implements IEventRepository {
     this.NotificationModel = NotificationModel;
     this.LiveStatusModel = LiveStatusModel;
     this.LikesModel = LikesModel
-    this.CommentsModel = CommentsModel
+    this.CommentsModel = CommentsModel;
+    this.UserReportModel =UserReportModel
   }
 
   async createEvent(
@@ -478,11 +482,11 @@ export default class EventRepository implements IEventRepository {
           where: { eventId },
         });
         if (!isLive) {
-          await this.LiveStatusModel.create({
+          const started = await this.LiveStatusModel.create({
             eventId,
             startTime,
             endTime
-          });
+          });          
         }
         return
       } catch (error) {
@@ -490,9 +494,11 @@ export default class EventRepository implements IEventRepository {
       }
   }
 
-  async setEventEndTime(eventId: string, endTime: string): Promise<void> {
+  async setEventEndTime(eventId: string, endTime: string, approvedAmount:number): Promise<void> {
       try {
-        const isLive = await this.LiveStatusModel.update({endTime},{where:{eventId}})
+        const isLive = await this.LiveStatusModel.update({endTime,approvedAmount},{where:{eventId}})
+        console.log("updated",isLive);
+        
         return
       } catch (error) {
         throw error
@@ -669,6 +675,62 @@ export default class EventRepository implements IEventRepository {
         return comment
       } catch (error) {
        throw error 
+      }
+  }
+
+  async getAdminEventApprovals(): Promise<Model<ILiveStatus, IILiveStatusCreationAttributes>[] | null> {
+      try {
+        
+        const events = await this.LiveStatusModel.findAll({
+          // where:{isApproved:false},
+          include:[
+            {
+              model:this.EventModel,
+              as:'liveEvent',
+              required:true
+            }
+          ]
+        })
+        
+        return events
+      } catch (error) {        
+        throw error
+      }
+  }
+
+  async getTotalTicketAmountForEvent(eventId: string): Promise<number> {
+      try {
+        const result = await this.TicketModel.sum('amount', {
+          where: {
+            eventId: eventId,
+            isCancelled: false 
+          }
+        });
+    
+        return result || 0;
+      } catch (error) {
+        throw error
+      }
+  }
+
+  async updateApprovalStatus(eventId:string): Promise<void> {
+      try {
+        await this.LiveStatusModel.update({isApproved:true},{where:{eventId}})
+        return
+      } catch (error) {
+        throw error
+      }
+  }
+
+  async reportUser(data: IReportUserParams): Promise<Model<IUserReport,IUserReportCreationAttributes> | null> {
+      try {
+        const newReport = await this.UserReportModel.create(data)
+        console.log("report is :",newReport);
+        
+
+        return newReport
+      } catch (error) {
+        throw error
       }
   }
 

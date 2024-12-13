@@ -376,6 +376,9 @@ export default class EventController implements IEventController {
     async setEventStartTime(req: IAuthRequest, res: Response, next: NextFunction): Promise<void> {
         try {
             const {eventId , startTime} = req.body
+
+            console.log(req.body);
+            
             await this.eventUseCase.setStartTime(eventId,startTime)
 
             res.status(200).json({message:"ok"})
@@ -474,7 +477,8 @@ export default class EventController implements IEventController {
             res.status(400).json(response)
             return
         } catch (error) {
-            throw error
+            res.status(500).json(error)
+            return
         }
     }
 
@@ -491,7 +495,8 @@ export default class EventController implements IEventController {
             res.status(400).json(response)
             return
         } catch (error) {
-            throw error
+            res.status(500).json(error)
+            return
         }
     }
 
@@ -512,7 +517,63 @@ export default class EventController implements IEventController {
             res.status(400).json(response)
             return
         } catch (error) {
-            throw error
+            res.status(500).json(error)
+            return
+        }
+    }
+
+    async getAdminEventApprovals(req:Request , res:Response): Promise<void> {
+        try {
+            const response = await this.eventUseCase.getAdminEventApprovals()
+
+            if(response){
+                res.status(200).json(response)
+                return
+            }
+            res.status(400).json(response)
+            return
+        } catch (error) {
+            res.status(500).json(error)
+            return
+        }
+    }
+
+    async appruveFund(req: Request, res: Response): Promise<void> {
+        try {
+            const {eventId} = req.body
+
+            const response = await this.eventUseCase.approveEventsFund(eventId)
+
+            if(response?.status){
+                res.status(200).json(response)
+                return
+            }
+
+            res.status(400).json(response)
+            return
+        } catch (error) {
+            res.status(500).json(error)
+            return
+        }
+    }
+
+    async reportUser(req: IAuthRequest, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const userId = req.userId as string
+            const { reportedUserId, reason } = req.body;
+
+            const response = await this.eventUseCase.verifyReportUser({reporterId:userId,reportedUserId,reason})
+
+            if(response?.status){
+                res.status(200).json(response)
+                return
+            }
+
+            res.status(400).json(response)
+            return
+        } catch (error) {
+            res.status(500).json(error)
+            return
         }
     }
 }

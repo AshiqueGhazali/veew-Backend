@@ -28,4 +28,7 @@ export default interface IEventController{
     addComment(req:IAuthRequest, res:Response, next: NextFunction):Promise<void>
     getEventComments(req:IAuthRequest, res:Response, next: NextFunction):Promise<void>
     removeComment(req:IAuthRequest, res:Response, next: NextFunction):Promise<void>
+    getAdminEventApprovals(req:Request , res:Response):Promise<void>
+    appruveFund(req:Request , res:Response):Promise<void>
+    reportUser(req:IAuthRequest, res:Response, next: NextFunction):Promise<void>
 }

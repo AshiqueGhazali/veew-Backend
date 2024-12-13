@@ -216,8 +216,6 @@ class AdminUseCase implements IAdminUseCase {
         const eventCountPerCategory = await this.adminRepository.getEventCountPerCategory()
         const latestUsers = await this.adminRepository.getLetestUsers()  
         const LastMonthTransactions = await this.adminRepository.getLastMonthTransactions()             
-
-        console.log("afdsafsf",LastMonthTransactions.debitData);
         
         return {
           eventCountPerDay,

@@ -21,6 +21,8 @@ import NotificationModel from "../models/NotificationModel";
 import LiveStatusModel from "../models/LiveStatusModel";
 import LikesModel from "../models/LikesModel";
 import CommentsModel from "../models/CommentsModel";
+import UserReportModel from "../models/UserReportModel";
+
 
 
 const userRouter: Router = express.Router();
@@ -37,7 +39,8 @@ const eventRepository = new EventRepository(
   NotificationModel,
   LiveStatusModel,
   LikesModel,
-  CommentsModel
+  CommentsModel,
+  UserReportModel
 );
 const eventUseCase = new EventUseCase(eventRepository, stripePayment);
 const eventController = new EventController(eventUseCase);
@@ -112,6 +115,9 @@ userRouter.get("/getLikedEventsId",authorizationMiddleware,eventController.getLi
 userRouter.post("/addNewComment",authorizationMiddleware,eventController.addComment.bind(eventController))
 userRouter.get("/getEventComments",authorizationMiddleware,eventController.getEventComments.bind(eventController))
 userRouter.delete("/deleteComment",authorizationMiddleware,eventController.removeComment.bind(eventController))
+
+
+userRouter.post("/reportUser",authorizationMiddleware,eventController.reportUser.bind(eventController))
 
 
 

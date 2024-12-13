@@ -20,6 +20,7 @@ import EventRepository from "../../adapters/Repositories/EventRepository";
 import EventUseCase from "../../usecase/EventUseCase";
 import EventController from "../../adapters/Controllers/EventController";
 import StripePayment from "../utils/stripePayments";
+import UserReportModel from "../models/UserReportModel";
 
 const adminRoutes: Router = express.Router();
 
@@ -47,7 +48,8 @@ const eventRepository = new EventRepository(
   NotificationModel,
   LiveStatusModel,
   LikesModel,
-  CommentsModel
+  CommentsModel,
+  UserReportModel
 );
 const eventUseCase = new EventUseCase(eventRepository, stripePayment);
 const eventController = new EventController(eventUseCase);
@@ -116,6 +118,16 @@ adminRoutes.patch(
   "/cancellEvent",
   authorizationMiddleware,
   eventController.cancelEvent.bind(eventController)
+);
+adminRoutes.get(
+  "/getAdminEventApprovals",
+  authorizationMiddleware,
+  eventController.getAdminEventApprovals.bind(eventController)
+);
+adminRoutes.post(
+  "/approveFund",
+  authorizationMiddleware,
+  eventController.appruveFund.bind(eventController)
 );
 
 // admin ticket management
