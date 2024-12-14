@@ -576,4 +576,21 @@ export default class EventController implements IEventController {
             return
         }
     }
+
+    async getReportedUsersWithReporters(req: Request, res: Response): Promise<void> {
+        try {
+            const response = await this.eventUseCase.getReportedUsersWithReporters()
+
+            if(response){
+                res.status(200).json(response)
+                return
+            }
+
+            res.status(400).json(response)
+            return
+        } catch (error) {
+            res.status(500).json(error)
+            return
+        }
+    }
 }

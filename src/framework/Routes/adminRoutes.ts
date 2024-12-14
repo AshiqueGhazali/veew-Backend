@@ -137,4 +137,11 @@ adminRoutes.get(
   eventController.getAllTicketsData.bind(eventController)
 );
 
+
+// report management
+adminRoutes.get(
+  "/getUserReports",
+  authorizationMiddleware,
+  eventController.getReportedUsersWithReporters.bind(eventController)
+)
 export default adminRoutes;

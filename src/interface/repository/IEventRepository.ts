@@ -56,4 +56,5 @@ export default interface IEventRepository {
     getTotalTicketAmountForEvent(eventId:string):Promise<number>
     updateApprovalStatus(eventId:string):Promise<void>
     reportUser(data:IReportUserParams):Promise<Model<IUserReport,IUserReportCreationAttributes> | null>
+    getReportedUsersWithReporters():Promise<Model<IUser, IUserCreationAttributes>[] | null>
 }

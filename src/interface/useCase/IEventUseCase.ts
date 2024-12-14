@@ -4,6 +4,7 @@ import { IEvent, IEventCreationAttributes } from "../../entity/eventEntity";
 import { ITicket, ITicketCreationAttributes } from "../../entity/ticketEntity";
 import { IComments, ICommentsCreationAttributes } from "../../entity/commentsEntity";
 import { IILiveStatusCreationAttributes, ILiveStatus } from "../../entity/liveStatus";
+import { IUser, IUserCreationAttributes } from "../../entity/userEntity";
 
 export interface createEventParams{
     eventTitle : string;
@@ -84,4 +85,6 @@ export default interface IEventUseCase {
     getAdminEventApprovals():Promise<Model<ILiveStatus,IILiveStatusCreationAttributes>[] | null>
     approveEventsFund(eventId:string):Promise<resObj | null>
     verifyReportUser(data:IReportUserParams):Promise<resObj | null>
+    getReportedUsersWithReporters():Promise<Model<IUser, IUserCreationAttributes>[] | null>
+    
 }

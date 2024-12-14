@@ -734,4 +734,35 @@ export default class EventRepository implements IEventRepository {
       }
   }
 
+  async getReportedUsersWithReporters(): Promise<Model<IUser, IUserCreationAttributes>[] | null> {
+      try {
+        const reportedUsers = await this.UserModel.findAll({
+          include: [
+            {
+              model: this.UserReportModel,
+              as: "reportsReceived", 
+              where: {}, 
+              include: [
+                {
+                  model: this.UserModel,
+                  as: "reporter", 
+                  required: true, 
+                },
+              ],
+              attributes: ["reason"], 
+              required: true,
+            },
+          ],
+          attributes: ["id", "firstName", "lastName","email","image"],
+          
+        });
+
+        console.log("repoppppprrrrr",reportedUsers);
+        
+        return reportedUsers;
+      } catch (error) {
+        throw error
+      }
+  }
+
 }

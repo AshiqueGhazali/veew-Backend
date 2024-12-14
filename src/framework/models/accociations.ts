@@ -57,10 +57,15 @@ Comments.belongsTo(User, { foreignKey: "userId", as: "CommentedBy" });
 Comments.hasMany(Comments, { foreignKey: 'parentId', as: 'replies' });
 Comments.belongsTo(Comments, { foreignKey: 'parentId', as: 'parentComment' });
 
-User.hasMany(UserReport, {foreignKey: "reportedUserId", as: "userReports"})
-UserReport.belongsTo(User, {foreignKey: "reportedUserId", as: "reportedUser"})
+// User.hasMany(UserReport, {foreignKey: "reportedUserId", as: "userReports"})
+// UserReport.belongsTo(User, {foreignKey: "reportedUserId", as: "reportedUser"})
 
-User.hasMany(UserReport, {foreignKey: "reporterId", as: "reportes"})
-UserReport.belongsTo(User, {foreignKey: "reporterId", as: "reporter"})
+// User.hasMany(UserReport, {foreignKey: "reporterId", as: "reportes"})
+// UserReport.belongsTo(User, {foreignKey: "reporterId", as: "reporter"})
+User.hasMany(UserReport, { foreignKey: "reporterId", as: "reportsMade" });
+User.hasMany(UserReport, { foreignKey: "reportedUserId", as: "reportsReceived" });
+
+UserReport.belongsTo(User, { foreignKey: "reporterId", as: "reporter" });
+UserReport.belongsTo(User, { foreignKey: "reportedUserId", as: "reportedUser" });
 
 export { Pricing, UserSubscription, User };

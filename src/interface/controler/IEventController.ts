@@ -31,4 +31,5 @@ export default interface IEventController{
     getAdminEventApprovals(req:Request , res:Response):Promise<void>
     appruveFund(req:Request , res:Response):Promise<void>
     reportUser(req:IAuthRequest, res:Response, next: NextFunction):Promise<void>
+    getReportedUsersWithReporters(req:Request , res:Response):Promise<void>
 }

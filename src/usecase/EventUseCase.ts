@@ -26,6 +26,7 @@ import { ITicket, ITicketCreationAttributes } from "../entity/ticketEntity";
 import UserRepository from "../adapters/Repositories/UserRepository";
 import { IComments, ICommentsCreationAttributes } from "../entity/commentsEntity";
 import { ILiveStatus, IILiveStatusCreationAttributes } from "../entity/liveStatus";
+import { IUser, IUserCreationAttributes } from "../entity/userEntity";
 
 export default class EventUseCase implements IEventUseCase {
   private eventRepository: IEventRepository;
@@ -854,6 +855,14 @@ export default class EventUseCase implements IEventUseCase {
           status:true,
           message:"report submitted"
         }
+      } catch (error) {
+        throw error
+      }
+  }
+
+  async getReportedUsersWithReporters(): Promise<Model<IUser, IUserCreationAttributes>[] | null> {
+      try {
+        return await this.eventRepository.getReportedUsersWithReporters()
       } catch (error) {
         throw error
       }
