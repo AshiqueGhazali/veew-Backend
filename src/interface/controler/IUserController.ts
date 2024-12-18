@@ -18,4 +18,5 @@ export default interface IUserController {
   getWalletTransactions(req:IAuthRequest, res:Response, next: NextFunction):Promise<void>;
   getUserNotification(req:IAuthRequest, res:Response, next: NextFunction):Promise<void>
   getProfileStatus(req:IAuthRequest, res:Response, next: NextFunction):Promise<void>
+  getUserDataById(req:IAuthRequest, res:Response, next: NextFunction):Promise<void>
 }

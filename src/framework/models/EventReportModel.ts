@@ -17,10 +17,10 @@ const EventReport: ModelDefined<IEventReport, IEventReportCreationAttributes> =
         allowNull: false,
         references: { model: "user", key: "id" }, 
       },
-      reportedUserId: {
+      reportedEventId: {
         type: DataTypes.UUID,
         allowNull: false,
-        references: { model: "user", key: "id" }, 
+        references: { model: "events", key: "id" }, 
       },
       reason :{
         type: DataTypes.TEXT,

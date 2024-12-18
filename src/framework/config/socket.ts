@@ -1,93 +1,80 @@
-import { Server, Socket } from "socket.io";
-import { createServer } from "http";
 
-interface Rooms {
-  [key: string]: string[]; // Maps room IDs to arrays of user IDs
+import { Server, Socket } from "socket.io";
+
+interface User {
+    id:string;
+    socketId:string;
 }
 
-export default function socketConnection(server: any) {
-  const io = new Server(server, {
-    cors: {
-      origin: "http://localhost:5173", // React frontend
-      methods: ["GET", "POST"],
-    },
-  });
+export default function soketConnection(server:any){
 
-  const rooms: Rooms = {}; // Store rooms and their members
+    const io=new Server(server,{
+        cors:{
+            origin:"*", 
+        },
+    })
+    
+    let users:User[]=[]
 
-  // io.on("connection", (socket: Socket) => {
-  //   console.log(`New client connected: ${socket.id}`);
+    const addUser=(id:string,socketId:string)=>{
+        !users.some(user=>user.id===id)&&users.push({id,socketId})
+    }
 
-  //   // Handle room joining
-  //   socket.on("join-room", ({ roomId, userId }: { roomId: string; userId: string }) => {
-  //     console.log(`User ${userId} joined room ${roomId}`);
-      
-  //     // Initialize the room if it doesn't exist
-  //     if (!rooms[roomId]) {
-  //       rooms[roomId] = [];
-  //     }
+    const removeUser=(socketId:string)=>{
+       const filterd=users.filter(user=>user.socketId!=socketId)
+       users=filterd
+    }
 
-  //     // Add the user to the room
-  //     rooms[roomId].push(userId);
-  //     socket.join(roomId);
+    const getUser=(id:string):User|undefined=>{
+    //    let data=users.find(user=>user.id == id)
+    //    return data
+    
+       let data:string|null=null 
 
-  //     // Notify others in the room
-  //     socket.to(roomId).emit("user-connected", userId);
-
-  //     // Handle user disconnect
-  //     socket.on("disconnect", () => {
-  //       console.log(`User ${userId} disconnected from room ${roomId}`);
+       for(let i=0;i<users.length;i++){
+        console.log("ashiqueeeee");
         
-  //       if (rooms[roomId]) {
-  //         // Remove the user from the room
-  //         rooms[roomId] = rooms[roomId].filter((id) => id !== userId);
-  //         socket.to(roomId).emit("user-disconnected", userId);
-  //       }
-  //     });
-  //   });
-  // });
+            if(users[i].id==id){
+                console.log("hii its matched");
+                
+                data=users[i].socketId
+                return users[i]
+            }
+       }
 
-  io.on("connection", (socket: Socket) => {
-    console.log(`New client connected: ${socket.id}`);
-  
-    socket.on("join-room", ({ roomId, userId }: { roomId: string; userId: string }) => {
-      console.log(`User ${userId} joined room ${roomId}`);
-  
-      if (!rooms[roomId]) rooms[roomId] = [];
-      rooms[roomId].push(userId);
-  
-      socket.join(roomId);
-      socket.to(roomId).emit("user-connected", userId);
-  
-      socket.on("disconnect", () => {
-        console.log(`User ${userId} disconnected from room ${roomId}`);
-        if (rooms[roomId]) {
-          rooms[roomId] = rooms[roomId].filter((id) => id !== userId);
-          socket.to(roomId).emit("user-disconnected", userId);
-        }
-      });
-  
-      // Handle WebRTC signaling
-      socket.on("offer", ({ offer, target }) => {
-        socket.to(target).emit("offer", { offer, sender: socket.id });
-      });
-  
-      socket.on("answer", ({ answer, target }) => {
-        socket.to(target).emit("answer", { answer, sender: socket.id });
-      });
-  
-      socket.on("ice-candidate", ({ candidate, target }) => {
-        socket.to(target).emit("ice-candidate", { candidate, sender: socket.id });
-      });
-  
-      // Handle chat messages
-      socket.on("message", ({ roomId, message, sender }) => {
-        io.to(roomId).emit("message", { message, sender });
-      });
-    });
-  });
+       console.log(data,"djfjfk",users,id);
+       
+       if(data){
+        return data
+       }
+    
+    }
 
-  
+    io.on("connection",(socket:Socket)=>{  
 
-  return io; // Optionally return the Socket.IO instance
+        // take socketId and userId 
+
+        socket.on("addUser",(id)=>{
+            addUser(id,socket.id)
+            io.emit('getUsers',users) 
+        })
+
+    
+       
+        socket.on('message',async(data,id) => {  
+            console.log('Message received:',data,id);
+            const user=await getUser(id) 
+          
+            
+            if(!user){ return }
+            io.to(user.socketId).emit('message-content',data);
+        });
+        
+        socket.on("disconnect",()=>{
+             removeUser(socket.id)
+             io.emit("lostUsers",users)
+        })
+
+    })
+
 }

@@ -22,6 +22,8 @@ import LiveStatusModel from "../models/LiveStatusModel";
 import LikesModel from "../models/LikesModel";
 import CommentsModel from "../models/CommentsModel";
 import UserReportModel from "../models/UserReportModel";
+import EventReportModel from "../models/EventReportModel";
+
 
 
 
@@ -40,7 +42,8 @@ const eventRepository = new EventRepository(
   LiveStatusModel,
   LikesModel,
   CommentsModel,
-  UserReportModel
+  UserReportModel,
+  EventReportModel
 );
 const eventUseCase = new EventUseCase(eventRepository, stripePayment);
 const eventController = new EventController(eventUseCase);
@@ -73,7 +76,7 @@ userRouter.get("/getPlanOfUser",authorizationMiddleware,userController.getUserSu
 userRouter.get('/getDataCounts',authorizationMiddleware,eventController.getDataCounts.bind(eventController))
 userRouter.get('/getNotifications',authorizationMiddleware,userController.getUserNotification.bind(userController))
 userRouter.get('/getProfileStatus',authorizationMiddleware,userController.getProfileStatus.bind(userController))
-
+userRouter.get('/getUserDataById',authorizationMiddleware,userController.getUserDataById.bind(userController))
 
 
 // event controller routes :
@@ -87,6 +90,7 @@ userRouter.patch("/editEventDate",authorizationMiddleware,eventController.editEv
 userRouter.patch("/cancelEvent",authorizationMiddleware,eventController.cancelEvent.bind(eventController))
 userRouter.post("/setEventStartTime",authorizationMiddleware,eventController.setEventStartTime.bind(eventController))
 userRouter.post("/setEventEndTime",authorizationMiddleware,eventController.setEventEndTime.bind(eventController))
+userRouter.get("/getEventLiveUpdates",authorizationMiddleware,eventController.getEventUpdates.bind(eventController))
 
 
 
@@ -118,6 +122,7 @@ userRouter.delete("/deleteComment",authorizationMiddleware,eventController.remov
 
 
 userRouter.post("/reportUser",authorizationMiddleware,eventController.reportUser.bind(eventController))
+userRouter.post("/reportEvent",authorizationMiddleware,eventController.reportEvent.bind(eventController))
 
 
 

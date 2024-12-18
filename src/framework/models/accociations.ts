@@ -11,6 +11,9 @@ import LiveStatus from "./LiveStatusModel";
 import Likes from "./LikesModel";
 import Comments from "./CommentsModel";
 import UserReport from "./UserReportModel";
+import EventReport from "./EventReportModel";
+import Conversation from "./ConversationModel";
+import Message from "./MessageModel";
 
 Pricing.hasMany(UserSubscription, { foreignKey: "planId", as: "plans" });
 
@@ -57,15 +60,36 @@ Comments.belongsTo(User, { foreignKey: "userId", as: "CommentedBy" });
 Comments.hasMany(Comments, { foreignKey: 'parentId', as: 'replies' });
 Comments.belongsTo(Comments, { foreignKey: 'parentId', as: 'parentComment' });
 
-// User.hasMany(UserReport, {foreignKey: "reportedUserId", as: "userReports"})
-// UserReport.belongsTo(User, {foreignKey: "reportedUserId", as: "reportedUser"})
-
-// User.hasMany(UserReport, {foreignKey: "reporterId", as: "reportes"})
-// UserReport.belongsTo(User, {foreignKey: "reporterId", as: "reporter"})
 User.hasMany(UserReport, { foreignKey: "reporterId", as: "reportsMade" });
 User.hasMany(UserReport, { foreignKey: "reportedUserId", as: "reportsReceived" });
 
 UserReport.belongsTo(User, { foreignKey: "reporterId", as: "reporter" });
 UserReport.belongsTo(User, { foreignKey: "reportedUserId", as: "reportedUser" });
+
+
+User.hasMany(User, { foreignKey: "reporterId", as: "reportCreatedBy" });
+Events.hasMany(EventReport, { foreignKey: "reportedEventId", as: "reportsReceived" });
+
+EventReport.belongsTo(User, { foreignKey: "reporterId", as: "reporter" });
+EventReport.belongsTo(Events, { foreignKey: "reportedEventId", as: "reportedEvent" });
+
+// User.hasMany(Message, {foreignKey:"senderId", as:"sendedMessages"})
+// User.hasMany(Message, {foreignKey:" receiverId", as:"recievedMessages"})
+
+// Message.belongsTo(User, {foreignKey:"senderId", as:"sendBy"})
+// Message.belongsTo(User, {foreignKey:" receiverId", as:"receiver"})
+User.hasMany(Conversation,{foreignKey:"firstUserId", as:"user1Conversation"})
+User.hasMany(Conversation,{foreignKey:"secondUserId", as:"user2Conversation"})
+
+Conversation.belongsTo(User,{foreignKey:"firstUserId", as:"firstUserInConversation"})
+Conversation.belongsTo(User,{foreignKey:"secondUserId", as:"secondUserInConversation"})
+
+Conversation.hasMany(Message, {foreignKey:"conversationId", as:"messages"})
+User.hasMany(Message,{foreignKey:"senderId", as:"sendedMessage"})
+User.hasMany(Message, {foreignKey:"receiverId", as:"receivedMessage"})
+
+Message.belongsTo(Conversation, {foreignKey:"conversationId", as:"conversation"})
+Message.belongsTo(User,{foreignKey:"senderId", as:"sendBy"})
+Message.belongsTo(User, {foreignKey:"receiverId", as:"receivedTo"})
 
 export { Pricing, UserSubscription, User };

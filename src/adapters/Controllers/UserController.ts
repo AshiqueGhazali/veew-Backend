@@ -23,10 +23,33 @@ class UserController implements IUserController {
         return;
       }
       res.status(200).json({ userData: data });
+      return
     } catch (error) {
         res.status(500).json(error)
         return
     }
+  }
+
+  async getUserDataById(req: IAuthRequest, res: Response, next: NextFunction): Promise<void> {
+      try {
+        let userId: string = req.query.userId as string;
+
+        console.log("userrrrrrrrrrrrr",userId);
+        console.log("querrrryyyyyyyyy is ", req.query);
+        
+        
+
+        const data = await this.userUseCase.getUserProfile(userId);
+        if (!data) {
+          res.json(401).json({ message: "could't find user" });
+          return;
+        }
+        res.status(200).json({ userData: data });
+        return;
+      } catch (error) {
+        res.status(500).json(error);
+        return;
+      }
   }
 
   async editUserProfile(

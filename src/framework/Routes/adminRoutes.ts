@@ -21,6 +21,7 @@ import EventUseCase from "../../usecase/EventUseCase";
 import EventController from "../../adapters/Controllers/EventController";
 import StripePayment from "../utils/stripePayments";
 import UserReportModel from "../models/UserReportModel";
+import EventReportModel from "../models/EventReportModel";
 
 const adminRoutes: Router = express.Router();
 
@@ -49,7 +50,8 @@ const eventRepository = new EventRepository(
   LiveStatusModel,
   LikesModel,
   CommentsModel,
-  UserReportModel
+  UserReportModel,
+  EventReportModel
 );
 const eventUseCase = new EventUseCase(eventRepository, stripePayment);
 const eventController = new EventController(eventUseCase);
@@ -143,5 +145,11 @@ adminRoutes.get(
   "/getUserReports",
   authorizationMiddleware,
   eventController.getReportedUsersWithReporters.bind(eventController)
+)
+
+adminRoutes.get(
+  "/getEventReports",
+  authorizationMiddleware,
+  eventController.getReportedEventsWithReporters.bind(eventController)
 )
 export default adminRoutes;

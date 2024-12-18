@@ -1,16 +1,16 @@
 import { Model } from "sequelize";
 import { IEvent, IEventCreationAttributes } from "../../entity/eventEntity";
-import { createEventParams, dataCountResponse, editEventDateParams, editEventDetailsParams, IAddCommentParms, IReportUserParams, startEventRes } from "../useCase/IEventUseCase";
+import { createEventParams, dataCountResponse, editEventDateParams, editEventDetailsParams, IAddCommentParms, IReportEventParams, IReportUserParams, startEventRes } from "../useCase/IEventUseCase";
 import { ITicket, ITicketCreationAttributes } from "../../entity/ticketEntity";
 import { transactionParams } from "./IUserRepository";
 import { ITransaction, ITransactionCreationAttributes } from "../../entity/transactionEntity";
 import { IWallet, IWalletCreationAttributes } from "../../entity/walletEntity";
 import { INotification, INotificationCreationAttributes } from "../../entity/notificationsEntity";
 import { IUser, IUserCreationAttributes } from "../../entity/userEntity";
-import { Mode } from "fs";
 import { IComments, ICommentsCreationAttributes } from "../../entity/commentsEntity";
 import { IILiveStatusCreationAttributes, ILiveStatus } from "../../entity/liveStatus";
 import { IUserReport, IUserReportCreationAttributes } from "../../entity/userReportEntity";
+import { IEventReport, IEventReportCreationAttributes } from "../../entity/eventReportEntity";
 
 export interface createTicketParams {
     ticketCode:string
@@ -56,5 +56,8 @@ export default interface IEventRepository {
     getTotalTicketAmountForEvent(eventId:string):Promise<number>
     updateApprovalStatus(eventId:string):Promise<void>
     reportUser(data:IReportUserParams):Promise<Model<IUserReport,IUserReportCreationAttributes> | null>
+    reportEvent(data:IReportEventParams):Promise<Model<IEventReport,IEventReportCreationAttributes> | null>
     getReportedUsersWithReporters():Promise<Model<IUser, IUserCreationAttributes>[] | null>
+    getReportedEventsWithReporters():Promise<Model<IEvent, IEventCreationAttributes>[] | null>
+    getEventUpdation(eventId:string):Promise<Model<ILiveStatus, IILiveStatusCreationAttributes> | null>
 }

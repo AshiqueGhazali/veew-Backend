@@ -8,6 +8,7 @@ import {
   editEventDateParams,
   editEventDetailsParams,
   IAddCommentParms,
+  IReportEventParams,
   IReportUserParams,
   startEventRes,
 } from "../../interface/useCase/IEventUseCase";
@@ -23,6 +24,7 @@ import { IILiveStatusCreationAttributes, ILiveStatus } from "../../entity/liveSt
 import { IILikesCreationAttributes, ILikes } from "../../entity/likesEntity";
 import { IComments, ICommentsCreationAttributes } from "../../entity/commentsEntity";
 import { IUserReport, IUserReportCreationAttributes } from "../../entity/userReportEntity";
+import { IEventReport, IEventReportCreationAttributes } from "../../entity/eventReportEntity";
 
 export default class EventRepository implements IEventRepository {
   private EventModel: ModelDefined<IEvent, IEventCreationAttributes>;
@@ -35,6 +37,7 @@ export default class EventRepository implements IEventRepository {
   private LikesModel:ModelDefined<ILikes,IILikesCreationAttributes>
   private CommentsModel:ModelDefined<IComments,ICommentsCreationAttributes>
   private UserReportModel:ModelDefined<IUserReport,IUserReportCreationAttributes>
+  private EventReportModel:ModelDefined<IEventReport,IEventReportCreationAttributes>
 
   constructor(
     EventModel: ModelDefined<IEvent, IEventCreationAttributes>,
@@ -46,7 +49,8 @@ export default class EventRepository implements IEventRepository {
     LiveStatusModel:ModelDefined<ILiveStatus,IILiveStatusCreationAttributes>,
     LikesModel:ModelDefined<ILikes,IILikesCreationAttributes>,
     CommentsModel:ModelDefined<IComments,ICommentsCreationAttributes>,
-    UserReportModel:ModelDefined<IUserReport,IUserReportCreationAttributes>
+    UserReportModel:ModelDefined<IUserReport,IUserReportCreationAttributes>,
+    EventReportModel:ModelDefined<IEventReport,IEventReportCreationAttributes>
   ) {
     this.EventModel = EventModel;
     this.UserModel = UserModel;
@@ -57,7 +61,8 @@ export default class EventRepository implements IEventRepository {
     this.LiveStatusModel = LiveStatusModel;
     this.LikesModel = LikesModel
     this.CommentsModel = CommentsModel;
-    this.UserReportModel =UserReportModel
+    this.UserReportModel =UserReportModel;
+    this.EventReportModel = EventReportModel
   }
 
   async createEvent(
@@ -476,7 +481,7 @@ export default class EventRepository implements IEventRepository {
   async setEventStartTime(eventId: string, startTime: string): Promise<void> {
       try {
         const now = new Date();
-        const endTime = new Date(now.getTime() + 1 * 60 * 60 * 1000).toISOString()
+        // const endTime = new Date(now.getTime() + 1 * 60 * 60 * 1000).toISOString()
 
         const isLive = await this.LiveStatusModel.findOne({
           where: { eventId },
@@ -485,7 +490,7 @@ export default class EventRepository implements IEventRepository {
           const started = await this.LiveStatusModel.create({
             eventId,
             startTime,
-            endTime
+            endTime:startTime
           });          
         }
         return
@@ -724,12 +729,21 @@ export default class EventRepository implements IEventRepository {
 
   async reportUser(data: IReportUserParams): Promise<Model<IUserReport,IUserReportCreationAttributes> | null> {
       try {
-        const newReport = await this.UserReportModel.create(data)
-        console.log("report is :",newReport);
-        
+        const newReport = await this.UserReportModel.create(data)        
 
         return newReport
       } catch (error) {
+        throw error
+      }
+  }
+
+  async reportEvent(data: IReportEventParams): Promise<Model<IEventReport, IEventReportCreationAttributes> | null> {
+      try {
+        const newReport = await this.EventReportModel.create(data)
+
+        return newReport
+        
+      } catch (error) {        
         throw error
       }
   }
@@ -756,8 +770,6 @@ export default class EventRepository implements IEventRepository {
           attributes: ["id", "firstName", "lastName","email","image"],
           
         });
-
-        console.log("repoppppprrrrr",reportedUsers);
         
         return reportedUsers;
       } catch (error) {
@@ -765,4 +777,53 @@ export default class EventRepository implements IEventRepository {
       }
   }
 
+  async getReportedEventsWithReporters(): Promise<Model<IEvent, IEventCreationAttributes>[] | null> {
+      try {
+        const reportedEvents = await this.EventModel.findAll({
+          include: [
+            {
+              model: this.EventReportModel,
+              as: "reportsReceived", 
+              where: {}, 
+              include: [
+                {
+                  model: this.UserModel,
+                  as: "reporter", 
+                  required: true, 
+                },
+              ],
+              attributes: ["reason"], 
+              required: true,
+            },
+            {
+              model: this.UserModel,
+              as: "user",
+              required: true,
+            }
+          ],
+          attributes: ["id", "hostsId", "eventTitle","category","date", "imageUrl"],
+          
+        });
+        
+        return reportedEvents;
+      } catch (error) {
+        console.log(error);
+        
+        throw error
+      }
+  }
+
+  async getEventUpdation(eventId: string): Promise<Model<ILiveStatus, IILiveStatusCreationAttributes> | null> {
+      try {
+        const status = await this.LiveStatusModel.findOne({where:{eventId}})
+
+        if(status){
+          return status
+        }
+
+        return null
+      } catch (error) {
+        throw error
+      }
+  }
 }

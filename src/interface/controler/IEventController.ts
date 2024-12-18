@@ -32,4 +32,7 @@ export default interface IEventController{
     appruveFund(req:Request , res:Response):Promise<void>
     reportUser(req:IAuthRequest, res:Response, next: NextFunction):Promise<void>
     getReportedUsersWithReporters(req:Request , res:Response):Promise<void>
+    reportEvent(req:IAuthRequest, res:Response, next: NextFunction):Promise<void>
+    getReportedEventsWithReporters(req:Request , res:Response):Promise<void>
+    getEventUpdates(req:IAuthRequest, res:Response, next: NextFunction):Promise<void>
 }

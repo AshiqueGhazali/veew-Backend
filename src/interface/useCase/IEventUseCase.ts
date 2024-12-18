@@ -55,6 +55,12 @@ export interface IReportUserParams {
     reason:string
 }
 
+export interface IReportEventParams {
+    reporterId:string;
+    reportedEventId:string;
+    reason:string
+}
+
 export default interface IEventUseCase {
     verifyEventCreation(userId:string,data:createEventParams):Promise<resObj|null>
     getAllEvents():Promise<Model<IEvent,IEventCreationAttributes>[] | null>
@@ -85,6 +91,9 @@ export default interface IEventUseCase {
     getAdminEventApprovals():Promise<Model<ILiveStatus,IILiveStatusCreationAttributes>[] | null>
     approveEventsFund(eventId:string):Promise<resObj | null>
     verifyReportUser(data:IReportUserParams):Promise<resObj | null>
+    verifyReportEvent(data:IReportEventParams):Promise<resObj | null>
     getReportedUsersWithReporters():Promise<Model<IUser, IUserCreationAttributes>[] | null>
+    getReportedEventsWithReporters():Promise<Model<IEvent, IEventCreationAttributes>[] | null>
+    getEventUpdation(eventId:string):Promise<Model<ILiveStatus,IILiveStatusCreationAttributes> | null>
     
 }

@@ -577,6 +577,26 @@ export default class EventController implements IEventController {
         }
     }
 
+    async reportEvent(req: IAuthRequest, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const userId = req.userId as string
+            const { reportedEventId, reason } = req.body;
+
+            const response = await this.eventUseCase.verifyReportEvent({reporterId:userId,reportedEventId,reason})
+
+            if(response?.status){
+                res.status(200).json(response)
+                return
+            }
+
+            res.status(400).json(response)
+            return
+        } catch (error) {
+            res.status(500).json(error)
+            return
+        }
+    }
+
     async getReportedUsersWithReporters(req: Request, res: Response): Promise<void> {
         try {
             const response = await this.eventUseCase.getReportedUsersWithReporters()
@@ -593,4 +613,42 @@ export default class EventController implements IEventController {
             return
         }
     }
+
+    async getReportedEventsWithReporters(req: Request, res: Response): Promise<void> {
+        try {
+            const response = await this.eventUseCase.getReportedEventsWithReporters()
+
+            if(response){
+                res.status(200).json(response)
+                return
+            }
+
+            res.status(400).json(response)
+            return
+        } catch (error) {
+            res.status(500).json(error)
+            return
+        }
+    }
+
+    async getEventUpdates(req: IAuthRequest, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const eventId = req.query.eventId as string
+
+            const response = await this.eventUseCase.getEventUpdation(eventId)
+
+            if(response){
+                res.status(200).json(response)
+                return
+            }
+
+            res.status(400).json(response)
+            return
+        } catch (error) {
+            res.status(500).json(error)
+            return
+        }
+    }
+
+    
 }

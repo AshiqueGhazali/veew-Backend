@@ -9,6 +9,7 @@ import IEventUseCase, {
   editEventDateParams,
   editEventDetailsParams,
   IAddCommentParms,
+  IReportEventParams,
   IReportUserParams,
   startEventRes,
 } from "../interface/useCase/IEventUseCase";
@@ -860,9 +861,49 @@ export default class EventUseCase implements IEventUseCase {
       }
   }
 
+  async verifyReportEvent(data: IReportEventParams): Promise<resObj | null> {
+      try {
+        const event = await this.eventRepository.fetchEventDetails(data.reportedEventId)
+
+        if(!event || event.dataValues.hostsId===data.reporterId){
+          const message = !event ? "event not found" : "this event is hosted by you!"
+
+          return {
+            status:false,
+            message:message
+          }
+        }
+
+        const response = await this.eventRepository.reportEvent(data)
+        return {
+          status:true,
+          message:"report submitted"
+        }
+
+      } catch (error) {
+        throw error
+      }
+  }
+
   async getReportedUsersWithReporters(): Promise<Model<IUser, IUserCreationAttributes>[] | null> {
       try {
         return await this.eventRepository.getReportedUsersWithReporters()
+      } catch (error) {
+        throw error
+      }
+  }
+
+  async getReportedEventsWithReporters(): Promise<Model<IEvent, IEventCreationAttributes>[] | null> {
+      try {
+        return await this.eventRepository.getReportedEventsWithReporters()
+      } catch (error) {
+        throw error
+      }
+  }
+
+  async getEventUpdation(eventId: string): Promise<Model<ILiveStatus, IILiveStatusCreationAttributes> | null> {
+      try {
+        return await this.eventRepository.getEventUpdation(eventId)
       } catch (error) {
         throw error
       }

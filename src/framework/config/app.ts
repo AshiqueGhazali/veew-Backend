@@ -12,6 +12,7 @@ import '../models/accociations';
 import userAuthRouter from "../Routes/userAuth";
 import userRouter from "../Routes/userRoutes";
 import adminRoutes from "../Routes/adminRoutes";
+import messageRouter from "../Routes/messageRoutes";
 
 const app = express();
 
@@ -46,6 +47,8 @@ app.use(morgan("dev"));
 app.use("/", userAuthRouter);
 app.use("/", userRouter);
 
+// messagge Roustes
+app.use("/chat",messageRouter)
 // admin Routes
 app.use("/admin", adminRoutes);
 
